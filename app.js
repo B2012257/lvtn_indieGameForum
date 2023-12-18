@@ -1,15 +1,17 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/site.router');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/site.router');
 const {log} = require("debug");
 const db = require("./models/index");
 const route = require("./routes/index.js")
-
+const passport = require('passport')
+const session = require('express-session')
+const app = express();
 db.sequelize.sync()
     .then(() => {
       console.log("Synced db.");
@@ -18,11 +20,24 @@ db.sequelize.sync()
       console.log("Failed to sync db: " + err.message);
     });
 
-var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+// Sử dụng middleware session
+app.use(session({
+    secret: 'shiba',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 10000 } // 1 giờ (đơn vị tính bằng mili giây)
+}));
+
+// Cấu hình Passport và sử dụng session
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(passport.authenticate('session'));
 
 app.use(logger('dev'));
 app.use(express.json());
