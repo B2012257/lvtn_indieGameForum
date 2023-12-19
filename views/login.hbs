@@ -1,5 +1,9 @@
 <h1>Sign in</h1>
 <form action="/login/password" method="post">
+    {{#if msg}}
+        <p>message: {{msg}}</p>
+    {{/if}}
+    <a href="/register">Register</a>
     <section>
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required autofocus>
@@ -9,4 +13,5 @@
         <input id="current-password" name="password" type="password" autocomplete="current-password" required>
     </section>
     <button type="submit">Sign in</button>
+    <a href="/oauth2/login/federated/google">Login with google</a>
 </form>

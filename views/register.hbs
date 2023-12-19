@@ -1,5 +1,8 @@
 <h1>Register</h1>
 <form action="/user/register" method="post">
+    {{#if msg}}
+        <p>{{msg}}</p>
+        {{/if}}
     <section>
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required autofocus>
@@ -13,4 +16,5 @@
     <input id="current-password" name="re-type-password" type="password" autocomplete="current-password" required>
     </section>
     <button type="submit">Register</button>
+    <a href="/login">Login</a>
 </form>

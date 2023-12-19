@@ -20,18 +20,16 @@ db.sequelize.sync()
       console.log("Failed to sync db: " + err.message);
     });
 
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 // Sử dụng middleware session
 app.use(session({
-    secret: 'shiba',
+    secret: '!xtera!123!',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 10000 } // 1 giờ (đơn vị tính bằng mili giây)
+    cookie: { maxAge: 36000000 } // 1 giờ (đơn vị tính bằng mili giây)
 }));
 
 // Cấu hình Passport và sử dụng session
@@ -62,5 +60,16 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+// Middleware xử lý lỗi cho Sequelize
+// Middleware xử lý lỗi cho Sequelize
+app.use((err, req, res, next) => {
+    if (err.name === 'SequelizeValidationError') {
+        const errors = err.errors.map(e => e.message);
+        res.render('error', { errors });
+    } else {
+        next(err);
+    }
+});
+
 
 module.exports = app;

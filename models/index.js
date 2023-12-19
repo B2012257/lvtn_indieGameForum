@@ -21,6 +21,9 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.user = require("./user.model.js")(sequelize, Sequelize);
+db.role = require("./role.model")(sequelize, Sequelize)
 
+
+db.role.hasMany(db.user) // 1 -> N
 
 module.exports = db;

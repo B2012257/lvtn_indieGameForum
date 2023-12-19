@@ -1,8 +1,8 @@
 <h1>{{title}}</h1>
 <p>Welcome to {{fullname}} !</p>
+
 {{#if user}}
-    <p>Hello, {{user.displayName}}!</p>
-    <p>Hello, {{user.emails.[0].value}}!</p>
-    <img src="{{user.photos.[0].value}}" alt="">
+    <p>Hello, {{user.name}}!</p>
+    <p>Hello, {{user.token}}!</p>
     <a href="/logout">Logout</a>
 {{/if}}

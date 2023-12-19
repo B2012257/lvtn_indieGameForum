@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("user", {
+    return sequelize.define("user", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -9,13 +9,21 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
         },
         username: {
-            type: Sequelize.STRING(10)
+            type: Sequelize.STRING(10),
+            defaultValue: ""
         },
         password: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            defaultValue: ""
+        },
+        googleId: {
+            type: Sequelize.STRING,
+            defaultValue: ""
+        },
+        email: {
+            type: Sequelize.STRING,
+            defaultValue: ""
         }
 
     });
-
-    return User;
 };
