@@ -1,3 +1,21 @@
-{{#each errors}}
-    <p>{{this.message}}</p>
-{{/each}}
+<div class="d-flex align-items-center justify-content-center vh-100">
+    <div class="text-center">
+        <div class="d-flex">
+            <div class="left">
+                <img src="/images/ghost-error.png" alt="Ghost" width="200px">
+
+            </div>
+            <div class="right pt-4 mt-2 pe-5">
+                <span class="display-1 fw-bold">404</span>
+                <p class="fs-3 ">
+                    <span class="text-danger">Opps!</span>
+                    Không tìm thấy trang.
+                </p></div>
+        </div>
+        <p class="lead mt-2">
+            Trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
+            <image class="align-baseline" src="/images/why.gif" width="50px"> </image>
+        </p>
+        <a href="#" onclick="history.back()" class="btn btn-primary">Quay về</a>
+    </div>
+</div>

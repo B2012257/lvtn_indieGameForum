@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             validate: {
                 isIn: {
-                    args: [['user', 'admin']],
+                    args: [['User', 'Admin']],
                     msg: "Role must be User or Admin"
                 }
             }

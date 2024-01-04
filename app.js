@@ -12,6 +12,8 @@ const route = require("./routes/index.js")
 const passport = require('passport')
 const session = require('express-session')
 const app = express();
+const hbsViewEngineConfig = require('./configs/hbsEngine')
+
 db.sequelize.sync()
     .then(() => {
       console.log("Synced db.");
@@ -20,16 +22,14 @@ db.sequelize.sync()
       console.log("Failed to sync db: " + err.message);
     });
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
 
+hbsViewEngineConfig(app)
 // Sử dụng middleware session
 app.use(session({
     secret: '!xtera!123!',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 36000000 } // 1 giờ (đơn vị tính bằng mili giây)
+    cookie: { maxAge: 86400000  } // 1 ngày (đơn vị tính bằng mili giây)
 }));
 
 // Cấu hình Passport và sử dụng session
@@ -41,10 +41,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 route(app)
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -58,17 +60,12 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
-});
-// Middleware xử lý lỗi cho Sequelize
-// Middleware xử lý lỗi cho Sequelize
-app.use((err, req, res, next) => {
-    if (err.name === 'SequelizeValidationError') {
-        const errors = err.errors.map(e => e.message);
-        res.render('error', { errors });
-    } else {
-        next(err);
-    }
+  res.render('error', {
+      title: "Page not found",
+      header: true,
+      user: req.user || req.session.user,
+      errors: res.locals.error
+  });
 });
 
 

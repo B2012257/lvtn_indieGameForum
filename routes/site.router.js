@@ -1,20 +1,10 @@
 
 const express = require('express');
 const router = express.Router();
-const authController = require("../controllers/auth.controller")
+const siteController = require("../controllers/site.controller")
 
-const {log} = require("debug");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20");
-
-
-router.get('/login', authController.getLoginPage)
-router.post('/login/password', authController.loginService)
-
-router.get('/register', authController.getRegisterPage)
-router.post('/user/register', authController.registerService)
-
-router.get('/', authController.getIndexPage)
+router.get('/login', siteController.getLoginPage)
+router.get('/register', siteController.getRegisterPage)
 router.get('/logout', (req, res) => {
     req.logout((err) => {
         if (err) {
@@ -24,5 +14,7 @@ router.get('/logout', (req, res) => {
         res.redirect('/login'); // Chuyển hướng sau khi đăng xuất thành công
     });
 });
+router.get('/games',siteController.getGamesPage)
+router.get('/', siteController.getIndexPage)
 
 module.exports = router;

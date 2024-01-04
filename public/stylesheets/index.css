@@ -1,0 +1,20 @@
+.side-bar {
+    background-color: #f3f3f3;
+    max-height: 100vh;
+}
+.sidebar__title {
+    font-weight: 500;
+}
+.sidebar__list {
+    vertical-align: middle;
+
+}
+.sidebar__list__item a {
+    font-size: 14px;
+    text-decoration: none;
+    vertical-align: middle;
+    color: gray;
+}
+.sidebar__list__item a:hover {
+    color: #8899e0;
+}
