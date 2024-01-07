@@ -1,7 +1,10 @@
 .side-bar {
     background-color: #f3f3f3;
-    max-height: 100vh;
+    position: fixed;
+    top: 70px;
+    bottom: 0;
 }
+
 .sidebar__title {
     font-weight: 500;
 }
@@ -17,4 +20,50 @@
 }
 .sidebar__list__item a:hover {
     color: #8899e0;
+}
+
+.right__content {
+    margin-left: auto;
+}
+.view_all__btn {
+    display: inline-block;
+    padding: 2px 16px;
+    border: #F16262 1px solid;
+    background-color: transparent;
+    font-size: 14px;
+    color: #F16262;
+
+}
+.view_all_game {
+    display: inline-block;
+    padding: 4px 20px;
+    border: #F16262 1px solid;
+    background-color: transparent;
+    font-size: 16px;
+    color: #F16262;
+}
+.ratings i{
+    color:#cecece;
+}
+.rating-color{
+    color:#fbc634 !important;
+}
+.game__thumbnail {
+    position: relative;
+}
+.sale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 4px;
+    background-color: #F16262;
+    color: white;
+    font-size: 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-style: italic;
+    transition: background-color 0.3s ease;
+}
+.sale:hover {
+    background-color: #C13E3E;
 }

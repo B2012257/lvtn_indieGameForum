@@ -29,6 +29,7 @@ passport.use(new GoogleStrategy({
             //Sinh token
             let token = jwtUtil.generateToken(profile.displayName, profile.email)
             let user = {
+                id: isExist.id,
                 name: profile.displayName,
                 email,
                 token
@@ -36,14 +37,14 @@ passport.use(new GoogleStrategy({
             console.log(user)
             return done(null, user);
         } else {
-            //Them vao db
+            //Them role vao db
             let roleUser = await db.role.findOne({
                 where: {name: "User"}
             })
             let newRoleUser = roleUser
-            if(!roleUser) {
-                newRoleUser=  await db.role.create({
-                   name: "User"
+            if (!roleUser) {
+                newRoleUser = await db.role.create({
+                    name: "User"
                 })
             }
             db.user.create(
@@ -60,7 +61,8 @@ passport.use(new GoogleStrategy({
                     console.log(err)
                     return done(err)
                 })
-        }}));
+        }
+    }));
 passport.serializeUser((user, done) => {
     done(null, user);
 });

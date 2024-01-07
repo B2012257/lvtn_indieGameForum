@@ -1,0 +1,174 @@
+<link rel="stylesheet" href="/stylesheets/upload_project.css">
+<main style="margin-top: 70px" class="container">
+    <div class="card pt-4" style="margin: auto; width: 900px">
+        <div class="card-header bg-body-secondary">
+            Đăng tải dự án
+        </div>
+        <div class="card-body row p-3">
+            <div class="left col-4 border-end">
+                <h6>Hình ảnh</h6>
+                <div class="left__content pt-2">
+                    <div class="mb-3 row">
+                        <label for="inputCover" class="col col-form-label left__content__label">Thêm ảnh bìa (250x200):</label>
+                        <div class="mb-1 d-flex justify-content-center p-1">
+                            <img class="selectedImage" src="https://mdbootstrap.com/img/Photos/Others/placeholder.jpg"
+                                 alt="example placeholder" style="width: 250px; height: 200px" />
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <div class="btn btn-primary btn-sm btn-rounded cursor-pointer">
+                                <label role="button" class="form-label text-white m-0 fs-14px" for="chooseCoverImage">Chọn ảnh</label>
+                                <input type="file" class="form-control d-none" id="chooseCoverImage" onchange="displaySelectedImage(event, '.selectedImage')" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="formFileMultiple" class="form-label">Thêm ảnh chụp màn hình:</label>
+                        <div class="btn btn-primary btn-sm cursor-pointer rounded-1 w-25 text-nowrap m-auto">
+                            <label role="button" class="form-label m-0 fs-14px" for="chooseScreenshotImages">Chọn ảnh</label>
+                            <input multiple type="file" class="form-control d-none" id="chooseScreenshotImages"/>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="right col-8">
+                <h6>Thông tin dự án</h6>
+                <div class="right__content ps-1 pt-2">
+                    <div class="mb-3 row">
+                        <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự án:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control rounded-1" id="inputName">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputCategory" class="col-sm-2 col-form-label right__content__label">Phân
+                            loại:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control rounded-1" id="inputCategory">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
+                            <i>Mỗi một nhãn ngăn cách bằng dấu (,)
+                                <br/> vd: Kinh dị,Phiêu lưu</i></label>
+                        <div class="col-sm-10">
+                            <input class="form-control" name="tags" list="datalistTag" id="inputTag"
+                                   placeholder="Ví dụ: kinh dị, phiêu lưu">
+                            <datalist id="datalistTag">
+                                <option value="Kinh dị">
+                                <option value="Một người chơi">
+                                <option value="Offline">
+                                <option value="Khám phá">
+                                <option value="Giải đố">
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputShortDescription" class="col-sm-2 col-form-label right__content__label">Mô tả
+                            ngắn <i>(Tối đa 200 từ)</i></label>
+                        <div class="col-sm-10">
+                            <textarea maxlength="200" class="form-control rounded-1" name="short-description"
+                                      id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputLongDescription" class="col-sm-2 col-form-label right__content__label">Mô tả
+                            chi tiết</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control rounded-1" name="detail-description" id="inputLongDescription"
+                                      rows="6" placeholder="Mô tả chi tiết"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="selectRelease" class="col-sm-2 col-form-label right__content__label">Trạng thái phát
+                            hành</label>
+                        <div class="col-sm-10">
+                            <select name="" id="selectRelease" class="form-control rounded-1">
+                                <option value="ready">Sẵn sàng phát hành - Dự án đã hoàn thành</option>
+                                <option value="developing">Đang phát triển - Dự án đang phát triển hoặc truy cập sớm
+                                </option>
+                            </select>
+
+                        </div>
+                        <label for="inputReleaseDate" class="col-sm-2 col-form-label right__content__label">Ngày phát
+                            hành:</label>
+                        <div class="col-sm-10">
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control rounded-1" id="inputReleaseDate">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="mb-3 row border-bottom">
+                        <label class="col-sm-2 col-form-label right__content__label">Giá:</label>
+                        <div class="col-sm-10">
+                            <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off"
+                                   checked>
+                            <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                   class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option1">Miễn phí</label>
+
+                            <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+                            <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                   class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option2">Ủng hộ</label>
+
+                            <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off">
+                            <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                   class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
+                        </div>
+
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputUploadFile" class="col-sm-2 col-form-label right__content__label">Tải lên:</label>
+
+                        <div class="col-sm-10">
+
+                            <input multiple type="file" class="form-control rounded-1 fs-14px" id="inputUploadFile">
+                        </div>
+                    </div>
+                    <div class="mb-5 row">
+                        <label class="col-sm-2 col-form-label right__content__label">Hiển thị:</label>
+
+                        <div class="col-12 ps-4 pe-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft" checked>
+                                <label class="form-check-label right__content__label" for="flexRadioDraft" >
+                                    Bản nháp - Chỉ có bạn mới có thể xem
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic" >
+                                <label class="form-check-label right__content__label" for="flexRadioPublic">
+                                    Công khai - Mọi người đều có thể xem
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn w-25 btn-sm btn-success" type="submit">Lưu và xem</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function displaySelectedImage(event, imgElementSelector) {
+        const selectedImage = document.querySelector(imgElementSelector);
+        const fileInput = event.target;
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+
+            reader.readAsDataURL(fileInput.files[0]); //chuyển ảnh thành url thành url
+
+            reader.onload = function(e) {
+                selectedImage.src = e.target.result;
+            };
+
+        }
+    }
+</script>

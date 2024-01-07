@@ -14,6 +14,7 @@ router.get('/logout', (req, res) => {
         res.redirect('/login'); // Chuyển hướng sau khi đăng xuất thành công
     });
 });
+router.get('/user/upload-project', siteController.getCreateProjectPage)
 router.get('/games',siteController.getGamesPage)
 router.get('/', siteController.getIndexPage)
 

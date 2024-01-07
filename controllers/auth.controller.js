@@ -35,9 +35,13 @@ const registerService = async (req, res) => {
         //     }
         // }
         let roleUser = await db.role.findOne({
-            where: {name: "Admin"}
+            where: {name: "User"}
         })
-        console.log(roleUser)
+        if (!roleUser) {
+            roleUser = await db.role.create({
+                name: "User"
+            })
+        }
         await bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
             if (!err) {
                 // console.log(hash);
@@ -74,21 +78,21 @@ const loginService = async (req, res) => {
         if (checkPass) {
             let accessToken = jwtUtil.generateToken(userDB.name, userDB.username)
             req.session.user = {
+                id: userDB.id,
                 name: userDB.name,
                 email: userDB.email,
                 token: accessToken
             }
-            console.log(req.user)
             res.redirect(303, "/");
         }
         // Sai mat khau
         else {
-            res.render("login", {msg: "Sai mat khau"})
+            res.render("login", {msg: "Sai thông tin tài khoản hoặc mật khẩu"})
         }
     }
     // Chưa đăng ký tài khoản
     else {
-        res.render("login", {msg: "Ton khoan khong ton tai"})
+        res.render("login", {msg: "Tài khoản không tồn tại"})
     }
 }
 module.exports = {  loginService, registerService}

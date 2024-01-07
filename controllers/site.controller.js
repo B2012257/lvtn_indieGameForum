@@ -1,4 +1,7 @@
+const db = require("../models/index")
+
 //[GET] /
+
 const getIndexPage = (req, res) => {
     console.log("req")
     console.log(req.user)
@@ -32,7 +35,7 @@ const getRegisterPage = (req, res) => {
     })
 }
 // [GET] /games
-const getGamesPage = (req,res )=> {
+const getGamesPage = (req, res) => {
     res.render("games", {
         user: req.user || req.session.user,
         title: "Kho trò chơi",
@@ -41,4 +44,24 @@ const getGamesPage = (req,res )=> {
         isGamesActive: true
     })
 }
-module.exports = {getIndexPage, getLoginPage, getRegisterPage, getGamesPage}
+// [GET] /user/upload-project
+const getCreateProjectPage = async (req, res) => {
+    if(req.user || req.session.user){
+        res.render("upload_project", {
+            title: "Tạo dự án",
+            header: true,
+            footer: true,
+            user: req.user || req.session.user,
+        })
+    }else {
+        res.redirect("/login")
+    }
+
+}
+module.exports = {
+    getIndexPage,
+    getLoginPage,
+    getRegisterPage,
+    getGamesPage,
+    getCreateProjectPage
+}
