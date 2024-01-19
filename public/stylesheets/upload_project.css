@@ -4,3 +4,27 @@
 .fs-14px {
     font-size: 14px;
 }
+#tag_suggests {
+    margin-top: 4px;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+    max-height: 200px;
+    overflow-y: scroll;
+    list-style: none;
+    padding: 10px 0 10px 10px;
+}
+.tag_suggests__item {
+    padding: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.tag_suggests__item:hover {
+    border-radius: 4px;
+    background-color: #adacac;
+}
+.clickToAddLabel {
+    border-radius: 2px;
+    font-size: 12px;
+    font-style: italic;
+    color: #8a8a8a;
+}

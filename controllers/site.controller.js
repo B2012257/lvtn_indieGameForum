@@ -1,5 +1,5 @@
 const db = require("../models/index")
-
+const drive = require("../services/google.clound/index")
 //[GET] /
 
 const getIndexPage = (req, res) => {
@@ -46,6 +46,9 @@ const getGamesPage = (req, res) => {
 }
 // [GET] /user/upload-project
 const getCreateProjectPage = async (req, res) => {
+    // await drive.uploadImageFile()
+    // await  drive.createFolder("projects")
+    // await drive.searchFolder("projects")
     if(req.user || req.session.user){
         res.render("upload_project", {
             title: "Tạo dự án",

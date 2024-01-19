@@ -62,6 +62,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
       title: "Page not found",
+      error_code: "404",
+      error_msg: "Không tìm thấy trang.",
       header: true,
       user: req.user || req.session.user,
       errors: res.locals.error

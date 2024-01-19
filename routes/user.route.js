@@ -8,7 +8,7 @@ const userController = require("../controllers/user.controller");
 // [Get] /user/:id/project/create
 // router.get('/:id/project/create', userController.getCreateProjectPage)
 
-
+router.post('/upload-project', userController.uploadProject)
 
 
 
