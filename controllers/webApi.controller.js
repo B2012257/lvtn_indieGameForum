@@ -5,15 +5,26 @@ const drive = require("../services/google.clound/index")
 
 const uploadImages = (req, res) => {
 
-    return res.render("index", {
-        user: req.user || req.session.user,
-        title: "Trang chủ",
-        header: true,
-        footer: false,
-        isHomeActive: true
-    })
+    const { name, description, images } = req.body
+    const { id } = req.params
+    const project = { name, description, images, id }
+    const { files } = req
+
+    if (files.length > 0) {
+        const images = files.map((file) => {
+            return {
+                name: file.originalname,
+                path: file.path,
+                mimetype: file.mimetype,
+                size: file.size,
+            }
+        })
+        project.images = images
+    }
+
+
 }
-const uploadProject = (req, res) => {   }
+const uploadProject = (req, res) => { }
 
 module.exports = {
     uploadImages,

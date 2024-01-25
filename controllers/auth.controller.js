@@ -9,9 +9,9 @@ const db = require("../models/index")
 
 // [POST] /user/register
 const registerService = async (req, res) => {
-    let usernameDb = await db.user.findOne({where: {username: req.body.username}})
+    let usernameDb = await db.user.findOne({ where: { username: req.body.username } })
     if (usernameDb) {
-        return res.render("register", {msg: 'Username is already exists!'})
+        return res.render("register", { msg: 'Username is already exists!' })
     }
     //Check password and retype password
     if (req.body.password === req.body['re-type-password']) {
@@ -35,7 +35,7 @@ const registerService = async (req, res) => {
         //     }
         // }
         let roleUser = await db.role.findOne({
-            where: {name: "User"}
+            where: { name: "User" }
         })
         if (!roleUser) {
             roleUser = await db.role.create({
@@ -46,29 +46,29 @@ const registerService = async (req, res) => {
             if (!err) {
                 // console.log(hash);
                 const newUser =
-                    {
-                        username: req.body.username,
-                        password: hash,
-                        email: req.body.email,
-                        name: req.body.username,
-                        roleId: roleUser.id
-                    }
+                {
+                    username: req.body.username,
+                    password: hash,
+                    email: req.body.email,
+                    name: req.body.username,
+                    roleId: roleUser.id
+                }
 
                 db.user.create(newUser)
                     .then(user => {
                         // res.json(other)
-                        return res.render('register', {user: user, msg: `Dang ky tai khoan ${user.name} thanh cong`})
+                        return res.render('register', { user: user, msg: `Đăng ký tài khoản ${user.name} thành công!` })
                     })
-                    .catch((error) => res.render('register', {msg: error}))
-            } else return res.render('register', {msg: err})
+                    .catch((error) => res.render('register', { msg: error }))
+            } else return res.render('register', { msg: err })
         })
         // console.log(passwordHashed);
-    } else res.render("register", {msg: "Mật khẩu không trùng khớp!"})
+    } else res.render("register", { msg: "Mật khẩu không trùng khớp!" })
 
 }
 // [POST] /login/password
 const loginService = async (req, res) => {
-    const userDB = await db.user.findOne({where: {username: req.body.username}})
+    const userDB = await db.user.findOne({ where: { username: req.body.username } })
     const clientPassword = req.body.password
     if (userDB) {
         const checkPass = await bcrypt.compare(clientPassword, userDB.password).then(function (result) {
@@ -87,12 +87,14 @@ const loginService = async (req, res) => {
         }
         // Sai mat khau
         else {
-            res.render("login", {msg: "Sai thông tin tài khoản hoặc mật khẩu"})
+            res.render("login", { msg: "Sai thông tin tài khoản hoặc mật khẩu" })
         }
     }
     // Chưa đăng ký tài khoản
     else {
-        res.render("login", {msg: "Tài khoản không tồn tại"})
+        res.render("login", { msg: "Tài khoản không tồn tại" })
     }
 }
-module.exports = {  loginService, registerService}
+module.exports = {
+    loginService, registerService
+}

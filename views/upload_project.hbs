@@ -13,14 +13,15 @@
                             (250x200):</label>
                         <div class="mb-1 d-flex justify-content-center p-1">
                             <img class="selectedImage" src="https://mdbootstrap.com/img/Photos/Others/placeholder.jpg"
-                                 alt="example placeholder" style="width: 250px; height: 200px"/>
+                                alt="example placeholder" style="width: 250px; height: 200px" />
                         </div>
                         <div class="d-flex justify-content-center">
                             <div class="btn btn-primary btn-sm btn-rounded cursor-pointer">
-                                <label role="button" class="form-label text-white m-0 fs-14px" for="chooseCoverImage">Chọn
+                                <label role="button" class="form-label text-white m-0 fs-14px"
+                                    for="chooseCoverImage">Chọn
                                     ảnh</label>
                                 <input type="file" class="form-control d-none" id="chooseCoverImage"
-                                       onchange="displaySelectedImage(event, '.selectedImage')"/>
+                                    onchange="displaySelectedImage(event, '.selectedImage')" />
                             </div>
                         </div>
                     </div>
@@ -29,7 +30,7 @@
                         <div class="btn btn-primary btn-sm cursor-pointer rounded-1 w-25 text-nowrap m-auto">
                             <label role="button" class="form-label m-0 fs-14px" for="chooseScreenshotImages">Chọn
                                 ảnh</label>
-                            <input multiple type="file" class="form-control d-none" id="chooseScreenshotImages"/>
+                            <input multiple type="file" class="form-control d-none" id="chooseScreenshotImages" />
                         </div>
 
 
@@ -40,7 +41,8 @@
             <div class="right col-8">
                 <h6>Thông tin dự án</h6>
                 <div class="right__content ps-1 pt-2">
-                    <form id="upload_project_form" action="/user/upload-project" method="POST">
+                    <form id="upload_project_form" action="/user/upload-project" method="POST"
+                        enctype="multipart/form-data">
                         <div class="mb-3 row">
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
@@ -58,10 +60,10 @@
                         <div class="mb-3 row">
                             <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
                                 <i>Mỗi một nhãn ngăn cách bằng dấu (,)
-                                    <br/> vd: Kinh dị,Phiêu lưu</i></label>
+                                    <br /> vd: Kinh dị,Phiêu lưu</i></label>
                             <div class="col-sm-10">
                                 <input class="form-control inputTags" name="tags" id="inputTag"
-                                       placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
+                                    placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                                 <ul id="tag_suggests">
                                     <!--                                    <li class="tag_suggests__item">Kinh dị-->
                                     <!--                                        <label class="float-end clickToAddLabel">Chọn </label>-->
@@ -77,8 +79,8 @@
                                 tả
                                 ngắn <i>(Tối đa 200 từ)</i></label>
                             <div class="col-sm-10">
-                            <textarea maxlength="200" class="form-control rounded-1" name="short-description"
-                                      id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án"></textarea>
+                                <textarea maxlength="200" class="form-control rounded-1" name="short-description"
+                                    id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án"></textarea>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -86,8 +88,8 @@
                                 tả
                                 chi tiết</label>
                             <div class="col-sm-10">
-                            <textarea class="form-control rounded-1" name="detail-description" id="inputLongDescription"
-                                      rows="6" placeholder="Mô tả chi tiết"></textarea>
+                                <textarea class="form-control rounded-1" name="detail-description"
+                                    id="inputLongDescription" rows="6" placeholder="Mô tả chi tiết"></textarea>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -108,7 +110,7 @@
                             <div class="col-sm-10">
                                 <div class="col-sm-10">
                                     <input type="date" class="form-control rounded-1" id="inputReleaseDate"
-                                           name="releaseDate">
+                                        name="releaseDate">
                                 </div>
 
                             </div>
@@ -117,21 +119,23 @@
                             <label class="col-sm-2 col-form-label right__content__label">Giá:</label>
                             <div class="col-sm-10">
                                 <input value="free" type="radio" class="btn-check" name="options" id="option1"
-                                       autocomplete="off"
-                                       checked>
-                                <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
-                                       class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option1">Miễn
+                                    autocomplete="off" checked>
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option1">Miễn
                                     phí</label>
 
                                 <input value="donate" type="radio" class="btn-check" name="options" id="option2"
-                                       autocomplete="off">
-                                <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
-                                       class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option2">Ủng hộ</label>
+                                    autocomplete="off">
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option2">Ủng hộ</label>
 
                                 <input value="pay" type="radio" class="btn-check" name="options" id="option3"
-                                       autocomplete="off">
-                                <label style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
-                                       class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
+                                    autocomplete="off">
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
                             </div>
 
                         </div>
@@ -142,6 +146,8 @@
                             <div class="col-sm-10">
 
                                 <input multiple type="file" class="form-control rounded-1 fs-14px" id="inputUploadFile">
+
+
                             </div>
                         </div>
                         <div class="mb-5 row">
@@ -150,14 +156,14 @@
                             <div class="col-12 ps-4 pe-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft"
-                                           checked value="draft">
+                                        checked value="draft">
                                     <label class="form-check-label right__content__label" for="flexRadioDraft">
                                         Bản nháp - Chỉ có bạn mới có thể xem
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic"
-                                           value="public">
+                                        value="public">
                                     <label class="form-check-label right__content__label" for="flexRadioPublic">
                                         Công khai - Mọi người đều có thể xem
                                     </label>
@@ -202,13 +208,13 @@
         const tagSuggestsItem = document.createElement('li');
         tagSuggestsItem.classList.add('tag_suggests__item');
         tagSuggestsItem.innerHTML =
-                `
+            `
                     ${element}
                     <label class="float-end clickToAddLabel">Chọn </label>
                 `;
         tagSuggestsItem.addEventListener('click', () => {
             const inputTag = document.getElementById('inputTag')
-                    .value = element;
+                .value = element;
             tagSuggests.innerHTML = '';
         })
         console.log([tagSuggests])
@@ -259,13 +265,23 @@
     const form = document.getElementById('upload_project_form');
     form.addEventListener("submit", (event) => {
         event.preventDefault();
+        // Get the file input
+        let fileInput = document.getElementById('chooseCoverImage');
+        let externalInputValue = fileInput.value
+        // Get the main form
 
+        // Create a hidden input element
+        let hiddenInput = fileInput.cloneNode(true);
+
+        hiddenInput.name = 'cover_images';
+
+        form.appendChild(hiddenInput);
+
+        // Submit the form
         //call api , and add tags, imgage link to form
 
         //Submit form
-        setTimeout(() => {
-            form.submit();
-        }, 1000);
+        form.submit();
     })
 
 </script>
