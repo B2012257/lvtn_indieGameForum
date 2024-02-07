@@ -1,29 +1,25 @@
 const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 
-//[POST] /
+//[POST] /api/v1/upload-cover-image
+const ggdrive = require('../services/google.clound/index')
+const uploadImages = async (req, res) => {
+    // Tạo thư mục trên google drive với tên dự án
+    // Upload ảnh vào thư mục vừa tạo
+    // Trả về link ảnh
+    const file = req.file
+    if (file) {
+        return res.json(await ggdrive.uploadImageFile({ image: file }))
 
-const uploadImages = (req, res) => {
-
-    const { name, description, images } = req.body
-    const { id } = req.params
-    const project = { name, description, images, id }
-    const { files } = req
-
-    if (files.length > 0) {
-        const images = files.map((file) => {
-            return {
-                name: file.originalname,
-                path: file.path,
-                mimetype: file.mimetype,
-                size: file.size,
-            }
-        })
-        project.images = images
+    } else {
+        res.json({ status: 400, message: "Upload file failed! No such file to upload" })
     }
-
-
+    // return res.json(file)
+    // if (!req.user) {
+    //     return res.redirect("/login")
+    // }
 }
+//Api tải lên file dự án vào drive
 const uploadProject = (req, res) => { }
 
 module.exports = {

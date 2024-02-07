@@ -1,31 +1,23 @@
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("user", {
+    return sequelize.define("version", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        name: {
+        version_number: {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: false
 
         },
-        username: {
+        relase_date: {
             type: Sequelize.STRING(10),
-            defaultValue: ""
+            allowNull: false
+
         },
-        password: {
-            type: Sequelize.STRING,
-            defaultValue: ""
-        },
-        googleId: {
-            type: Sequelize.STRING,
-            defaultValue: ""
-        },
-        email: {
+        install_guide: {
             type: Sequelize.STRING,
             defaultValue: ""
         }
-
     });
 };

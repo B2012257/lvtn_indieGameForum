@@ -1,12 +1,13 @@
 const ggdrive = require("../services/google.clound/index");
-//[GET] /user/upload-project
+const api = require("./webApi.controller")
+const drive = require("../services/google.clound/index")
+
+//[POST] /user/upload-project
 const uploadProject = async (req, res) => {
-    const file = req.file
-    await ggdrive.uploadImageFile({ image: file })
+    
     // if (!req.user) {
     //     return res.redirect("/login")
     // }
-    return res.send(req.file.path)
 }
 
 module.exports = { uploadProject }

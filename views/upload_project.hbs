@@ -21,18 +21,24 @@
                                     for="chooseCoverImage">Chọn
                                     ảnh</label>
                                 <input type="file" class="form-control d-none" id="chooseCoverImage"
-                                    onchange="displaySelectedImage(event, '.selectedImage')" />
+                                    onchange="displaySelectedCoverImage(event, '.selectedImage')" />
                             </div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="formFileMultiple" class="form-label">Thêm ảnh chụp màn hình:</label>
+
                         <div class="btn btn-primary btn-sm cursor-pointer rounded-1 w-25 text-nowrap m-auto">
                             <label role="button" class="form-label m-0 fs-14px" for="chooseScreenshotImages">Chọn
                                 ảnh</label>
-                            <input multiple type="file" class="form-control d-none" id="chooseScreenshotImages" />
-                        </div>
+                            <input multiple type="file" class="form-control d-none" id="chooseScreenshotImages"
+                                onchange="displaySelectedScreenshotImage(event)" />
 
+                        </div>
+                        <div class="mb-1 d-flex flex-column justify-content-center p-1 target-screenshot-image">
+                            {{!-- <img class="" src="https://mdbootstrap.com/img/Photos/Others/placeholder.jpg" alt=""
+                                style="width: 250px; height: 200px" /> --}}
+                        </div>
 
                     </div>
 
@@ -185,7 +191,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <script src="/javascripts/index.js"></script>
 <script>
-    function displaySelectedImage(event, imgElementSelector) {
+    function displaySelectedCoverImage(event, imgElementSelector) {
         const selectedImage = document.querySelector(imgElementSelector);
         const fileInput = event.target;
 
@@ -199,7 +205,57 @@
             };
         }
     }
+    function displaySelectedScreenshotImage(event) {
+        const fileInput = event.target;
+        console.log(fileInput.files)
+        const arrayFile = Array.from(fileInput.files);
+        const urlArray = [];
+        // Sử dụng Promise để xử lý việc chuyển đổi ảnh thành URL
+        const promises = arrayFile.map(file => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageUrl = e.target.result;
+                    resolve(imageUrl);
+                };
+                reader.onerror = function (error) {
+                    reject(error);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
 
+        // Sử dụng Promise.all để đợi tất cả các tác vụ hoàn thành
+        Promise.all(promises)
+            .then(imageUrls => {
+                // imageUrls là một mảng chứa các URL của ảnh
+                console.log(imageUrls);
+                imageUrls.forEach((image, index) => {
+                    //Thêm src vào ảnh
+                    let divwrapper = document.createElement('div');
+                    let deteletag = document.createElement('i');
+                    let imagetag = document.createElement('img');
+                    deteletag.classList.add('delete_image');
+                    deteletag.classList.add('fa-solid')
+                    deteletag.classList.add('fa-xmark')
+                    imagetag.classList.add('screenshot');
+                    deteletag.title = "Xoá ảnh"
+                    deteletag.addEventListener('click', (e) => {
+                        let parent = e.target.parentElement
+                        parent.remove();
+                    })
+                    divwrapper.classList.add('screenshot_wrapper')
+                    imagetag.src = imageUrls[index];
+                    divwrapper.appendChild(imagetag);
+                    divwrapper.appendChild(deteletag);
+                    document.querySelector(".target-screenshot-image").appendChild(divwrapper);
+                })
+
+            })
+            .catch(error => {
+                console.error('Error converting images to URLs:', error);
+            });
+    }
     const list = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó"];
     const tagSuggests = document.getElementById('tag_suggests');
 
@@ -263,25 +319,39 @@
 
     //handle submit form
     const form = document.getElementById('upload_project_form');
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        // Get the file input
-        let fileInput = document.getElementById('chooseCoverImage');
-        let externalInputValue = fileInput.value
-        // Get the main form
 
-        // Create a hidden input element
-        let hiddenInput = fileInput.cloneNode(true);
+        //upload project file, cover image and screenshot
+        await Promise.all([uploadCoverImage(), uploadScreenShot(), uploadProjectFile()])
 
-        hiddenInput.name = 'cover_images';
-
-        form.appendChild(hiddenInput);
-
-        // Submit the form
-        //call api , and add tags, imgage link to form
 
         //Submit form
-        form.submit();
+        // form.submit();
     })
 
+    async function uploadScreenShot() {
+
+    }
+    async function uploadCoverImage() {
+        let coverImageInput = document.getElementById('chooseCoverImage');
+        let image = coverImageInput.files[0];
+        let formData = new FormData();
+
+        formData.append('coverImage', image);
+        fetch('/api/v1/upload-cover-image', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Images uploaded:', data);
+            })
+            .catch(error => {
+                console.error('Error uploading images:', error);
+            });
+    }
+    async function uploadProjectFile() {
+
+    }
 </script>

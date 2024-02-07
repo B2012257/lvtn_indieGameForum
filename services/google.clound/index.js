@@ -19,7 +19,7 @@ const drive = google.drive({
 })
 
 var that = module.exports = {
-    setFilePublic: async ({ fileId, emailToShare }) => {
+    shareFile: async ({ fileId, emailToShare }) => {
         try {
             await drive.permissions.create({
                 fileId,
@@ -34,10 +34,14 @@ var that = module.exports = {
                 fileId,
                 fields: 'webViewLink, webContentLink'
             })
-
-            return getUrl;
+            return {
+                status: 200,
+                data: getUrl.data,
+            };
         } catch (error) {
             console.error(error);
+            return error
+
         }
     },
     // Upload image to google drive
@@ -55,14 +59,17 @@ var that = module.exports = {
                 }
             })
             const fileId = createFile.data.id;
-            console.log(createFile.data)
-            const getUrl = await that.setFilePublic({ fileId });
+            return await that.shareFile({ fileId });
 
-            console.log(getUrl.data);
             //xoá file vừa upload
 
         } catch (error) {
-            console.error(error);
+            console.error({
+                statusNumber: 400,
+
+                message: "Upload file failed!",
+            });
+            return error;
         }
     },
     // Delete file with fileId
@@ -78,15 +85,16 @@ var that = module.exports = {
         }
     },
     //Create new folder with name, return id of this folder
-    async createFolder(name) {
+    async createFolder({ name, parents = [] }) {
 
-        const fileMetadata = {
+        const metadata = {
             name: name,
             mimeType: 'application/vnd.google-apps.folder',
+            parents: parents
         };
         try {
             const file = await drive.files.create({
-                resource: fileMetadata,
+                resource: metadata,
                 fields: 'id',
             });
             console.log('Folder Id:', file.data.id);
@@ -106,7 +114,7 @@ var that = module.exports = {
         };
         try {
             const file = await drive.files.list(searchQuery);
-            console.log('Found file:', file.data);
+            console.log('Found folder:', file.data);
 
             Array.prototype.forEach.call(file.data.files, (f) => {
                 console.log(`${f.name} (${f.parents})`);
