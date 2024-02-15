@@ -13,6 +13,8 @@ benchmarks/graphs
 
 #idea
 .idea
+
+# dotenv environment variable files
+.env
 # ignore additional files using core.excludesFile
 # https://git-scm.com/docs/gitignore
-*.local
