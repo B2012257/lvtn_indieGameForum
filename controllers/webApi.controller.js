@@ -9,7 +9,11 @@ const uploadImages = async (req, res) => {
     // Trả về link ảnh
     const file = req.file
     if (file) {
-        return res.json(await ggdrive.uploadImageFile({ image: file }))
+        return res.json(
+            {
+                ...await ggdrive.uploadImageFile({ image: file }),
+                dataProject: req.body
+            })
 
     } else {
         res.json({ status: 400, message: "Upload file failed! No such file to upload" })
