@@ -53,3 +53,31 @@
     color: brown;
     cursor: pointer;
 }
+
+.upload_process_bar_wrapper {
+    height: 6px;
+    background: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    border: 1px solid;
+    padding: 0;
+    margin: 0 12px;
+}
+
+.upload_process_bar {
+    height: 100%;
+    border-radius: 10px;
+    background: #984040;
+    animation-duration: 2s;
+    animation-name: process;
+}
+
+@keyframes process {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
