@@ -69,7 +69,13 @@
     border-radius: 10px;
     background: #984040;
     animation-duration: 2s;
-    animation-name: process;
+    width: 0%;
+    /* animation-name: process; */
+    animation: all 2s ease;
+}
+
+.uploading_msg {
+    font-size: 15px;
 }
 
 @keyframes process {

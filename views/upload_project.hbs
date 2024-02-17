@@ -177,24 +177,34 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class=" col-12 mb-2">Đăng tải lên ảnh bìa:</div>
-                            <div class="col-12 upload_process_bar_wrapper">
-                                <div class="upload_process_bar"></div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg">1.
+                                <span class="text-secondary">Đang tải
+                                    lên
+                                    ảnh
+                                    bìa...</span>
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class=" col-12 mb-2">Đăng tải lên ảnh chụp màn hình:</div>
-                            <div class="col-12 upload_process_bar_wrapper">
-                                <div class="upload_process_bar"></div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg">2.
+                                <span class="text-secondary">Đang tải
+                                    lên ảnh chụp màn hình..</span>
                             </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg">3.
+                                <span class="text-secondary">Đang tải
+                                    lên tệp dự án...</span>
+                            </div>
+
+
                         </div>
+
                         <div class="row">
 
-
                             <div class="col-12 mt-4">
-                                <button class="btn w-25 btn-sm btn-success" type="submit">Lưu và xem</button>
+                                {{!-- <button class="btn w-25 btn-sm btn-success" type="submit">Lưu và xem</button> --}}
+                                <button type="submit" class="btn btn-primary" type="button">
+                                    {{!-- <div class="spinner-border spinner-border-sm" role="status">
+                                    </div> --}}
+                                    Lưu và xem trước
+                                </button>
                             </div>
-
                         </div>
 
                     </form>
@@ -205,7 +215,9 @@
 </main>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <script src="/javascripts/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
+    console.log(axios)
     function displaySelectedCoverImage(event, imgElementSelector) {
         const selectedImage = document.querySelector(imgElementSelector);
         const fileInput = event.target;
@@ -336,13 +348,20 @@
     }
 
     //handle submit form
+    const objectUpload = {
+        cover: 'Ảnh bìa',
+        screenshot: 'Ảnh chụp màn hình',
+        project: 'File dự án'
+    }
     const form = document.getElementById('upload_project_form');
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         //upload project file, cover image and screenshot
         await Promise.all([uploadCoverImage(), uploadScreenShot(), uploadProjectFile()])
-
+            .then(value => {
+                console.log(value)
+            })
 
         //Submit form
         //form.submit();
@@ -355,19 +374,27 @@
         let coverImageInput = document.getElementById('chooseCoverImage');
         let image = coverImageInput.files[0];
         let formData = new FormData();
-
-        formData.append('coverImage', image);
-        fetch('/api/v1/upload-cover-image', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Images uploaded:', data);
+        return new Promise((resolve, reject) => {
+            formData.append('coverImage', image);
+            fetch('/api/v1/upload-cover-image', {
+                method: 'POST',
+                body: formData,
             })
-            .catch(error => {
-                console.error('Error uploading images:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) resolve(data)
+                    else resolve(
+                        {
+                            status: 400,
+                            objectError: objectUpload.cover,
+                            msg: `Tải lên ${objectUpload.cover} không thành công!`
+                        }
+                    )
+                })
+                .catch(error => {
+                    console.error('Error uploading images:', error);
+                });
+        })
     }
     async function uploadProjectFile() {
 

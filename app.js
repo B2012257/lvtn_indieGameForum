@@ -6,7 +6,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/site.router');
-const {log} = require("debug");
+const { log } = require("debug");
 const db = require("./models/index");
 const route = require("./routes/index.js")
 const passport = require('passport')
@@ -15,21 +15,22 @@ const app = express();
 const hbsViewEngineConfig = require('./configs/hbsEngine')
 
 db.sequelize.sync()
-    .then(() => {
-      console.log("Synced db.");
-    })
-    .catch((err) => {
-      console.log("Failed to sync db: " + err.message);
-    });
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
+  });
 
 
 hbsViewEngineConfig(app)
 // Sử dụng middleware session
 app.use(session({
-    secret: '!xtera!123!',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 86400000  } // 1 ngày (đơn vị tính bằng mili giây)
+  secret: '!xtera!123!',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { maxAge: 86400000, sameSite: 'Lax' },
+  // 1 ngày (đơn vị tính bằng mili giây)
 }));
 
 // Cấu hình Passport và sử dụng session
@@ -48,12 +49,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 route(app)
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -61,12 +62,12 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error', {
-      title: "Page not found",
-      error_code: "404",
-      error_msg: "Không tìm thấy trang.",
-      header: true,
-      user: req.user || req.session.user,
-      errors: res.locals.error
+    title: "Page not found",
+    error_code: "404",
+    error_msg: "Không tìm thấy trang.",
+    header: true,
+    user: req.user || req.session.user,
+    errors: res.locals.error
   });
 });
 

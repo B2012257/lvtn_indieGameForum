@@ -40,8 +40,8 @@ db.project.hasMany(db.version) // 1 -> N
 db.version.belongsTo(db.project); // 1 -> 1
 
 //Define relationships project and tag
-db.project.hasMany(db.tag) // 1 -> N
-db.tag.belongsTo(db.project); // 1 -> 1
+db.project.belongsToMany(db.tag, { through: "project_tag" })
+db.tag.belongsToMany(db.project, { through: "project_tag" });
 
 //Define relationships project and category
 db.category.hasMany(db.project) // 1 -> N   

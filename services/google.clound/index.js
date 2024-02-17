@@ -64,10 +64,11 @@ var that = module.exports = {
             //xoá file vừa upload
 
         } catch (error) {
-            console.error({
+            console.log({
                 statusNumber: 400,
 
                 message: "Upload file failed!",
+                errorMessage: error
             });
             return error;
         }
