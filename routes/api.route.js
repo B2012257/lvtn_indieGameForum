@@ -14,9 +14,13 @@ const storage = multer.diskStorage({
     },
 });
 
-var upload = multer({ storage: storage });
+let upload = multer({ storage: storage });
 
-// [POST] /api/v1
-router.post('/upload-cover-image', upload.single('coverImage'), apiController.uploadImages);
+// [POST] /api/v1/upload-cover-image
+router.post('/upload-cover-image', upload.single('coverImage'), apiController.uploadImage);
+
+// [POST] /api/v1/upload-screenshot-image
+router.post('/upload-screenshot-image', upload.array('photos', 16), apiController.uploadImages);
+
 
 module.exports = router;

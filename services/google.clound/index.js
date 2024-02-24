@@ -39,7 +39,7 @@ var that = module.exports = {
                 data: getUrl.data,
             };
         } catch (error) {
-            console.error(error);
+            console.log(error);
             return error
 
         }
@@ -59,6 +59,12 @@ var that = module.exports = {
                 }
             })
             const fileId = createFile.data.id;
+            let responseData = await drive.files.get({
+                fileId,
+                fields: "webViewLink, webContentLink"
+            })
+            console.log(path.join(__dirname, `/../../${image.path}`));
+            console.log(responseData.data, responseData.status, responseData.statusText);
             return await that.shareFile({ fileId });
 
             //xoá file vừa upload
@@ -72,7 +78,18 @@ var that = module.exports = {
             });
             return error;
         }
+        finally {
+            try {
+                console.log(path.join(__dirname, `/../../${image.path}`));
+                await fs.unlink(path.join(__dirname, `/../../${image.path}`));
+                console.log('File deleted!');
+            } catch (error) {
+                console.error('Error deleting temporary file:', error);
+                // Handle the error appropriately, e.g., log it, rethrow it, or take other actions
+            }
+        }
     },
+
     // Delete file with fileId
     deleteFile: async (fileId) => {
         try {

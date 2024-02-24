@@ -213,7 +213,8 @@
         </div>
     </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"
+    integrity="sha256-qXBd/EfAdjOA2FGrGAG+b3YBn2tn5A6bhz+LSgYD96k=" crossorigin="anonymous"></script>
 <script src="/javascripts/index.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
@@ -233,6 +234,10 @@
         }
     }
     function displaySelectedScreenshotImage(event) {
+        //Bỏ thêm ảnh cũ vào trong
+        let screenshotImageInput = document.getElementById('chooseScreenshotImages')
+        let temp = [...screenshotUpload || []]
+        screenshotUpload = [...temp, ...screenshotImageInput.files]
         const fileInput = event.target;
         console.log(fileInput.files)
         const arrayFile = Array.from(fileInput.files);
@@ -241,9 +246,11 @@
         const promises = arrayFile.map(file => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
+
                 reader.onload = function (e) {
                     const imageUrl = e.target.result;
-                    resolve(imageUrl);
+
+                    resolve({ imageUrl, file });
                 };
                 reader.onerror = function (error) {
                     reject(error);
@@ -254,11 +261,13 @@
 
         // Sử dụng Promise.all để đợi tất cả các tác vụ hoàn thành
         Promise.all(promises)
-            .then(imageUrls => {
+            .then((imageArray) => {
                 // imageUrls là một mảng chứa các URL của ảnh
-                console.log(imageUrls);
-                imageUrls.forEach((image, index) => {
-                    //Thêm src vào ảnh
+                //const { imageUrl } = imageObject
+
+                console.log(imageArray)
+                imageArray.forEach(object => {
+                    console.log(object.file)
                     let divwrapper = document.createElement('div');
                     let deteletag = document.createElement('i');
                     let imagetag = document.createElement('img');
@@ -268,14 +277,17 @@
                     deteletag.classList.add('fa-xmark')
 
                     imagetag.classList.add('screenshot');
-
+                    imagetag.setAttribute('filename', object.file.name)
+                    //imageTag.fileName =
                     deteletag.title = "Xoá ảnh"
                     deteletag.addEventListener('click', (e) => {
                         let parent = e.target.parentElement
+                        let imageToDelete = parent.querySelector("img")
                         parent.remove();
+                        removeImageFromFiles(screenshotUpload, imageToDelete.getAttribute('filename'))
                     })
                     divwrapper.classList.add('screenshot_wrapper')
-                    imagetag.src = imageUrls[index];
+                    imagetag.src = object.imageUrl;
                     divwrapper.appendChild(imagetag);
                     divwrapper.appendChild(deteletag);
                     document.querySelector(".target-screenshot-image").appendChild(divwrapper);
@@ -283,7 +295,7 @@
 
             })
             .catch(error => {
-                console.error('Error converting images to URLs:', error);
+                console.log('Error converting images to URLs:', error);
             });
     }
     const list = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó"];
@@ -366,9 +378,35 @@
         //Submit form
         //form.submit();
     })
+    // Xóa ảnh khỏi mảng files
+    function removeImageFromFiles(files, deletedImageName) {
+        console.log(files, deletedImageName)
+        let arrayFile = Array.from(files)
 
+
+        for (let i = 0; i < arrayFile.length; i++) {
+            if (arrayFile[i].name === deletedImageName.trim()) {
+                arrayFile.splice(i, 1)
+                break;
+            }
+        }
+        screenshotUpload = arrayFile
+        //screenshotUpload = arrayFile.filter(obj => obj.name !== deletedImageName.trim());
+    }
+    let screenshotUpload
     async function uploadScreenShot() {
 
+        let formDatas = new FormData()
+        for (let i = 0; i < screenshotUpload.length; i++) {
+            formDatas.append('photos', screenshotUpload[i]);
+        }
+        console.log(formDatas)
+        fetch('/api/v1/upload-screenshot-image', {
+            method: 'POST',
+            body: formDatas,
+        })
+            .then(response => response.json())
+            .then(res => console.log(res))
     }
     async function uploadCoverImage() {
         let coverImageInput = document.getElementById('chooseCoverImage');
@@ -387,7 +425,8 @@
                         {
                             status: 400,
                             objectError: objectUpload.cover,
-                            msg: `Tải lên ${objectUpload.cover} không thành công!`
+                            msg: `Tải lên ${objectUpload.cover} không thành công!`,
+                            rsMsg: data
                         }
                     )
                 })
