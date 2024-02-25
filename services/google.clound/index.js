@@ -63,7 +63,6 @@ var that = module.exports = {
                 fileId,
                 fields: "webViewLink, webContentLink"
             })
-            console.log(path.join(__dirname, `/../../${image.path}`));
             console.log(responseData.data, responseData.status, responseData.statusText);
             return await that.shareFile({ fileId });
 
@@ -81,11 +80,12 @@ var that = module.exports = {
         finally {
             try {
                 console.log(path.join(__dirname, `/../../${image.path}`));
-                await fs.unlink(path.join(__dirname, `/../../${image.path}`));
-                console.log('File deleted!');
+                await fs.unlink(path.join(__dirname, `/../../${image.path}`), (err) => {
+                    if (err) throw err;
+                    console.log('File was deleted');
+                });
             } catch (error) {
                 console.error('Error deleting temporary file:', error);
-                // Handle the error appropriately, e.g., log it, rethrow it, or take other actions
             }
         }
     },

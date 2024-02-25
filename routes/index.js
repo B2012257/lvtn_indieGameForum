@@ -10,6 +10,7 @@ module.exports = (app) => {
   app.use("/oauth2", passport) //google oauth2
   app.use("/redirect", passport) //google redirect
   app.use("/user", userRouter)
+
   app.use("/api/v1", require("./api.route.js"))
   app.use("/", siteRouter)
 

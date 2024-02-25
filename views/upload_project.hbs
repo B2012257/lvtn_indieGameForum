@@ -48,7 +48,7 @@
                 <h6>Thông tin dự án</h6>
                 <div class="right__content ps-1 pt-2">
                     <form id="upload_project_form" action="/user/upload-project" method="POST"
-                        enctype="multipart/form-data">
+                        enctype="application/x-www-form-urlencoded">
                         <div class="mb-3 row">
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
@@ -213,12 +213,8 @@
         </div>
     </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"
-    integrity="sha256-qXBd/EfAdjOA2FGrGAG+b3YBn2tn5A6bhz+LSgYD96k=" crossorigin="anonymous"></script>
-<script src="/javascripts/index.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 <script>
-    console.log(axios)
     function displaySelectedCoverImage(event, imgElementSelector) {
         const selectedImage = document.querySelector(imgElementSelector);
         const fileInput = event.target;
@@ -367,16 +363,22 @@
     }
     const form = document.getElementById('upload_project_form');
     form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
+        event.preventDefault()
         //upload project file, cover image and screenshot
-        await Promise.all([uploadCoverImage(), uploadScreenShot(), uploadProjectFile()])
+        await Promise.all([uploadCoverImage(), uploadScreenShot()])
             .then(value => {
                 console.log(value)
             })
+            .catch(err => {
+                console.log(err)
+            })
+            .finally(() => {
+                form.submit()
+            })
+
+
 
         //Submit form
-        //form.submit();
     })
     // Xóa ảnh khỏi mảng files
     function removeImageFromFiles(files, deletedImageName) {
@@ -395,18 +397,27 @@
     }
     let screenshotUpload
     async function uploadScreenShot() {
+        return new Promise((resolve, reject) => {
+            let formDatas = new FormData()
+            if (screenshotUpload) {
+                for (let i = 0; i < screenshotUpload.length; i++) {
+                    formDatas.append('photos', screenshotUpload[i]);
+                }
+                console.log(formDatas)
+                fetch('/api/v1/upload-screenshot-image', {
+                    method: 'POST',
+                    body: formDatas,
+                })
+                    .then(response => response.json())
+                    .then(res => {
+                        if (res.status === 200) resolve(res)
+                        else reject(res)
+                    })
+            } else reject({ message: 'No screenshot' })
 
-        let formDatas = new FormData()
-        for (let i = 0; i < screenshotUpload.length; i++) {
-            formDatas.append('photos', screenshotUpload[i]);
-        }
-        console.log(formDatas)
-        fetch('/api/v1/upload-screenshot-image', {
-            method: 'POST',
-            body: formDatas,
         })
-            .then(response => response.json())
-            .then(res => console.log(res))
+
+
     }
     async function uploadCoverImage() {
         let coverImageInput = document.getElementById('chooseCoverImage');

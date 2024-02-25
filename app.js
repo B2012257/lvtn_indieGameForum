@@ -13,7 +13,7 @@ const passport = require('passport')
 const session = require('express-session')
 const app = express();
 const hbsViewEngineConfig = require('./configs/hbsEngine')
-
+const bodyParser = require('body-parser')
 db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
@@ -24,6 +24,14 @@ db.sequelize.sync()
 
 
 hbsViewEngineConfig(app)
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(cookieParser());
+
 // Sử dụng middleware session
 app.use(session({
   secret: '!xtera!123!',
@@ -38,10 +46,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.authenticate('session'));
 
+
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -70,6 +77,5 @@ app.use(function (err, req, res, next) {
     errors: res.locals.error
   });
 });
-
 
 module.exports = app;
