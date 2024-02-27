@@ -6,15 +6,9 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         name: {
-            type: Sequelize.STRING,
+            type: Sequelize.ENUM,
             allowNull: false,
-            value: ['User', 'Admin','user', 'admin'],
-            validate: {
-                isIn: {
-                    args: [['User', 'Admin', 'user', 'admin']],
-                    msg: "Role must be User or Admin"
-                }
-            }
+            values: ['User', 'Admin']
         }
 
     });

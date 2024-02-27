@@ -45,13 +45,14 @@ var that = module.exports = {
         }
     },
     // Upload image to google drive
-    uploadImageFile: async ({ image, shareTo }) => {
+    uploadImageFile: async ({ image, shareTo, parent }) => {
         try {
+            console.log(shareTo + 'and' + parent)
             const createFile = await drive.files.create({
                 requestBody: {
                     name: image.originalname,
                     mimeType: 'image/jpg',
-                    parents: ["1dWUgY4tEnQOJxUNdZzJJmsvbnHtH9W9o"] //[folder id]
+                    parents: [parent || process.env.PROJECT_FOLDER_ID_DRIVE || ''] //[folder id]
                 },
                 media: {
                     mimeType: 'image/jpg',
@@ -64,7 +65,7 @@ var that = module.exports = {
                 fields: "webViewLink, webContentLink"
             })
             console.log(responseData.data, responseData.status, responseData.statusText);
-            return await that.shareFile({ fileId });
+            return await that.shareFile({ fileId, emailToShare: shareTo });
 
             //xoá file vừa upload
 
@@ -103,12 +104,13 @@ var that = module.exports = {
         }
     },
     //Create new folder with name, return id of this folder
-    async createFolder({ name, parents = [] }) {
+    // id for folder projects. to save all projects in website
+    async createFolder({ name, parents = [process.env.PROJECT_FOLDER_ID_DRIVE] }) {
 
         const metadata = {
             name: name,
             mimeType: 'application/vnd.google-apps.folder',
-            parents: parents
+            parents: parents || ['']
         };
         try {
             const file = await drive.files.create({
@@ -123,10 +125,10 @@ var that = module.exports = {
         }
     },
     //search with folder name, return id, name, mineType, parents, webViewLink of this folder
-    async searchFolder(name1) {
+    async searchFolder({ name1 }) {
         const searchQuery = {
             mimeType: 'application/vnd.google-apps.folder',
-            q: `name = "${name1}"` || "",
+            q: `name = "${name1 || ""}"`,
             fields: 'files(id, name, mimeType, parents, webViewLink)',
             spaces: 'drive',
         };

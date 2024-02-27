@@ -15,7 +15,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         isPublic: {
             type: Sequelize.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            defaultValue: false
         },
         trailer: {
             type: Sequelize.STRING
@@ -27,10 +28,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         price: {
             type: Sequelize.DECIMAL(10, 2),
-            allowNull: false
-
+            allowNull: false,
+            defaultValue: 0.00
         },
-        project_url: {
+        project_id: {
             type: Sequelize.STRING,
             allowNull: false
 

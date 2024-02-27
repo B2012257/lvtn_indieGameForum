@@ -3,13 +3,22 @@ const drive = require("../services/google.clound/index")
 
 //[POST] /api/v1/upload-cover-image
 const ggdrive = require('../services/google.clound/index')
+
+let folderIdPublic;
 const uploadImage = async (req, res) => {
     // Tạo thư mục trên google drive với tên dự án
     // Upload ảnh vào thư mục vừa tạo
     // Trả về link ảnh
+    let project_name = req.body.pj_name
+    folderIdPublic = await drive.createFolder({ name: project_name })
+
     const file = req.file
-    if (file) {
-        return res.json(await ggdrive.uploadImageFile({ image: file }))
+    if (file && folderIdPublic) {
+        return res.json(await ggdrive.uploadImageFile({
+            image: file,
+            shareTo: req.session?.user?.email ?? req.user?.email,
+            parent: folderIdPublic
+        }))
 
     } else {
         res.json({ status: 400, message: "Upload file failed! No such file to upload" })
@@ -26,7 +35,11 @@ const uploadImages = async (req, res) => {
     if (files && files.length > 0) {
 
         for (const file of files) {
-            let fileResponse = await ggdrive.uploadImageFile({ image: file })
+            let fileResponse = await ggdrive.uploadImageFile({
+                image: file,
+                shareTo: req.session?.user?.email ?? req.user?.email,
+                parent: folderIdPublic
+            })
             urlResponse.push(fileResponse)
         }
         res.json({

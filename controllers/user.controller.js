@@ -9,6 +9,7 @@ const uploadProject = async (req, res) => {
     //     return res.redirect("/login")
     // }
     console.log(req.body)
+    await drive.createFolder({ name: "haha" })
     res.json(req.body)
 }
 

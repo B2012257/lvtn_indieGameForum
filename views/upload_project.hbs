@@ -53,7 +53,7 @@
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control rounded-1" id="inputName" name="name">
+                                <input type="text" class="form-control rounded-1" id="inputPjName" name="name">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -365,18 +365,31 @@
     form.addEventListener("submit", async (event) => {
         event.preventDefault()
         //upload project file, cover image and screenshot
-        await Promise.all([uploadCoverImage(), uploadScreenShot()])
+        //await Promise.all([uploadCoverImage(), uploadScreenShot()])
+        //    .then(value => {
+        //        console.log(value)
+        //    })
+        //    .catch(err => {
+        //       console.log(err)
+        //   })
+        //   .finally(() => {
+        //   })
+        await uploadCoverImage()
             .then(value => {
                 console.log(value)
             })
             .catch(err => {
                 console.log(err)
             })
-            .finally(() => {
-                form.submit()
+        await uploadScreenShot()
+            .then(value => {
+                console.log(value)
+            })
+            .catch(err => {
+                console.log(err)
             })
 
-
+        form.submit()
 
         //Submit form
     })
@@ -399,6 +412,7 @@
     async function uploadScreenShot() {
         return new Promise((resolve, reject) => {
             let formDatas = new FormData()
+
             if (screenshotUpload) {
                 for (let i = 0; i < screenshotUpload.length; i++) {
                     formDatas.append('photos', screenshotUpload[i]);
@@ -413,7 +427,7 @@
                         if (res.status === 200) resolve(res)
                         else reject(res)
                     })
-            } else reject({ message: 'No screenshot' })
+            } else resolve({ message: 'No screenshot' })
 
         })
 
@@ -421,8 +435,11 @@
     }
     async function uploadCoverImage() {
         let coverImageInput = document.getElementById('chooseCoverImage');
+        let pj_name = document.querySelector('#inputPjName').value
         let image = coverImageInput.files[0];
         let formData = new FormData();
+        formData.append('pj_name', pj_name);
+
         return new Promise((resolve, reject) => {
             formData.append('coverImage', image);
             fetch('/api/v1/upload-cover-image', {

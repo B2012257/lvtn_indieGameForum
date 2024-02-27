@@ -8,11 +8,11 @@ require('dotenv').config()
 
 //Google Oauth2
 passport.use(new GoogleStrategy({
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/redirect/google',
-        scope: ['profile', 'email']
-    },
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/redirect/google',
+    scope: ['profile', 'email']
+},
     async (accessToken, refreshToken, profile, done) => {
         // console.log(accessToken, refreshToken, profile)
         //Kiem tra xem co trong db chua
@@ -39,7 +39,7 @@ passport.use(new GoogleStrategy({
         } else {
             //Them role vao db
             let roleUser = await db.role.findOne({
-                where: {name: "User"}
+                where: { name: "User" }
             })
             let newRoleUser = roleUser
             if (!roleUser) {
