@@ -80,7 +80,6 @@ var that = module.exports = {
         }
         finally {
             try {
-                console.log(path.join(__dirname, `/../../${image.path}`));
                 await fs.unlink(path.join(__dirname, `/../../${image.path}`), (err) => {
                     if (err) throw err;
                     console.log('File was deleted');

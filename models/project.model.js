@@ -31,10 +31,15 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue: 0.00
         },
-        project_id: {
+        project_folder_id: {
             type: Sequelize.STRING,
             allowNull: false
 
+        },
+        releaseStatus: {
+            type: Sequelize.ENUM,
+            values: ['developing', 'ready'],
+            allowNull: false
         }
 
     });

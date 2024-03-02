@@ -150,10 +150,14 @@
                                 lên:</label>
 
                             <div class="col-sm-10">
-
+                                <i class="fa-solid fa-check"></i>
+                                <i class="fa-solid fa-xmark"></i>
                                 <input multiple type="file" class="form-control rounded-1 fs-14px" id="inputUploadFile">
-
-
+                                <i class="fa-brands fa-windows"></i>
+                                <i class="fa-brands fa-linux"></i>
+                                <i class="fa-brands fa-apple"></i>
+                                <i class="fa-brands fa-android"></i>
+                                <i class="fa-brands fa-app-store-ios"></i>
                             </div>
                         </div>
                         <div class="mb-5 row">
@@ -395,9 +399,7 @@
     })
     // Xóa ảnh khỏi mảng files
     function removeImageFromFiles(files, deletedImageName) {
-        console.log(files, deletedImageName)
         let arrayFile = Array.from(files)
-
 
         for (let i = 0; i < arrayFile.length; i++) {
             if (arrayFile[i].name === deletedImageName.trim()) {
@@ -406,7 +408,6 @@
             }
         }
         screenshotUpload = arrayFile
-        //screenshotUpload = arrayFile.filter(obj => obj.name !== deletedImageName.trim());
     }
     let screenshotUpload
     async function uploadScreenShot() {
@@ -462,6 +463,17 @@
                     console.error('Error uploading images:', error);
                 });
         })
+    }
+    const platform = {
+        windows: "Windows",
+        mac: "Mac Os",
+        linux: "Linux",
+        android: "Android",
+        ios: "Ios"
+    }
+
+    function handleAddPlatform() {
+        //Thêm 1 input type file với name = platform
     }
     async function uploadProjectFile() {
 
