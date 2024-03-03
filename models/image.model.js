@@ -1,12 +1,17 @@
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("category", {
+    return sequelize.define("image", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        name: {
+        url: {
             type: Sequelize.STRING,
+            allowNull: false
+        },
+        isCoverImage: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
             allowNull: false
         }
 
