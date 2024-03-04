@@ -49,11 +49,13 @@ const getCreateProjectPage = async (req, res) => {
     // await drive.uploadImageFile()
     // await  drive.createFolder("projects")
     // await drive.searchFolder("projects")
+    const tags = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó", "Offline", "1 Nguời chơi", "Co-op"]
     if (req.user || req.session.user) {
         res.render("upload_project", {
             title: "Tạo dự án",
             header: true,
             footer: true,
+            tags,
             user: req.user || req.session.user,
         })
     } else {

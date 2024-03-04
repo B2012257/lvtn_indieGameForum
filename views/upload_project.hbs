@@ -65,9 +65,15 @@
                         </div>
                         <div class="mb-3 row">
                             <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
-                                <i>Mỗi một nhãn ngăn cách bằng dấu (,)
-                                    <br /> vd: Kinh dị,Phiêu lưu</i></label>
-                            <div class="col-sm-10">
+                                <i>(Có thể chọn nhiều nhãn)</i>
+                            </label>
+                            <div class="col-sm-10 tags_wrapper">
+                                {{!-- <span class="badge text-bg-secondary mb-1">
+                                    Kinh di
+                                    <i class="fa-solid fa-xmark delete_tag" title="Xóa nhãn này"></i>
+                                </span> --}}
+
+
                                 <input class="form-control inputTags" name="tags" id="inputTag"
                                     placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                                 <ul id="tag_suggests">
@@ -75,7 +81,14 @@
                                     <!--                                        <label class="float-end clickToAddLabel">Chọn </label>-->
                                     <!--                                    </li>-->
                                     <!--                                    <li class="tag_suggests__item">Sinh tồn</li>-->
-                                    <!--                                    <li class="tag_suggests__item">Kinh dị</li>-->
+                                    <!--        
+                                                                    <li class="tag_suggests__item">Kinh dị</li>-->
+                                    {{#each tags}}
+                                    <li class="tag_suggests__item">
+                                        {{this}}
+                                        <label class="float-end clickToAddLabel">Chọn </label>
+                                    </li>
+                                    {{/each}}
 
                                 </ul>
                             </div>
@@ -370,26 +383,25 @@
                 console.log('Error converting images to URLs:', error);
             });
     }
-    const list = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó"];
-    const tagSuggests = document.getElementById('tag_suggests');
+    //Lấy ra các tag bỏ vào list
+    let tags = document.querySelectorAll('.tag_suggests__item')
+    const taglist = []
+    console.log(tags[0].firstChild.nodeValue.trim())
 
-    //add tag in tag suggest element list
-    list.map(element => {
-        const tagSuggestsItem = document.createElement('li');
-        tagSuggestsItem.classList.add('tag_suggests__item');
-        tagSuggestsItem.innerHTML =
-            `
-                    ${element}
-                    <label class="float-end clickToAddLabel">Chọn </label>
-                `;
-        tagSuggestsItem.addEventListener('click', () => {
+    tags.forEach(tag => {
+        let tagName = tag.firstChild.nodeValue.trim()
+        taglist.push(tagName)
+    });
+
+    const tagSuggests = document.getElementById('tag_suggests')
+    document.querySelectorAll(".tag_suggests__item").forEach(element => {
+        element.addEventListener('click', () => {
+            let tagClickName = element.firstChild.nodeValue.trim()
             const inputTag = document.getElementById('inputTag')
-                .value = element;
+                .value = ""
+            chooseTag(tagClickName)
             tagSuggests.innerHTML = '';
         })
-        console.log([tagSuggests])
-        tagSuggests.appendChild(tagSuggestsItem);
-
     })
 
     function onSearchTag() {
@@ -397,7 +409,8 @@
         const filter = inputTag.value;
 
         tagSuggests.innerHTML = '';
-        const isInList = list.map(element => {
+        // Kiểm tra có trong list k
+        const isInList = taglist.map(element => {
             if (element.toLowerCase().includes(filter.toLowerCase())) {
                 const tagSuggestsItem = document.createElement('li');
                 tagSuggestsItem.classList.add('tag_suggests__item');
@@ -406,16 +419,17 @@
                     <label class="float-end clickToAddLabel">Chọn </label>
                 `;
                 tagSuggestsItem.addEventListener('click', () => {
-                    inputTag.value = element;
-                    tagSuggests.innerHTML = '';
+                    inputTag.value = "";
+                    tagSuggests.textContent = '';
+                    chooseTag(element)
+
                 })
-                console.log([tagSuggests])
                 tagSuggests.appendChild(tagSuggestsItem);
                 return true;
             }
             return false;
         })
-        console.log(isInList)
+
         if (!isInList.includes(true)) {
             const tagSuggestsItem = document.createElement('li');
             tagSuggestsItem.classList.add('tag_suggests__item');
@@ -424,13 +438,47 @@
                     <label class="float-end clickToAddLabel">Chọn </label>
                 `;
             tagSuggestsItem.addEventListener('click', () => {
-                inputTag.value = filter;
-                tagSuggests.innerHTML = '';
+                inputTag.value = "";
+                tagSuggests.textContent = "";
+                chooseTag(filter)
             })
             tagSuggests.appendChild(tagSuggestsItem);
         }
     }
+    function isChoosedTag(tagName) {
+        let tags = document.querySelectorAll('.tagNameChoosing.badge')
+        return Array.from(tags).some(tag => tag.textContent.trim().toLocaleLowerCase() === tagName.trim().toLocaleLowerCase());
+    }
+    function chooseTag(tagName) {
+        //<span class="badge text-bg-secondary mb-1">
+        //                            Kinh di
+        //  < i class="fa-solid fa-xmark delete_tag" title = "Xóa nhãn này" ></ >
+        //     </span >
+        if (isChoosedTag(tagName)) {
+            return alert("Nhãn này đã được chọn")
+        }
+        const tagBadge = document.createElement('span');
+        const closeTagIcon = document.createElement('i');
 
+        closeTagIcon.addEventListener("click", (event) => {
+            event.target.parentElement.remove()
+        })
+
+        tagBadge.classList.add('badge');
+        tagBadge.classList.add('tagNameChoosing');
+        tagBadge.classList.add('text-bg-secondary');
+        tagBadge.classList.add('mb-1');
+        tagBadge.classList.add('me-1');
+        tagBadge.textContent = tagName;
+
+        closeTagIcon.classList.add('fa-solid');
+        closeTagIcon.classList.add('fa-xmark');
+        closeTagIcon.classList.add('delete_tag');
+
+        tagBadge.appendChild(closeTagIcon);
+
+        document.querySelector(".tags_wrapper").insertBefore(tagBadge, document.querySelector(".tags_wrapper").firstChild);
+    }
     //handle submit form
     const objectUpload = {
         cover: 'Ảnh bìa',

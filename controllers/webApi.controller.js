@@ -16,7 +16,6 @@ const uploadImage = async (req, res) => {
     if (file && folderIdPublic) {
         let imageRes = await ggdrive.uploadImageFile({
             image: file,
-
             parent: folderIdPublic
         })
         let webViewLink = imageRes.data.webViewLink
