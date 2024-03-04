@@ -19,14 +19,13 @@ const drive = google.drive({
 })
 
 var that = module.exports = {
-    shareFile: async ({ fileId, emailToShare }) => {
+    shareFile: async ({ fileId, emailToShare, shareToUser }) => {
         try {
             await drive.permissions.create({
                 fileId,
                 requestBody: {
                     role: 'reader',
-                    type: 'user',
-                    emailAddress: emailToShare ? emailToShare : 'thaib2012257@student.ctu.edu.vn'
+                    type: 'anyone',
                 }
             })
 
@@ -45,7 +44,7 @@ var that = module.exports = {
         }
     },
     // Upload image to google drive
-    uploadImageFile: async ({ image, shareTo, parent }) => {
+    uploadImageFile: async ({ image, shareTo, parent, shareToUser }) => {
         try {
             console.log(shareTo + 'and' + parent)
             const createFile = await drive.files.create({
@@ -65,7 +64,7 @@ var that = module.exports = {
                 fields: "webViewLink, webContentLink"
             })
             console.log(responseData.data, responseData.status, responseData.statusText);
-            return await that.shareFile({ fileId, emailToShare: shareTo });
+            return await that.shareFile({ fileId, emailToShare: shareTo, shareToUser });
 
             //xoá file vừa upload
 
@@ -89,7 +88,51 @@ var that = module.exports = {
             }
         }
     },
+    // Upload image to google drive
+    uploadCompressedFile: async ({ file, shareTo, parent, shareToUser }) => {
+        try {
+            console.log(shareTo + 'and' + parent)
+            const createFile = await drive.files.create({
+                requestBody: {
+                    name: file.originalname,
+                    //mimeType: 'application/vnd.google-apps.file',
+                    parents: [parent || process.env.PROJECT_FOLDER_ID_DRIVE || ''] //[folder id]
+                },
+                media: {
+                    mimeType: 'application/zip',
+                    body: fs.createReadStream(path.join(__dirname, `/../../${file.path}`))
+                }
+            })
+            const fileId = createFile.data.id;
+            let responseData = await drive.files.get({
+                fileId,
+                fields: "webViewLink, webContentLink"
+            })
+            console.log(responseData.data, responseData.status, responseData.statusText);
+            return await that.shareFile({ fileId, emailToShare: shareTo, shareToUser });
 
+            //xoá file vừa upload
+
+        } catch (error) {
+            console.log({
+                statusNumber: 400,
+
+                message: "Upload file failed!",
+                errorMessage: error
+            });
+            return error;
+        }
+        finally {
+            try {
+                await fs.unlink(path.join(__dirname, `/../../${file.path}`), (err) => {
+                    if (err) throw err;
+                    console.log('File was deleted');
+                });
+            } catch (error) {
+                console.error('Error deleting temporary file:', error);
+            }
+        }
+    },
     // Delete file with fileId
     deleteFile: async (fileId) => {
         try {

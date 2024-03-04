@@ -150,14 +150,77 @@
                                 lên:</label>
 
                             <div class="col-sm-10">
-                                <i class="fa-solid fa-check"></i>
-                                <i class="fa-solid fa-xmark"></i>
-                                <input multiple type="file" class="form-control rounded-1 fs-14px" id="inputUploadFile">
-                                <i class="fa-brands fa-windows"></i>
-                                <i class="fa-brands fa-linux"></i>
-                                <i class="fa-brands fa-apple"></i>
-                                <i class="fa-brands fa-android"></i>
-                                <i class="fa-brands fa-app-store-ios"></i>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-windows platform_icon"></i>
+                                    <span class="platform_name">Windows: </span>
+                                    <label class="inputUploadFile" for="inputWindowsUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputWindowsUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                    <span class="platform_name">Linux (RPM-based): </span>
+                                    <label class="inputUploadFile" for="inputLinuxRPMUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputLinuxRPMUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                    <span class="platform_name">Linux (Debian-based): </span>
+                                    <label class="inputUploadFile" for="inputLinuxDBUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputLinuxDBUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-apple platform_icon"></i>
+
+                                    <span class="platform_name">Mac OS: </span>
+                                    <label class="inputUploadFile" for="inputMacOsUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputMacOsUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-android platform_icon"></i>
+
+
+                                    <span class="platform_name">Android: </span>
+                                    <label class="inputUploadFile" for="inputAndroidUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputAndroidUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" onclick="handleClickDeleteFlatform(event)"
+                                        title="Xóa nền tảng này"></i>
+                                    <i class="fa-brands fa-app-store-ios platform_icon"></i>
+                                    <span class="platform_name">IOS: </span>
+                                    <label class="inputUploadFile" for="inputIOSUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputIOSUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+
                             </div>
                         </div>
                         <div class="mb-5 row">
@@ -181,6 +244,9 @@
                             </div>
                         </div>
                         <div class="row">
+                            <i class="fa-solid fa-check"></i>
+                            <i class="fa-solid fa-spinner"></i>
+                            <i class="fa-solid fa-xmark"></i>
                             <div class="fst-italic col-12 mb-2 uploading_msg">1.
                                 <span class="text-secondary">Đang tải
                                     lên
@@ -210,6 +276,9 @@
                                 </button>
                             </div>
                         </div>
+                        <img src="https://drive.google.com/uc?id=1LuZz5u-t9N-xXVv3wNUbueiX2hNTdAqi"
+                            alt="Ảnh từ Google Drive">
+
 
                     </form>
                 </div>
@@ -219,6 +288,10 @@
 </main>
 
 <script>
+    window.addEventListener('beforeunload', function (event) {
+        // Xóa bộ nhớ đệm
+        projectFiles = []
+    });
     function displaySelectedCoverImage(event, imgElementSelector) {
         const selectedImage = document.querySelector(imgElementSelector);
         const fileInput = event.target;
@@ -392,7 +465,13 @@
             .catch(err => {
                 console.log(err)
             })
-
+        await uploadProjectFile()
+            .then(value => {
+                console.log(value)
+            })
+            .catch(err => {
+                console.log(err)
+            })
         form.submit()
 
         //Submit form
@@ -472,10 +551,52 @@
         ios: "Ios"
     }
 
-    function handleAddPlatform() {
-        //Thêm 1 input type file với name = platform
+    function handleClickDeleteFlatform(event) {
+        let platformElement = event.target.parentElement
+        console.log(platformElement)
+        platformElement.remove()
     }
-    async function uploadProjectFile() {
+    let projectFiles = []
+    function handleChooseProjectFile(event) {
+        let file = event.target.files[0]
+        projectFiles.push(
+            {
+                file,
+                platform: event.target.parentElement.querySelector('.platform_name').textContent.trim()
+            })
+        let fileName = file.name
+        displaySelectedProjectFileName(fileName, event) // Hiển thị tên file đã chọn
 
     }
+    function displaySelectedProjectFileName(fileName, event) {
+        console.log(event.target.parentElement)
+        let platformElement = event.target.parentElement
+        let platformName = platformElement.querySelector('span')
+        platformName.innerHTML += fileName
+    }
+    async function uploadProjectFile() {
+        //Lấy tât cả các file đã chọn
+        return new Promise((resolve, reject) => {
+            let formDatas = new FormData()
+            if (projectFiles.length == 0) return resolve({ message: 'No file' })
+            for (let i = 0; i < projectFiles.length; i++) {
+                formDatas.append('projectFiles', projectFiles[i].file);
+            }
+            console.log(formDatas)
+            fetch('/api/v1/upload-project', {
+                method: 'POST',
+                body: formDatas,
+            })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.status === 200) resolve(res)
+                    else reject(res)
+                })
+
+        }
+
+        )
+    }
+
+
 </script>

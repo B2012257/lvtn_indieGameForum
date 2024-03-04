@@ -4,7 +4,7 @@ const drive = require("../services/google.clound/index")
 
 const getIndexPage = (req, res) => {
     console.log("req")
-    console.log(req.user)
+    console.log(req.session?.user?.id ?? req.user?.id)
 
     // if (!req.user) {
     //     return res.redirect("/login")
@@ -49,14 +49,14 @@ const getCreateProjectPage = async (req, res) => {
     // await drive.uploadImageFile()
     // await  drive.createFolder("projects")
     // await drive.searchFolder("projects")
-    if(req.user || req.session.user){
+    if (req.user || req.session.user) {
         res.render("upload_project", {
             title: "Tạo dự án",
             header: true,
             footer: true,
             user: req.user || req.session.user,
         })
-    }else {
+    } else {
         res.redirect("/login")
     }
 

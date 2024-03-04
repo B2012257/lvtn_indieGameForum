@@ -14,6 +14,7 @@ const session = require('express-session')
 const app = express();
 const hbsViewEngineConfig = require('./configs/hbsEngine')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
@@ -24,6 +25,15 @@ db.sequelize.sync()
 
 
 hbsViewEngineConfig(app)
+
+app.use(cors(
+  {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    'Access-Control-Allow-Origin': '*',
+  }
+
+))
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
@@ -37,7 +47,14 @@ app.use(session({
   secret: '!xtera!123!',
   resave: true,
   saveUninitialized: true,
-  cookie: { maxAge: 86400000, sameSite: 'Lax' },
+  cookie: {
+    maxAge: 3600000,
+    sameSite: 'Lax',
+    secure: false,
+    httpOnly: true,
+    path: '/',
+    expires: new Date(new Date().getTime() + 86409000)
+  },
   // 1 ngày (đơn vị tính bằng mili giây)
 }));
 

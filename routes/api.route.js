@@ -22,5 +22,7 @@ router.post('/upload-cover-image', upload.single('coverImage'), apiController.up
 // [POST] /api/v1/upload-screenshot-image
 router.post('/upload-screenshot-image', upload.array('photos', 16), apiController.uploadImages);
 
+// [POST] /api/v1/upload-project
+router.post('/upload-project', upload.array('projectFiles', 6), apiController.uploadProject);
 
 module.exports = router;
