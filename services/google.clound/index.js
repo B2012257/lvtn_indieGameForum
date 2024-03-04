@@ -25,7 +25,7 @@ var that = module.exports = {
                 fileId,
                 requestBody: {
                     role: 'reader',
-                    type: 'anyone',
+                    type: shareToUser ?? 'anyone',
                 }
             })
 
@@ -35,6 +35,7 @@ var that = module.exports = {
             })
             return {
                 status: 200,
+                fileId: fileId,
                 data: getUrl.data,
             };
         } catch (error) {
@@ -50,7 +51,7 @@ var that = module.exports = {
             const createFile = await drive.files.create({
                 requestBody: {
                     name: image.originalname,
-                    mimeType: 'image/jpg',
+                    // mimeType: 'image/jpg',
                     parents: [parent || process.env.PROJECT_FOLDER_ID_DRIVE || ''] //[folder id]
                 },
                 media: {
