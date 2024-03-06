@@ -1,9 +1,14 @@
+const SequelizeSlugify = require('sequelize-slugify');
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("project", {
+    let project = sequelize.define("project", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true
+        },
+        name: {
+            type: Sequelize.STRING,
+            defaultValue: 'New project'
         },
         short_description: {
             type: Sequelize.STRING,
@@ -43,9 +48,27 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.ENUM,
             values: ['developing', 'ready'],
             //allowNull: false
+        },
+        slug: {
+            type: Sequelize.STRING,
+            unique: true
         }
 
     }, {
         paranoid: true
-    });
+    },
+    );
+    SequelizeSlugify.slugifyModel(project, {
+        source: ['name', 'id'],
+        overwrite: false,
+        slugOptions: {
+            lower: true,
+            strict: true,
+            separator: '-',
+            lang: 'vi'
+            , symbols: false
+        },
+        column: 'slug'
+    })
+    return project;
 };

@@ -21,13 +21,27 @@ const drive = google.drive({
 var that = module.exports = {
     shareFile: async ({ fileId, emailToShare, shareToUser }) => {
         try {
-            await drive.permissions.create({
-                fileId,
-                requestBody: {
-                    role: 'reader',
-                    type: shareToUser ?? 'anyone',
+            let request
+            if (shareToUser) {
+                request = {
+                    fileId: fileId,
+                    requestBody: {
+                        role: 'reader',
+                        type: 'user',
+                        emailAddress: emailToShare
+                    }
+
                 }
-            })
+            } else {
+                request = {
+                    fileId: fileId,
+                    requestBody: {
+                        role: 'reader',
+                        type: 'anyone'
+                    }
+                }
+            }
+            await drive.permissions.create(request)
 
             const getUrl = await drive.files.get({
                 fileId,
@@ -92,7 +106,11 @@ var that = module.exports = {
     // Upload image to google drive
     uploadCompressedFile: async ({ file, shareTo, parent, shareToUser }) => {
         try {
-            console.log(shareTo + 'and' + parent)
+
+            const filePath = path.join(__dirname, `/../../${file.path}`);
+            if (!fs.existsSync(filePath)) {
+                throw new Error('Không tìm thấy tệp: ' + filePath);
+            }
             const createFile = await drive.files.create({
                 requestBody: {
                     name: file.originalname,
@@ -101,7 +119,7 @@ var that = module.exports = {
                 },
                 media: {
                     mimeType: 'application/zip',
-                    body: fs.createReadStream(path.join(__dirname, `/../../${file.path}`))
+                    body: fs.createReadStream(filePath)
                 }
             })
             const fileId = createFile.data.id;
@@ -110,9 +128,9 @@ var that = module.exports = {
                 fields: "webViewLink, webContentLink"
             })
             console.log(responseData.data, responseData.status, responseData.statusText);
+            //xoá file vừa upload
             return await that.shareFile({ fileId, emailToShare: shareTo, shareToUser });
 
-            //xoá file vừa upload
 
         } catch (error) {
             console.log({
@@ -124,14 +142,19 @@ var that = module.exports = {
             return error;
         }
         finally {
-            try {
-                await fs.unlink(path.join(__dirname, `/../../${file.path}`), (err) => {
-                    if (err) throw err;
-                    console.log('File was deleted');
-                });
-            } catch (error) {
-                console.error('Error deleting temporary file:', error);
-            }
+            //     try {
+            //         if (fs.existsSync(path.join(__dirname, `/../../${file.path}`))) {
+            //             await fs.unlink(path.join(__dirname, `/../../${file.path}`), (err) => {
+            //                 if (err) { console.log(err); };
+            //                 console.log('File was deleted');
+            //                 return;
+            //             });
+            //         }
+            //         return
+
+            //     } catch (error) {
+            //         console.log('Error deleting temporary file:', error);
+            //     }
         }
     },
     // Delete file with fileId

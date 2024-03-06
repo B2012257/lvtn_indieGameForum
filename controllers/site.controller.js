@@ -49,13 +49,44 @@ const getCreateProjectPage = async (req, res) => {
     // await drive.uploadImageFile()
     // await  drive.createFolder("projects")
     // await drive.searchFolder("projects")
+    let classification = [
+        {
+            id: 1,
+            name: "Trò chơi"
+        },
+        {
+            id: 2,
+            name: "Thiết kế"
+        },
+        {
+            id: 3,
+            name: "Pixel art design"
+        },
+    ]
+    let genres = [
+        {
+            id: 1,
+            name: "Kinh dị"
+        },
+        {
+            id: 2,
+            name: "Phiêu lưu"
+        },
+        {
+            id: 3,
+            name: "Sinh tồn"
+        },
+    ]
+    //Sau này lấy tag từ bacekend
     const tags = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó", "Offline", "1 Nguời chơi", "Co-op"]
     if (req.user || req.session.user) {
         res.render("upload_project", {
             title: "Tạo dự án",
             header: true,
-            footer: true,
+            footer: false,
             tags,
+            classification,
+            genres,
             user: req.user || req.session.user,
         })
     } else {

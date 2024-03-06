@@ -7,8 +7,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         version_number: {
             type: Sequelize.STRING,
-            allowNull: false
-
+            allowNull: false,
+            defaultValue: '1.0'
         },
         relase_date: {
             type: Sequelize.STRING(10),

@@ -57,10 +57,36 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label for="inputCategory" class="col-sm-2 col-form-label right__content__label">Phân
+                            <label for="selectClassification" class="col-sm-2 col-form-label right__content__label">Phân
                                 loại:</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control rounded-1" id="inputCategory" name="category">
+                                <div class="form-floating">
+                                    <select name="classification" class="form-select" id="selectClassification">
+                                        <option value="0" selected>Open this select menu</option>
+                                        {{#each classification}}
+                                        <option value={{this.id}}>{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <label for="selectClassification">Chọn một phân loại</label>
+                                </div>
+                                {{!-- <input type="text" class="form-control rounded-1" id="inputCategory"
+                                    name="category"> --}}
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputGenre" class="col-sm-2 col-form-label right__content__label">Thể
+                                loại</label>
+                            <div class="col-sm-10">
+                                <div class="form-floating">
+                                    <select name="genre" class="form-select" id="inputGenre">
+                                        <option value="0" selected>Open this select menu</option>
+                                        {{#each genres}}
+                                        <option value={{this.id}}>{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <label for="inputGenre">Chọn một thể loại</label>
+                                </div>
+
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -77,12 +103,6 @@
                                 <input class="form-control inputTags" name="tags" id="inputTag"
                                     placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                                 <ul id="tag_suggests">
-                                    <!--                                    <li class="tag_suggests__item">Kinh dị-->
-                                    <!--                                        <label class="float-end clickToAddLabel">Chọn </label>-->
-                                    <!--                                    </li>-->
-                                    <!--                                    <li class="tag_suggests__item">Sinh tồn</li>-->
-                                    <!--        
-                                                                    <li class="tag_suggests__item">Kinh dị</li>-->
                                     {{#each tags}}
                                     <li class="tag_suggests__item">
                                         {{this}}
@@ -236,6 +256,13 @@
 
                             </div>
                         </div>
+                        <div class="mb-3 row mt-1">
+                            <label for="inputVersion" class="col-sm-2 col-form-label right__content__label">Mã số phiên
+                                bản:</label>
+                            <div class="col-2 mt-1">
+                                <input type="text" class="form-control rounded-1" id="inputVersion" name="version">
+                            </div>
+                        </div>
                         <div class="mb-5 row">
                             <label class="col-sm-2 col-form-label right__content__label">Hiển thị:</label>
 
@@ -289,9 +316,6 @@
                                 </button>
                             </div>
                         </div>
-                        <img src="https://lh3.googleusercontent.com/d/{id image}" alt="Ảnh từ Google Drive">
-
-
                     </form>
                 </div>
             </div>
@@ -385,8 +409,7 @@
     }
     //Lấy ra các tag bỏ vào list
     let tags = document.querySelectorAll('.tag_suggests__item')
-    const taglist = []
-    console.log(tags[0].firstChild.nodeValue.trim())
+    let taglist = []
 
     tags.forEach(tag => {
         let tagName = tag.firstChild.nodeValue.trim()
@@ -449,6 +472,7 @@
         let tags = document.querySelectorAll('.tagNameChoosing.badge')
         return Array.from(tags).some(tag => tag.textContent.trim().toLocaleLowerCase() === tagName.trim().toLocaleLowerCase());
     }
+    let tagsChoosing = [] //Biển lưu danh sách tag để gữi lên server
     function chooseTag(tagName) {
         //<span class="badge text-bg-secondary mb-1">
         //                            Kinh di
@@ -457,6 +481,9 @@
         if (isChoosedTag(tagName)) {
             return alert("Nhãn này đã được chọn")
         }
+        //thêm tag vào list để gữi lên server
+        tagsChoosing.push(tagName)
+
         const tagBadge = document.createElement('span');
         const closeTagIcon = document.createElement('i');
 
@@ -519,6 +546,9 @@
             .catch(err => {
                 console.log(err)
             })
+
+        //Thêm danh sách tag vào form
+        document.querySelector('.inputTags').value = tagsChoosing
         form.submit()
 
         //Submit form
@@ -592,7 +622,7 @@
     }
     const platform = {
         windows: "Windows",
-        mac: "Mac Os",
+        mac: "Mac OS",
         linux: "Linux",
         android: "Android",
         ios: "Ios"
@@ -600,8 +630,16 @@
 
     function handleClickDeleteFlatform(event) {
         let platformElement = event.target.parentElement
-        console.log(platformElement)
+        let platformToDelete = platformElement.querySelector('.platform_name').textContent.trim().split(":")[1]
         platformElement.remove()
+        //Xóa khỏi mảng projectFiles
+        projectFiles = projectFiles.filter(projectFile => {
+            console.log(projectFile.file.name, platformToDelete)
+            return projectFile.file.name.toLocaleLowerCase().trim() !== platformToDelete.toLocaleLowerCase().trim()
+        });
+        // Sử dụng filter để loại bỏ phần tử có 'file.name' giống với 'clickedUsername'
+
+        //data = data.filter(item => item.file.platform !== clickedUsername);
     }
     let projectFiles = []
     function handleChooseProjectFile(event) {
@@ -610,7 +648,8 @@
             {
                 file,
                 platform: event.target.parentElement.querySelector('.platform_name').textContent.trim()
-            })
+            }
+        )
         let fileName = file.name
         displaySelectedProjectFileName(fileName, event) // Hiển thị tên file đã chọn
 

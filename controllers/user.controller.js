@@ -2,14 +2,14 @@ const ggdrive = require("../services/google.clound/index");
 const api = require("./webApi.controller")
 const drive = require("../services/google.clound/index")
 
-//[POST] /user/upload-project
+//[POST] /user/upload-project 
+//FORM POST METHOD
 const uploadProject = async (req, res) => {
 
     // if (!req.user) {
     //     return res.redirect("/login")
     // }
-    console.log(req.body)
-    await drive.createFolder({ name: "haha" })
+    // console.log(req.body)
     res.json(req.body)
 }
 
