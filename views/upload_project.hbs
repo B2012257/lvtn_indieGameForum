@@ -53,7 +53,7 @@
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control rounded-1" id="inputPjName" name="name">
+                                <input required type="text" class="form-control rounded-1" id="inputPjName" name="name">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -148,7 +148,7 @@
                                 hành:</label>
                             <div class="col-sm-10">
                                 <div class="col-sm-10">
-                                    <input type="date" class="form-control rounded-1" id="inputReleaseDate"
+                                    <input required type="date" class="form-control rounded-1" id="inputReleaseDate"
                                         name="releaseDate">
                                 </div>
 
@@ -260,7 +260,8 @@
                             <label for="inputVersion" class="col-sm-2 col-form-label right__content__label">Mã số phiên
                                 bản:</label>
                             <div class="col-2 mt-1">
-                                <input type="text" class="form-control rounded-1" id="inputVersion" name="version">
+                                <input value="1.0" type="text" class="form-control rounded-1" id="inputVersion"
+                                    name="version">
                             </div>
                         </div>
                         <div class="mb-5 row">
@@ -283,23 +284,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <i class="fa-solid fa-check"></i>
-                            <i class="fa-solid fa-spinner"></i>
-                            <i class="fa-solid fa-xmark"></i>
-                            <div class="fst-italic col-12 mb-2 uploading_msg">1.
-                                <span class="text-secondary">Đang tải
-                                    lên
-                                    ảnh
-                                    bìa...</span>
+                        <div class="row ">
+                            <div class="m-auto text-center loadding_icon d-none">
+                                <i class="fa-solid fa-circle-notch"></i>
+                                <p class="text-center">Vui lòng chờ</p>
                             </div>
-                            <div class="fst-italic col-12 mb-2 uploading_msg">2.
-                                <span class="text-secondary">Đang tải
-                                    lên ảnh chụp màn hình..</span>
+                            <div class="m-auto text-center success_icon d-none">
+                                <i class="fa-solid fa-check"></i>
+                                <p class="text-center">Thành công</p>
+
                             </div>
-                            <div class="fst-italic col-12 mb-2 uploading_msg">3.
-                                <span class="text-secondary">Đang tải
-                                    lên tệp dự án...</span>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_cover_image d-none">
+                            </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_screenshots d-none">
+                            </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_project_file d-none">
                             </div>
 
 
@@ -515,6 +514,7 @@
     const form = document.getElementById('upload_project_form');
     form.addEventListener("submit", async (event) => {
         event.preventDefault()
+        toggleVisibility({ isToggle: true, elementClassName: "loadding_icon" })
         //upload project file, cover image and screenshot
         //await Promise.all([uploadCoverImage(), uploadScreenShot()])
         //    .then(value => {
@@ -527,6 +527,9 @@
         //   })
         await uploadCoverImage()
             .then(value => {
+                //Tải thành công
+                toggleVisibility({ isToggle: false, elementClassName: "upload_cover_image", value: "1. Đã tải lên ảnh bìa." })
+
                 console.log(value)
             })
             .catch(err => {
@@ -534,6 +537,8 @@
             })
         await uploadScreenShot()
             .then(value => {
+                toggleVisibility({ isToggle: false, elementClassName: "upload_screenshots", value: "2. Đã tải lên ảnh màn hình." })
+
                 console.log(value)
             })
             .catch(err => {
@@ -542,15 +547,21 @@
         await uploadProjectFile()
             .then(value => {
                 console.log(value)
+                toggleVisibility({ isToggle: false, elementClassName: "upload_project_file", value: "3. Đã tải tệp dự án." })
+
             })
             .catch(err => {
                 console.log(err)
             })
 
         //Thêm danh sách tag vào form
-        document.querySelector('.inputTags').value = tagsChoosing
-        form.submit()
+        toggleVisibility({ isToggle: true, elementClassName: "loadding_icon" })
 
+        toggleVisibility({ isToggle: true, elementClassName: "success_icon" })
+        document.querySelector('.inputTags').value = tagsChoosing
+        setTimeout(() => {
+            form.submit()
+        }, 2000)
         //Submit form
     })
     // Xóa ảnh khỏi mảng files
@@ -570,21 +581,22 @@
         return new Promise((resolve, reject) => {
             let formDatas = new FormData()
 
-            if (screenshotUpload) {
-                for (let i = 0; i < screenshotUpload.length; i++) {
-                    formDatas.append('photos', screenshotUpload[i]);
-                }
-                console.log(formDatas)
-                fetch('/api/v1/upload-screenshot-image', {
-                    method: 'POST',
-                    body: formDatas,
+            if (screenshotUpload && screenshotUpload.length > 0) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_screenshots", value: "2. Đang tải lên ảnh màn hình..." })
+            }
+
+            for (let i = 0; i < screenshotUpload.length; i++) {
+                formDatas.append('photos', screenshotUpload[i]);
+            }
+            fetch('/api/v1/upload-screenshot-image', {
+                method: 'POST',
+                body: formDatas,
+            })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.status === 200) resolve(res)
+                    else resolve(res)
                 })
-                    .then(response => response.json())
-                    .then(res => {
-                        if (res.status === 200) resolve(res)
-                        else reject(res)
-                    })
-            } else resolve({ message: 'No screenshot' })
 
         })
 
@@ -598,6 +610,9 @@
         formData.append('pj_name', pj_name);
 
         return new Promise((resolve, reject) => {
+            if (image) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_cover_image", value: "1. Đang tải lên ảnh bìa..." })
+            }
             formData.append('coverImage', image);
             fetch('/api/v1/upload-cover-image', {
                 method: 'POST',
@@ -663,8 +678,11 @@
     async function uploadProjectFile() {
         //Lấy tât cả các file đã chọn
         return new Promise((resolve, reject) => {
+
             let formDatas = new FormData()
-            if (projectFiles.length == 0) return resolve({ message: 'No file' })
+            if (projectFiles.length > 0) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_project_file", value: "3. Đang tải lên tệp dự án..." })
+            }
             for (let i = 0; i < projectFiles.length; i++) {
                 formDatas.append('projectFiles', projectFiles[i].file);
             }
@@ -678,11 +696,16 @@
                     if (res.status === 200) resolve(res)
                     else reject(res)
                 })
-
         }
 
         )
     }
-
+    function toggleVisibility({ elementClassName, value, isToggle }) {
+        let elementToShow = document.querySelector(`.${elementClassName}`)
+        if (isToggle) elementToShow.classList.toggle('d-none')
+        if (value) elementToShow.textContent = value
+        //elementToShow.textContent = value
+        return
+    }
 
 </script>

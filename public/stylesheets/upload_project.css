@@ -107,6 +107,32 @@
     cursor: pointer;
 }
 
+.upload_cover_image,
+.upload_screenshots,
+.upload_project_file {
+    /* display: none; */
+}
+
+.loadding_icon i {
+    font-size: 30px;
+    color: #000000;
+    animation: fadeIn 1s linear;
+    animation: spin 1s linear infinite;
+}
+
+.success_icon {
+    animation: fadeIn 1s linear;
+}
+
+.success_icon i {
+    font-size: 30px;
+    color: #4caf50;
+}
+
+.success_icon p {
+    color: #4caf50;
+}
+
 @keyframes process {
     from {
         width: 0%;
@@ -114,5 +140,25 @@
 
     to {
         width: 100%;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }

@@ -171,7 +171,7 @@ var that = module.exports = {
     },
     //Create new folder with name, return id of this folder
     // id for folder projects. to save all projects in website
-    async createFolder({ name, parents = [process.env.PROJECT_FOLDER_ID_DRIVE] }) {
+    async createFolder({ name, parents = [process.env.PROJECT_FOLDER_ID_DRIVE], shareToEmail, shareToUser }) {
 
         const metadata = {
             name: name,
@@ -184,6 +184,8 @@ var that = module.exports = {
                 fields: 'id',
             });
             console.log('Folder Id:', file.data.id);
+            await that.shareFile({ fileId: file.data.id, emailToShare: shareToEmail, shareToUser });
+
             return file.data.id;
         } catch (err) {
             // TODO(developer) - Handle error

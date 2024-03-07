@@ -12,8 +12,11 @@ const uploadImage = async (req, res) => {
     // Trả về link ảnh
     project_name = req.body.pj_name
     //tạo thư mục dự án trên DRIVE
-    folderIdPublic = await drive.createFolder({ name: project_name })
-
+    folderIdPublic = await drive.createFolder({
+        name: project_name,
+        shareToUser: true,
+        shareToEmail: req.session?.user?.email ?? req.user?.email
+    })
     const file = req.file
     //Nếu tạo thành công
     if (folderIdPublic) {
@@ -109,7 +112,13 @@ const uploadProject = async (req, res) => {
             urlResponse.push(fileResponse)
 
         }
-    }
+        res.json({
+            status: 200, msg: 'Success!', urlResponse
+        })
+    } else
+        res.json({
+            status: 400, msg: 'Bad request! At least 1 file'
+        })
 }
 module.exports = {
     uploadImage,
