@@ -1,5 +1,6 @@
 const db = require("../models/index")
 const drive = require("../services/google.clound/index")
+const { platform } = require('../configs/constraint')
 
 //[POST] /api/v1/upload-cover-image
 const ggdrive = require('../services/google.clound/index')
@@ -96,18 +97,43 @@ const createProjectInDb = async () => {
 
 //Api tải lên file dự án vào drive
 const uploadProject = async (req, res) => {
-    const files = req.files
+    //Lưu 1 version vào db,  sau đó lưu vào bảng Dowload link trò chơi
+    const files = { ...req.files }
     let urlResponse = []
+    const newArrayFiles = [];
+    //Biến đổi để dễ code hơn
+    for (const key in files) {
+        if (files[key].length > 0) {
+            newArrayFiles.push(files[key][0]);
+        }
+    }
 
-    if (files && files.length > 0) {
+    //Nếu có file
+    if (files) {
         //Kiểm tra version, Lưu version mới sau đó lưu dơnload link vào db
-        console.log(req.body)
-        for (const file of files) {
+        //Lấy ra id project
+        let project = await db.project.findOne({
+            where: {
+                project_folder_id: folderIdPublic
+            }
+        })
+        let newVersion = await db.version.create({
+            projectId: project.id,
+        })
+        console.log('versionId', newVersion)
+
+        for (const file of newArrayFiles) {
             let fileResponse = await ggdrive.uploadCompressedFile({
                 file: file,
-                shareToUser: 'user',
+                shareToUser: true,
                 shareTo: req.session?.user?.email ?? req.user?.email,
                 parent: folderIdPublic
+            })
+            //Tạo 1 dowload và lưu vào db
+            await db.download.create({
+                link: fileResponse.data.webViewLink,
+                versionId: newVersion.id,
+                platform: file.fieldname
             })
             urlResponse.push(fileResponse)
 
@@ -117,7 +143,7 @@ const uploadProject = async (req, res) => {
         })
     } else
         res.json({
-            status: 400, msg: 'Bad request! At least 1 file'
+            status: 400, msg: 'Bad request! At least 1 file project'
         })
 }
 module.exports = {

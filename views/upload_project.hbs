@@ -53,7 +53,7 @@
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
                             <div class="col-sm-10">
-                                <input required type="text" class="form-control rounded-1" id="inputPjName" name="name">
+                                <input type="text" class="form-control rounded-1" id="inputPjName" name="name">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -64,7 +64,7 @@
                                     <select name="classification" class="form-select" id="selectClassification">
                                         <option value="0" selected>Open this select menu</option>
                                         {{#each classification}}
-                                        <option value={{this.id}}>{{this.name}}</option>
+                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                     <label for="selectClassification">Chọn một phân loại</label>
@@ -81,7 +81,7 @@
                                     <select name="genre" class="form-select" id="inputGenre">
                                         <option value="0" selected>Open this select menu</option>
                                         {{#each genres}}
-                                        <option value={{this.id}}>{{this.name}}</option>
+                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                     <label for="inputGenre">Chọn một thể loại</label>
@@ -148,7 +148,7 @@
                                 hành:</label>
                             <div class="col-sm-10">
                                 <div class="col-sm-10">
-                                    <input required type="date" class="form-control rounded-1" id="inputReleaseDate"
+                                    <input type="date" class="form-control rounded-1" id="inputReleaseDate"
                                         name="releaseDate">
                                 </div>
 
@@ -662,7 +662,7 @@
         projectFiles.push(
             {
                 file,
-                platform: event.target.parentElement.querySelector('.platform_name').textContent.trim()
+                platform: event.target.parentElement.querySelector('.platform_name').textContent.trim().split(":")[0]
             }
         )
         let fileName = file.name
@@ -684,7 +684,9 @@
                 toggleVisibility({ isToggle: true, elementClassName: "upload_project_file", value: "3. Đang tải lên tệp dự án..." })
             }
             for (let i = 0; i < projectFiles.length; i++) {
-                formDatas.append('projectFiles', projectFiles[i].file);
+                projectFiles[i].file.platform = projectFiles[i].platform
+                console.log(projectFiles[i].file)
+                formDatas.append(projectFiles[i].file.platform, projectFiles[i].file);
             }
             console.log(formDatas)
             fetch('/api/v1/upload-project', {

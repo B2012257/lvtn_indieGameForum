@@ -15,8 +15,40 @@ const app = express();
 const hbsViewEngineConfig = require('./configs/hbsEngine')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const classifications = require('./configs/classifications.json')
+const genres = require('./configs/genres.json')
+
 db.sequelize.sync()
   .then(() => {
+    //Kiểm tra và thêm các dụ liệu mặc định vào trang web
+    //Bảng  phân loại
+
+    classifications.forEach(async (classification) => {
+      await db.classification.findOrCreate({
+        where: {
+          name: classification.VIName
+        },
+        defaults: {
+          name: classification.VIName,
+          description: classification.description
+        }
+      })
+    })
+
+
+    //Bảng nhãn
+    genres.forEach(async (genre) => {
+      await db.genre.findOrCreate({
+        where: {
+          name: genre.name
+        },
+        defaults: {
+          name: genre.name,
+          description: genre.description
+        }
+      })
+    })
+
     console.log("Synced db.");
   })
   .catch((err) => {

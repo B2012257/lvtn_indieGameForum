@@ -11,9 +11,9 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: '1.0'
         },
         relase_date: {
-            type: Sequelize.STRING(10),
-            allowNull: false
-
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: new Date()
         },
         install_guide: {
             type: Sequelize.STRING,

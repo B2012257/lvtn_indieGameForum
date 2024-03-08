@@ -1,0 +1,27 @@
+    [
+        {
+            "ENName": "Games",
+            "VIName": "Trò chơi",
+            "description": "Gồm các trò chơi với nhiều thể loại khác nhau"
+        },
+        {
+            "ENName": "Game assets",
+            "VIName": "Tài  nguyên phát triển trò chơi",
+            "description": "Gồm các tài liệu để phát triển các trò chơi nói chung: âm thanh, hình ảnh, mô hình, hoạt ảnh, ..."
+        },
+        {
+            "ENName": "Game mods",
+            "VIName": "Game mods",
+            "description": "Gồm các phiên bản nội dung khác của trò chơi do người chơi phát triển"
+        },
+        {
+            "ENName": "Soundtracks",
+            "VIName": "Âm thanh",
+            "description": "Gồm các bản nhạc để áp dụng vào trò chơi"
+        },
+        {
+            "ENName": "Tool",
+            "VIName": "Công cụ",
+            "description": "Các công cụ hổ trợ phát triển game"
+        }
+    ]

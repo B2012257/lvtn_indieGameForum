@@ -1,0 +1,42 @@
+    [
+        {
+            "name": "action",
+            "description": "Games with fast-paced, exciting gameplay."
+        },
+        {
+            "name": "adventure",
+            "description": "Games that focus on exploration and storytelling."
+        },
+        {
+            "name": "puzzle",
+            "description": "Games that challenge players with puzzles and problem-solving."
+        },
+        {
+            "name": "strategy",
+            "description": "Games that require strategic thinking and planning."
+        },
+        {
+            "name": "rpg",
+            "description": "Role-playing games that involve character development and storytelling."
+        },
+        {
+            "name": "simulation",
+            "description": "Games that simulate real-world activities or systems."
+        },
+        {
+            "name": "sports",
+            "description": "Games that simulate sports or involve physical activities."
+        },
+        {
+            "name": "racing",
+            "description": "Games that involve racing or driving vehicles."
+        },
+        {
+            "name": "shooter",
+            "description": "Games that involve shooting or combat."
+        },
+        {
+            "name": "platformer",
+            "description": "Games that involve jumping and navigating platforms."
+        }
+    ]

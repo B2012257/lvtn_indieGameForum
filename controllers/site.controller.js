@@ -49,34 +49,52 @@ const getCreateProjectPage = async (req, res) => {
     // await drive.uploadImageFile()
     // await  drive.createFolder("projects")
     // await drive.searchFolder("projects")
-    let classification = [
+    let classification;
+    await db.classification.findAll(
         {
-            id: 1,
-            name: "Trò chơi"
-        },
+            attributes: ['id', 'name', 'description']
+        }
+    )
+        .then((row) => {
+            classification = JSON.parse(JSON.stringify(row))
+        })
+    // let classification = [
+    //     {
+    //         id: 1,
+    //         name: "Trò chơi"
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Thiết kế"
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Pixel art design"
+    //     },
+    // ]
+    let genres;
+    await db.genre.findAll(
         {
-            id: 2,
-            name: "Thiết kế"
-        },
-        {
-            id: 3,
-            name: "Pixel art design"
-        },
-    ]
-    let genres = [
-        {
-            id: 1,
-            name: "Kinh dị"
-        },
-        {
-            id: 2,
-            name: "Phiêu lưu"
-        },
-        {
-            id: 3,
-            name: "Sinh tồn"
-        },
-    ]
+            attributes: ['id', 'name', 'description']
+        }
+    )
+        .then((row) => {
+            genres = JSON.parse(JSON.stringify(row))
+        })
+    // let genres = [
+    //     {
+    //         id: 1,
+    //         name: "Kinh dị"
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Phiêu lưu"
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Sinh tồn"
+    //     },
+    // ]
     //Sau này lấy tag từ bacekend
     const tags = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó", "Offline", "1 Nguời chơi", "Co-op"]
     if (req.user || req.session.user) {

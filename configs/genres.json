@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Hành động",
+        "description": "Trò chơi liên quan đến các thử thách thể chất, chẳng hạn như chiến đấu, hoặc đua xe."
+    },
+    {
+        "name": "Phiêu lưu",
+        "description": "Trò chơi tập trung vào việc khám phá, kể chuyện và giải câu đố."
+    },
+    {
+        "name": "Nhập vai",
+        "description": "Trò chơi cho phép người chơi nhập vai vào các nhân vật và tham gia vào những câu chuyện hấp dẫn."
+    },
+    {
+        "name": "Mô phỏng",
+        "description": "Trò chơi mô phỏng các hoạt động hoặc hệ thống trong thế giới thực, chẳng hạn như lái xe, bay hoặc quản lý thành phố."
+    },
+    {
+        "name": "Chiến lược",
+        "description": "Trò chơi yêu cầu tư duy và lập kế hoạch chiến lược, thường liên quan đến quản lý tài nguyên và ra quyết định chiến thuật."
+    },
+    {
+        "name": "Thể thao",
+        "description": "Trò chơi mô phỏng hoặc liên quan đến các hoạt động thể thao, chẳng hạn như bóng đá, bóng rổ hoặc đua xe."
+    },
+    {
+        "name": "Câu đố",
+        "description": "Trò chơi thử thách người chơi bằng những câu đố hoặc những câu đố trí tuệ."
+    },
+    {
+        "name": "Bắn súng",
+        "description": "Trò chơi tập trung vào cơ chế bắn súng và chiến đấu."
+    },
+    {
+        "name": "Đua xe",
+        "description": "Trò chơi liên quan đến việc chạy đua với đối thủ hoặc đồng hồ."
+    },
+    {
+        "name": "Kinh dị",
+        "description": "Trò chơi tập trung vào việc tạo ra cảm giác kinh dị hoặc lo âu."
+    },
+    {
+        "name": "Sinh tồn",
+        "description": "Trò chơi tập trung vào việc sinh tồn trong môi trường khắc nghiệt, chẳng hạn như săn mồi hoặc xây dựng cơ sở."
+    }
+]
