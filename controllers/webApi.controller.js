@@ -4,20 +4,23 @@ const { platform } = require('../configs/constraint')
 
 //[POST] /api/v1/upload-cover-image
 const ggdrive = require('../services/google.clound/index')
-
+const random4NumberUntil = require('../utils/random4Number')
 let folderIdPublic;
-let project_name
+let project_name_and_random
 const uploadImage = async (req, res) => {
     // Tạo thư mục trên google drive với tên dự án
     // Upload ảnh cover vào thư mục vừa tạo
+    console.log("vao 1")
     // Trả về link ảnh
-    project_name = req.body.pj_name
+    let project_name = req.body.pj_name
+    project_name_and_random = project_name + random4NumberUntil()
     //tạo thư mục dự án trên DRIVE
     folderIdPublic = await drive.createFolder({
-        name: project_name,
+        name: project_name_and_random,
         shareToUser: true,
         shareToEmail: req.session?.user?.email ?? req.user?.email
     })
+    console.log("vao 2", folderIdPublic)
     const file = req.file
     //Nếu tạo thành công
     if (folderIdPublic) {
@@ -46,13 +49,19 @@ const uploadImage = async (req, res) => {
                         })
                             .then(row => {
                                 console.log(row);
-                                res.json({ status: 200, message: "Upload file success!", data: imageRes.data })
+                                res.json({
+                                    folderIdPublic,
+                                    status: 200, message: "Upload file success!",
+                                    data: {
+                                        imageUrl: imageRes.data,
+                                    }
+                                })
                             })
                             .catch(err => {
                                 console.log(err);
                             })
                     } else {
-                        res.json({ status: 400, message: "Upload file failed! No such file to upload" })
+                        res.json({ status: 400, message: "Upload file failed! No such file to upload", folderIdPublic })
                     }
 
                 }

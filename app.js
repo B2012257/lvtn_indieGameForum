@@ -17,6 +17,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const classifications = require('./configs/classifications.json')
 const genres = require('./configs/genres.json')
+const tags = require('./configs/tags.json')
 
 db.sequelize.sync()
   .then(() => {
@@ -49,6 +50,18 @@ db.sequelize.sync()
       })
     })
 
+    //Bảng tag
+    tags.forEach(async (tag) => {
+      await db.tag.findOrCreate({
+        where: {
+          name: tag.name
+        },
+        defaults: {
+          name: tag.name,
+          description: tag.description
+        }
+      })
+    })
     console.log("Synced db.");
   })
   .catch((err) => {
@@ -66,8 +79,7 @@ app.use(cors(
   }
 
 ))
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+
 // parse application/json
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: false }));
@@ -82,10 +94,10 @@ app.use(session({
   cookie: {
     maxAge: 3600000,
     sameSite: 'Lax',
-    secure: false,
-    httpOnly: true,
-    path: '/',
-    expires: new Date(new Date().getTime() + 86409000)
+    // secure: false,
+    // httpOnly: true,
+    // path: '/',
+    // expires: new Date(new Date().getTime() + 86409000)
   },
   // 1 ngày (đơn vị tính bằng mili giây)
 }));

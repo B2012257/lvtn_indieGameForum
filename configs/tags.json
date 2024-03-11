@@ -1,42 +1,42 @@
     [
         {
-            "name": "action",
+            "name": "Kinh di",
             "description": "Games with fast-paced, exciting gameplay."
         },
         {
-            "name": "adventure",
+            "name": "Phiêu lưu",
             "description": "Games that focus on exploration and storytelling."
         },
         {
-            "name": "puzzle",
+            "name": "Giải đố",
             "description": "Games that challenge players with puzzles and problem-solving."
         },
         {
-            "name": "strategy",
+            "name": "Cổ điển",
             "description": "Games that require strategic thinking and planning."
         },
         {
-            "name": "rpg",
+            "name": "Trực tuyến",
             "description": "Role-playing games that involve character development and storytelling."
         },
         {
-            "name": "simulation",
+            "name": "Nhiều người chơi",
             "description": "Games that simulate real-world activities or systems."
         },
         {
-            "name": "sports",
+            "name": "Một người chơi",
             "description": "Games that simulate sports or involve physical activities."
         },
         {
-            "name": "racing",
+            "name": "Sinh tồn",
             "description": "Games that involve racing or driving vehicles."
         },
         {
-            "name": "shooter",
+            "name": "Co-op",
             "description": "Games that involve shooting or combat."
         },
         {
-            "name": "platformer",
+            "name": "Đối kháng",
             "description": "Games that involve jumping and navigating platforms."
         }
     ]

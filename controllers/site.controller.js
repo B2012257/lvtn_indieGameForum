@@ -96,7 +96,17 @@ const getCreateProjectPage = async (req, res) => {
     //     },
     // ]
     //Sau này lấy tag từ bacekend
-    const tags = ["Kinh dị", "Sinh tồn", "Phiêu lưu", "Siêu khó", "Offline", "1 Nguời chơi", "Co-op"]
+
+    let tags;
+    await db.tag.findAll(
+        {
+            attributes: ['id', 'name', 'description']
+        }
+    )
+        .then((row) => {
+            tags = JSON.parse(JSON.stringify(row))
+        })
+
     if (req.user || req.session.user) {
         res.render("upload_project", {
             title: "Tạo dự án",

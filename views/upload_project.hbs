@@ -54,6 +54,9 @@
                                 án:</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control rounded-1" id="inputPjName" name="name">
+                                <input type="text" class="form-control rounded-1" id="inputPjFolderId" hidden
+                                    name="folder_id">
+
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -105,7 +108,7 @@
                                 <ul id="tag_suggests">
                                     {{#each tags}}
                                     <li class="tag_suggests__item">
-                                        {{this}}
+                                        {{this.name}}
                                         <label class="float-end clickToAddLabel">Chọn </label>
                                     </li>
                                     {{/each}}
@@ -529,7 +532,8 @@
             .then(value => {
                 //Tải thành công
                 toggleVisibility({ isToggle: false, elementClassName: "upload_cover_image", value: "1. Đã tải lên ảnh bìa." })
-
+                // Nhan duoc folderId
+                document.querySelector('#inputPjFolderId').value = value.folderIdPublic
                 console.log(value)
             })
             .catch(err => {
@@ -626,7 +630,7 @@
                             status: 400,
                             objectError: objectUpload.cover,
                             msg: `Tải lên ${objectUpload.cover} không thành công!`,
-                            rsMsg: data
+                            folderIdPublic: data.folderIdPublic
                         }
                     )
                 })

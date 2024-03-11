@@ -189,6 +189,7 @@ var that = module.exports = {
             return file.data.id;
         } catch (err) {
             // TODO(developer) - Handle error
+            console.log(err)
             throw err;
         }
     },
