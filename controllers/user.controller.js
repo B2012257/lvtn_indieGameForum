@@ -37,6 +37,7 @@ const uploadProject = async (req, res) => {
             //Kiểm tra tags nếu tìm thấy thì lưu id vào project_tag, còn không tìm thấy thì lưu mới vào db và lưu vào project_tag
             let project_tags = []
             project_tags = projectInfo.tags.split(",") // array of tags
+            console.log(project_tags)
             project_tags.forEach(async projectTagName => {
                 await db.tag.findOrCreate({
                     where: {
@@ -48,40 +49,40 @@ const uploadProject = async (req, res) => {
                     attributes: ['id']
                 })
                     .then(async ([tagInstance, created]) => {
+                        await project_db.addTag(tagInstance.id);
+                        console.log('Tag đã được thêm vào project.');
                         // Kiểm tra nếu tag được tạo mới hoặc đã tồn tại
-                        if (created) {
-                            console.log('Tag:', tagInstance.id);
+                        // if (created) {
+                        //     console.log('Tag:', tagInstance.id);
 
-                            // Kiểm tra xem project_db có phải là mô hình project không
-                            if (project_db instanceof db.project) {
-                                // Sử dụng addTag để thêm tag vào project
-                                await project_db.addTag(tagInstance.id);
-                                console.log('Tag đã được thêm vào project.');
-                            } else {
-                                console.error('project_db không phải là mô hình project.');
-                            }
-                        }
+                        //     // Kiểm tra xem project_db có phải là mô hình project không
+                        //     // Sử dụng addTag để thêm tag vào project
+
+                        // } else {
+                        //     await project_db.addTag(tagInstance.id);
+                        //     console.log('Tag đã được thêm vào project.');
+
+                        // }
                     });
             });
 
-            // // Tìm kiếm genre dựa trên id
-            // let genreDb = await db.genre.findOne({
-            //     where: {
-            //         id: projectInfo.genreId
-            //     }
-            // });
-
+            // Tìm kiếm genre dựa trên id
+            let genreDb = await db.genre.findOne({
+                where: {
+                    id: projectInfo.genre
+                }
+            });
             // // Tìm kiếm classification dựa trên id
-            // let classificationDb = await db.classification.findOne({
-            //     where: {
-            //         id: projectInfo.classificationId
-            //     }
-            // });
-            // // Thêm genres vào project
+            let classificationDb = await db.classification.findOne({
+                where: {
+                    id: projectInfo.classification
+                }
+            });
+            // Thêm genres vào project
 
-            // await project_db.setGenre(genreDb)
-            // // Thêm genres vào classification
-            // await project_db.setClassification(classificationDb)
+            await project_db.setGenre(genreDb)
+            // Thêm genres vào classification
+            await project_db.setClassification(classificationDb)
 
             await db.project.update({
                 short_description: projectInfo.short_description,

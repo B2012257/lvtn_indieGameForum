@@ -121,7 +121,7 @@
                                 tả
                                 ngắn <i>(Tối đa 200 từ)</i></label>
                             <div class="col-sm-10">
-                                <textarea maxlength="200" class="form-control rounded-1" name="short-description"
+                                <textarea maxlength="200" class="form-control rounded-1" name="short_description"
                                     id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án"></textarea>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
                                 tả
                                 chi tiết</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control rounded-1" name="detail-description"
+                                <textarea class="form-control rounded-1" name="long_description"
                                     id="inputLongDescription" rows="6" placeholder="Mô tả chi tiết"></textarea>
                             </div>
                         </div>
@@ -167,11 +167,12 @@
                                     class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option1">Miễn
                                     phí</label>
 
-                                <input value="donate" type="radio" class="btn-check" name="options" id="option2"
+                                {{!-- <input value="donate" type="radio" class="btn-check" name="options" id="option2"
                                     autocomplete="off">
                                 <label
                                     style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
                                     class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option2">Ủng hộ</label>
+                                --}}
 
                                 <input value="pay" type="radio" class="btn-check" name="options" id="option3"
                                     autocomplete="off">

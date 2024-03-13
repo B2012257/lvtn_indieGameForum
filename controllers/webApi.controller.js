@@ -79,6 +79,11 @@ const uploadImage = async (req, res) => {
 const uploadImages = async (req, res) => {
     const files = req.files
     let urlResponse = []
+    let projectDb = await db.project.findOne({
+        where: {
+            project_folder_id: folderIdPublic
+        }
+    })
     if (files && files.length > 0) {
 
         for (const file of files) {
@@ -88,6 +93,12 @@ const uploadImages = async (req, res) => {
 
                 parent: folderIdPublic
             })
+            // Tạo một hình ảnh và luư vào db
+            const image = await db.image.create({
+                url: fileResponse.data.webViewLink,
+                isCoverImage: false,
+            });
+            await projectDb.addImage(image)
             urlResponse.push(fileResponse)
         }
         res.json({
