@@ -7,17 +7,17 @@
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li class="ms-4 me-1"><a href="/"
-                                         class="nav-link px-2 link-dark nav-bar {{#if isHomeActive}}active{{/if}}">Trang
-                    chủ</a></li>
+                        class="nav-link px-2 link-dark nav-bar {{#if isHomeActive}}active{{/if}}">Trang
+                        chủ</a></li>
                 <li class="ms-1 me-1"><a href="/games"
-                                         class="nav-link px-2 link-dark {{#if isGamesActive}}active{{/if}}">Kho trò
-                    chơi</a></li>
+                        class="nav-link px-2 link-dark {{#if isGamesActive}}active{{/if}}">Kho trò
+                        chơi</a></li>
                 <li class="ms-1 me-1"><a href="/challenge/gamejam"
-                                         class="nav-link px-2 link-dark {{#if isGameJamActive}}active{{/if}}">Cuộc
-                    thi</a></li>
+                        class="nav-link px-2 link-dark {{#if isGameJamActive}}active{{/if}}">Cuộc
+                        thi</a></li>
                 <li class="ms-1 me-1"><a href="/comunity"
-                                         class="nav-link px-2 link-dark {{#if isComunityActive}}active{{/if}}">Cộng
-                    đồng</a></li>
+                        class="nav-link px-2 link-dark {{#if isComunityActive}}active{{/if}}">Cộng
+                        đồng</a></li>
 
             </ul>
 
@@ -30,30 +30,30 @@
 
             <div class="dropdown text-end">
                 {{#if user}}
-                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        {{#if user.avatar}}
-                            <img src="{{user.avatar}}" alt="mdo" width="32" height="32" class="rounded-circle">
-                            {{user.name}}
-                        {{else}}
-                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
-                                 class="rounded-circle">
-                            {{user.name}}
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    {{#if user.avatar}}
+                    <img src="{{user.avatar}}" alt="mdo" width="32" height="32" class="rounded-circle">
+                    {{user.name}}
+                    {{else}}
+                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                    {{user.name}}
 
-                        {{/if}}
-                    </a>
-                    <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
-                        <li><a class="dropdown-item" href="/user/upload-project">Đăng tải dự án</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="/logout"> Đăng xuất </a></li>
-                    </ul>
+                    {{/if}}
+                </a>
+                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
+                    <li><a class="dropdown-item" href="/user/projects">Dự án của tôi</a></li>
+                    <li><a class="dropdown-item" href="/user/project/create">Đăng tải dự án mới</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/logout"> Đăng xuất </a></li>
+                </ul>
                 {{else}}
-                    <a href="/login" class="btn btn-outline-primary me-2">Login</a>
-                    <a href="/register" class="btn btn-outline-primary me-2">Register</a>
+                <a href="/login" class="btn btn-outline-primary me-2">Login</a>
+                <a href="/register" class="btn btn-outline-primary me-2">Register</a>
                 {{/if}}
             </div>
         </div>

@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="/stylesheets/my_project.css">
+<main style="margin-top: 70px" class="container">
+
+    {{#each projects}}
+    <ul>
+        <li data-id="{{this.id}}"> {{this.name}},{{this.genre.name}}, {{this.classification.name}},
+            {{#each this.tags}}
+            tags {{this.name}}
+            {{/each}}
+            <a href="/user/project/{{this.slug}}/view">{{this.name}}</a>
+
+        </li>
+    </ul>
+    {{/each}}
+</main>
+<script src="/javascripts/my_project.js"></script>

@@ -122,10 +122,66 @@ const getCreateProjectPage = async (req, res) => {
     }
 
 }
+const getEditProjectPage = (req, res) => {
+    if (req.user || req.session.user) {
+        res.render("preview_project", {
+            title: "Tạo dự án",
+            header: true,
+            footer: false,
+            user: req.user || req.session.user,
+        })
+    } else {
+        res.redirect("/login")
+    }
+}
+const getMyProjectPage = async (req, res) => {
+    let projectDB = await db.project.findAll({
+        include: [
+            db.classification, db.tag, db.genre, db.image
+        ],
+        order: [['createdAt', 'DESC']]
+    })
+    let projects = JSON.parse(JSON.stringify(projectDB))
+    if (req.user || req.session.user) {
+        res.render("my_project", {
+            title: "Dự án của tôi",
+            header: true,
+            projects,
+            footer: false,
+            user: req.user || req.session.user,
+        })
+    } else {
+        res.redirect("/login")
+    }
+}
+const getProjectViewPage = async (req, res) => {
+    let slug = req.params.slug
+    let projectDB = await db.project.findOne({
+        where: {
+            slug
+        },
+        include: [
+            db.classification, db.tag, db.genre, db.image,
+        ]
+        , order: [[db.image, 'createdAt', 'DESC']]
+    })
+    let projectInfo = JSON.parse(JSON.stringify(projectDB))
+    console.log(projectInfo);
+    res.render("project_view", {
+        title: 'Xem ' + slug,
+        header: true,
+        footer: false,
+        projectInfo,
+        user: req.user || req.session.user,
+    })
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
     getRegisterPage,
     getGamesPage,
-    getCreateProjectPage
+    getCreateProjectPage,
+    getEditProjectPage,
+    getMyProjectPage,
+    getProjectViewPage
 }

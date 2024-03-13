@@ -14,8 +14,11 @@ router.get('/logout', (req, res) => {
         res.redirect('/login'); // Chuyển hướng sau khi đăng xuất thành công
     });
 });
-router.get('/user/upload-project', siteController.getCreateProjectPage)
-router.get('/games',siteController.getGamesPage)
+router.get('/user/project/create', siteController.getCreateProjectPage)
+router.get('/user/project/edit', siteController.getEditProjectPage)
+router.get('/user/projects', siteController.getMyProjectPage)
+router.get('/user/project/:slug/view', siteController.getProjectViewPage)
+router.get('/games', siteController.getGamesPage)
 router.get('/', siteController.getIndexPage)
 
 module.exports = router;

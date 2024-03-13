@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="/stylesheets/project_view.css">
+<div style="margin-top: 70px" class="p-0 banner container-fluid">
+    1
+</div>
+<main class="container">
+
+    <section>
+        <div class="">
+            <div class="carousel">
+                {{#each projectInfo.images}}
+                {{#if this.isCoverImage}}
+                <img src="{{this.url}}" width="400px" alt=""></label>
+                {{/if}}
+
+                {{/each}}
+                {{projectInfo.name}}
+                <ul class="carousel__thumbnails gap-2">
+                    <iframe width="250" src="{{projectInfo.trailer}}" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+
+                    {{#each projectInfo.images}}
+                    {{#unless this.isCoverImage}}
+                    <li>
+                        <img src="{{this.url}}" alt=""></label>
+                    </li>
+                    {{/unless}}
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </section>
+</main>
+{{!--
+<script src="/javascripts/my_project.js"></script> --}}
