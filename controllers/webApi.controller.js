@@ -111,8 +111,26 @@ const uploadImages = async (req, res) => {
     }
 }
 
-const createProjectInDb = async () => {
+const saveDescription = async (req, res) => {
+    console.log(req.body)
+    let projectId = req.body.projectId
+    let newDescription = req.body.description
+    try {
+        let newUpdatedProject = await db.project.update(
+            {
+                long_description: newDescription
+            },
+            {
+                where: {
+                    id: projectId
+                },
+            }
+        )
+        res.json({ msg: "Success!", status: 200 })
 
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 //Api tải lên file dự án vào drive
@@ -169,5 +187,6 @@ const uploadProject = async (req, res) => {
 module.exports = {
     uploadImage,
     uploadImages,
-    uploadProject
+    uploadProject,
+    saveDescription
 }

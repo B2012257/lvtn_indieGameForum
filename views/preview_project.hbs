@@ -1,12 +1,58 @@
 <link rel="stylesheet" href="/stylesheets/preview_project.css">
-<main style="margin-top: 70px" class="container-fluid">
-    <div class="card pt-4" style="margin: auto; width: 900px">
-        <div class="card-header bg-body-secondary">
-            Đăng tải dự án
-        </div>
-        <div id="editor"></div>
+<main style="margin-top: 70px" class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="card pt-4">
+                <h6 class="">
+                    Tùy chỉnh dự án
+                </h6>
+                {{#with projectInfo}}
+                <div id="project_id" class="d-none">{{this.id}}</div>
+                <p id="project_long_description" class="d-none">
+                    {{long_description}}
+                </p>
+                {{/with}}
 
-    </div>
+                <div id="editor" class="bg-dark">
+
+                </div>
+                <button class="save_btn btn btn-primary" type="button">Save</button>
+            </div>
+        </div>
+        <div class="col-4 pt-4">
+            <h6 class="">Thông tin dự án</h6>
+            {{#with projectInfo}}
+            <ul class="list-group">
+                <li class="list-group-item">Phân loại: <a href="">{{classification.name}}</a></li>
+                <li class="list-group-item">Thể loại: <a href="">{{genre.name}}</a></li>
+                <li class="list-group-item">Tag:
+                    {{#each tags}}
+                    <a href="">{{this.name}},</a>
+                    {{/each}}
+                </li>
+                <li class="list-group-item">Giá: {{price}}</li>
+                <li class="list-group-item">Trạng thái phát hành: {{releaseStatus}}</li>
+                <li class="list-group-item">Trạng thái hiển thị: {{#if isPublic}}
+                    <span class="text-success">Công khai</span>
+                    {{else}}
+                    <span class="text-danger">Riêng tư</span>
+                    {{/if}}
+                </li>
+                {{#if versions}}
+                {{#each versions}}
+                <li class="list-group-item">Phiên bản: {{this.version_number}}</li>
+                {{/each}}
+                {{/if}}
+                <li class="list-group-item">Nhà phát triển: {{user.name}}</li>
+
+                <li class="list-group-item">Ngày cập nhật:
+                    {{moment updatedAt "DD, MMMM, YYYY HH:mm:ss"}}
+                <li class="list-group-item">Ngày đăng: {{moment createdAt "DD, MMMM, YYYY HH:mm:ss"}}</li>
+
+            </ul>
+            {{/with}}
+        </div>
+
 </main>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
 <script src="/javascripts/preview_project.js"></script>

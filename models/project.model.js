@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: ''
         },
         long_description: {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT('long'),
             allowNull: false,
             defaultValue: ''
         },

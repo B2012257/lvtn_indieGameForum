@@ -53,7 +53,7 @@
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
                                 án:</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control rounded-1" id="inputPjName" name="name">
+                                <input required type="text" class="form-control rounded-1" id="inputPjName" name="name">
                                 <input type="text" class="form-control rounded-1" id="inputPjFolderId" hidden
                                     name="folder_id">
 
@@ -179,9 +179,16 @@
                                 <label
                                     style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
                                     class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
+                                <div class="col-5 mt-2 mb-2">
+                                    <input class="form-control" type="text" id="payInput" onblur="validatePrice(event)"
+                                        style="display: none;" placeholder="VND">
+                                    <p id="payAmountError" style="display: none;">Vui lòng chỉ nhập số nguyên!</p>
+                                </div>
+
                             </div>
 
                         </div>
+
                         <div class="mb-3 row">
                             <label for="inputUploadFile" class="col-sm-2 col-form-label right__content__label">Tải
                                 lên:</label>
@@ -714,5 +721,27 @@
         //elementToShow.textContent = value
         return
     }
+    //Hiển thị input nhập giá
+    document.getElementById('option3').addEventListener('click', function () {
+        document.getElementById('payInput').style.display = 'block';
+        document.getElementById('payInput').focus()
+    });
 
+    document.getElementById('option1').addEventListener('click', function () {
+        document.getElementById('payInput').style.display = 'none';
+        document.getElementById('payAmountError').style.display = 'none';
+    });
+    function validatePrice(event) {
+        let payInput = event.target
+        let payInputValue = payInput.value
+        var payAmount = payInputValue.trim();
+        var vietnameseDongPattern = /^\d{1,9}$/;; //regex pattern
+        var isValid = vietnameseDongPattern.test(payAmount);
+
+        if (!isValid) {
+            document.getElementById('payAmountError').style.display = 'block';
+        } else {
+            document.getElementById('payAmountError').style.display = 'none';
+        }
+    }
 </script>

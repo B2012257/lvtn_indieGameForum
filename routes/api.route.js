@@ -46,5 +46,7 @@ router.post('/upload-project', upload.fields([
     },
 ]), apiController.uploadProject);
 
+//[POST] /api/v1/project/update/description 
+router.post('/project/update/description', apiController.saveDescription);
 
 module.exports = router;

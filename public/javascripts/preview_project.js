@@ -18,7 +18,6 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
             'alignment', '|',
             'link', 'uploadImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
             'specialCharacters', 'horizontalLine', 'pageBreak', '|',
-            'textPartLanguage', '|',
             'sourceEditing'
         ],
         shouldNotGroupWhenFull: true
@@ -119,9 +118,7 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
         // 'ExportPdf',
         // 'ExportWord',
         'AIAssistant',
-        'CKBox',
-        'CKFinder',
-        'EasyImage',
+        //'EasyImage',
         // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
         // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
         // Storing images as Base64 is usually a very bad idea.
@@ -153,9 +150,42 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
 });
 
 // Xử lí khi trình soạn thảo đã sẵn sàng
-editor.then(editor => {
-    const content = '<p>This is the content you want to add.</p>';
-
+editor.then(async editor => {
+    const content = getDescription();
     // Đặt nội dung vào trình soạn thảo
-    editor.setData(content);
+    await editor.setData(content);
+    document.querySelector('.save_btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        saveDescription(editor)
+    })
+
 })
+
+function getDescription() {
+    return document.querySelector("#project_long_description").textContent
+}
+function saveDescription(editor) {
+    const editorData = editor.getData();
+    console.log(editorData);
+    let projectId = document.querySelector("#project_id").textContent
+    fetch("/api/v1/project/update/description", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            projectId: projectId,
+            description: editorData,
+        })
+
+    }).then(res => res.json())
+        .then(data => {
+            console.log(data)
+            if (data.status === 200) {
+                alert('Success');
+                location.reload();
+            } else {
+                console.log('Failed');
+            }
+        })
+}

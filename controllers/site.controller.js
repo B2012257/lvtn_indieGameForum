@@ -122,12 +122,24 @@ const getCreateProjectPage = async (req, res) => {
     }
 
 }
-const getEditProjectPage = (req, res) => {
+const getEditProjectPage = async (req, res) => {
+    const projectDb = await db.project.findOne({
+        include: [
+            db.classification, db.tag, db.genre, db.image, db.user, db.version
+        ],
+        where: {
+            id: req.params.id
+        },
+    })
+
+    console.log(projectDb)
+    let projectInfo = JSON.parse(JSON.stringify(projectDb))
     if (req.user || req.session.user) {
         res.render("preview_project", {
             title: "Tạo dự án",
             header: true,
             footer: false,
+            projectInfo,
             user: req.user || req.session.user,
         })
     } else {

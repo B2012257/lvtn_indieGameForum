@@ -133,6 +133,10 @@
     color: #4caf50;
 }
 
+#payAmountError {
+    color: red;
+}
+
 @keyframes process {
     from {
         width: 0%;
