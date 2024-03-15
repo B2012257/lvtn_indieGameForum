@@ -3,11 +3,8 @@
 
     {{#each projects}}
     <ul>
-        <li data-id="{{this.id}}"> {{this.name}},{{this.genre.name}}, {{this.classification.name}},
-            {{#each this.tags}}
-            tags {{this.name}}
-            {{/each}}
-            <a href="/user/project/{{this.slug}}/view">{{this.name}}</a>
+        <li data-id="{{this.id}}"> {{this.name}}
+            <a href="/user/project/{{this.slug}}/view">Xem</a>,
             <a href="/user/project/{{this.id}}/edit">Chinh sua giao dien</a>
         </li>
     </ul>

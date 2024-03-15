@@ -1,16 +1,18 @@
 
 const handlebars = require('express-handlebars')
 const moment = require('moment');
-const helperMoment = require('helper-moment');
 module.exports = (app) => {
     moment.locale('vi');
 
     app.engine('.hbs', handlebars.engine({
         extname: '.hbs',
         helpers: {
-            moment: function (date, format) {
-                return moment(date).format(format);
-            }
+            momentDay: function (date) {
+                return moment(date).format("L");
+            },
+            momentTime: function (date) {
+                return moment(date).format("LLL");
+            },
         }
     }));
     app.set('view engine', '.hbs');

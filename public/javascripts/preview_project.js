@@ -9,7 +9,7 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
             'exportPDF', 'exportWord', '|',
             'findAndReplace', 'selectAll', '|',
             'heading', '|',
-            'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+            'bold', 'italic', 'underline', 'code', 'subscript', 'superscript', '|',
             'bulletedList', 'numberedList', 'todoList', '|',
             'outdent', 'indent', '|',
             'undo', 'redo',
@@ -161,6 +161,7 @@ editor.then(async editor => {
 
 })
 
+
 function getDescription() {
     return document.querySelector("#project_long_description").textContent
 }
@@ -189,3 +190,5 @@ function saveDescription(editor) {
             }
         })
 }
+
+////

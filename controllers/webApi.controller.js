@@ -112,11 +112,10 @@ const uploadImages = async (req, res) => {
 }
 
 const saveDescription = async (req, res) => {
-    console.log(req.body)
     let projectId = req.body.projectId
     let newDescription = req.body.description
     try {
-        let newUpdatedProject = await db.project.update(
+        await db.project.update(
             {
                 long_description: newDescription
             },
@@ -126,10 +125,12 @@ const saveDescription = async (req, res) => {
                 },
             }
         )
-        res.json({ msg: "Success!", status: 200 })
+        res.json({ msg: "Lưu thành công!", status: 200 })
 
     } catch (error) {
         console.log(error);
+        res.json({ msg: "Lưu không thành công! Vui lòng thử lại", status: 400 })
+
     }
 }
 
@@ -184,9 +185,13 @@ const uploadProject = async (req, res) => {
             status: 400, msg: 'Bad request! At least 1 file project'
         })
 }
+const uploadImageFromCkEditor = async (req, res) => {
+
+}
 module.exports = {
     uploadImage,
     uploadImages,
     uploadProject,
-    saveDescription
+    saveDescription,
+    uploadImageFromCkEditor
 }

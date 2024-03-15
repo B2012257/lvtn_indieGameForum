@@ -21,7 +21,10 @@
     {{#if header}}
     {{> header}}
     {{/if}}
-    <main style="min-height: 100vh">
+    <main {{!--
+        background:url('https://img.freepik.com/premium-vector/retro-vibe-doodle-pattern-video-game-hand-drawn-doodle-seamless-pattern-tetris-console-dialog-cloud-video-element-enter-computer-retro-arcade-play-background-wallpaper-pattern-vector-illustration_685689-265.jpg?w=826');
+        background-size: 100px;background-position: right center; background-repeat: repeat --}}
+        style="min-height: 100vh; ">
         {{{body}}}
     </main>
     {{#if footer}}

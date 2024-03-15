@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue: '1.0'
         },
-        relase_date: {
+        release_Date: {
             type: Sequelize.DATE,
             allowNull: false,
             defaultValue: new Date()

@@ -1,58 +1,148 @@
 <link rel="stylesheet" href="/stylesheets/preview_project.css">
-<main style="margin-top: 70px" class="container">
+<div class="heading" style="margin-top: 72px; padding-bottom: 10px">
+    {{!-- <div class="change_theme">
+        <div class="change_background_btn">
+            <i class="fa-solid fa-palette"></i>
+            <div class="chooseColor">
+                Chọn màu nền: <input type="color" name="" id="">
+            </div>
+        </div>
+
+    </div> --}}
+
+    <div class="banner" title="Click to upload banner">
+        <img src="https://m.gjcdn.net/game-header/1400/435648-cp4ec7zu-v4.webp" alt="">
+    </div>
+    <div class="heading_content">
+        <div class="heading_content__title container d-flex justify-content-between">
+            <div class="heading_content__title__left">
+                <ul class="title__left__list">
+                    <li class="title__left__list__item__banner title__left__list__item">
+                        {{#each projectInfo.images}}
+                        {{#if this.isCoverImage}}
+                        <img class="title__left__list__item__banner_small" src="{{this.url}}" alt="" width="300"
+                            height="170">
+
+                        {{/if}}
+                        {{/each}}
+
+                    </li>
+                    <li class="title__left__list__item">
+                        <a href="#" class="active pt-2 pb-2 text-decoration-none text-black">Tổng quan</a>
+                    </li>
+                    <li class="title__left__list__item">
+                        <a href="#" class="pt-2 pb-2 text-decoration-none text-black text-primary">Đánh giá</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="heading_content__title__right">
+                <button class="btn btn-outline-primary follow_btn">
+                    <i class="fa-solid fa-plus fa-bounce me-2"></i>
+                    Theo dõi</button>
+                <button class="btn btn-outline-danger">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+        </div>
+        <div class="carousel container p-0 mt-4">
+
+            <ul class="carousel__thumbnails gap-2 pb-2">
+                {{#if projectInfo.images}}
+                {{#each projectInfo.images}}
+                {{#unless this.isCoverImage}}
+                <li>
+                    <img src="{{this.url}}" alt=""></label>
+                </li>
+                {{/unless}}
+
+                {{/each}}
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+</div>
+<main class="container mb-5">
     <div class="row">
         <div class="col-8">
-            <div class="card pt-4">
-                <h6 class="">
+            <div class="pt-4">
+                <h5 class="d-inline-block mb-2">
                     Tùy chỉnh dự án
-                </h6>
+                </h5>
+                <button class="btn btn-outline-primary save_btn p-0 ps-2 pe-2 float-end">
+                    <i class="fa-solid fa-floppy-disk fa-fade me-2"></i>
+                    Lưu</button>
                 {{#with projectInfo}}
-                <div id="project_id" class="d-none">{{this.id}}</div>
+                <div id="project_id" class="d-none">{{this.id}}
+                </div>
                 <p id="project_long_description" class="d-none">
                     {{long_description}}
                 </p>
                 {{/with}}
 
-                <div id="editor" class="bg-dark">
+                <div id="editor" class="mt">
 
                 </div>
-                <button class="save_btn btn btn-primary" type="button">Save</button>
+                {{!-- <button class="save_btn btn btn-primary" type="button">Save</button> --}}
             </div>
         </div>
         <div class="col-4 pt-4">
-            <h6 class="">Thông tin dự án</h6>
+            <h5 class="d-inline-block">Thông tin dự án
+            </h5>
+            <a class="text-decoration-none float-end" href="#">Điều chỉnh</a>
+
             {{#with projectInfo}}
             <ul class="list-group">
-                <li class="list-group-item">Phân loại: <a href="">{{classification.name}}</a></li>
-                <li class="list-group-item">Thể loại: <a href="">{{genre.name}}</a></li>
-                <li class="list-group-item">Tag:
+                <li class="list-group-item">Phân loại: <a class="text-decoration-none"
+                        href="">{{classification.name}}.</a>
+                </li>
+                <li class="list-group-item">Thể loại:
+                    <a class="text-decoration-none" href="">{{genre.name}}.</a>
+                </li>
+                <li class="list-group-item">Nhãn:
                     {{#each tags}}
-                    <a href="">{{this.name}},</a>
+                    <a class="text-decoration-none" href="">{{this.name}},</a>
                     {{/each}}
                 </li>
+
+
                 <li class="list-group-item">Giá: {{price}}</li>
-                <li class="list-group-item">Trạng thái phát hành: {{releaseStatus}}</li>
-                <li class="list-group-item">Trạng thái hiển thị: {{#if isPublic}}
-                    <span class="text-success">Công khai</span>
-                    {{else}}
-                    <span class="text-danger">Riêng tư</span>
-                    {{/if}}
-                </li>
                 {{#if versions}}
+                <li class="list-group-item">Trạng thái phát hành:
+                    {{releaseStatus}}.</li>
                 {{#each versions}}
-                <li class="list-group-item">Phiên bản: {{this.version_number}}</li>
+
+                <li class="list-group-item">Phiên bản hiện tại: {{this.version_number}}.</li>
+                <li class="list-group-item">Ngày phát hành phiên bản: {{momentDay this.release_Date}}.</li>
+                <li class="list-group-item">Nền tảng hổ trợ: {{#each this.downloads}}
+                    {{this.platform}},
+                    {{/each}}
+                </li>
+
                 {{/each}}
                 {{/if}}
-                <li class="list-group-item">Nhà phát triển: {{user.name}}</li>
+                <li class="list-group-item">Nhà phát triển: {{user.name}}.</li>
 
-                <li class="list-group-item">Ngày cập nhật:
-                    {{moment updatedAt "DD, MMMM, YYYY HH:mm:ss"}}
-                <li class="list-group-item">Ngày đăng: {{moment createdAt "DD, MMMM, YYYY HH:mm:ss"}}</li>
+                <li class="list-group-item">Ngày chỉnh sửa:
+                    {{momentTime updatedAt}}.
+                <li class="list-group-item">Ngày đăng:
+                    {{momentTime createdAt}}.</li>
 
+
+                <li class="list-group-item">Trạng thái hiển thị:
+                    {{#if isPublic}}
+                    <span class="text-success">Công khai.</span>
+                    {{else}}
+                    <span class="text-danger">Riêng tư.</span>
+                    {{/if}}
+                </li>
             </ul>
             {{/with}}
         </div>
 
 </main>
+
 <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
+
 <script src="/javascripts/preview_project.js"></script>
+<script src="/javascripts/hideHeaderOnScroll.js"></script>

@@ -122,21 +122,30 @@ const getCreateProjectPage = async (req, res) => {
     }
 
 }
-const getEditProjectPage = async (req, res) => {
+const getEditInterfaceProjectPage = async (req, res) => {
     const projectDb = await db.project.findOne({
         include: [
-            db.classification, db.tag, db.genre, db.image, db.user, db.version
+            db.classification, db.tag, db.genre, db.user,
+            {
+                model: db.image,
+                order: [['createdAt', 'DESC']]
+            },
+            {
+                model: db.version,
+                include: [db.download],
+                order: [['createdAt', 'DESC']],
+                limit: 1 //Giới hạn 1 phiên bản mới nhất
+            }
         ],
         where: {
             id: req.params.id
         },
     })
-
-    console.log(projectDb)
     let projectInfo = JSON.parse(JSON.stringify(projectDb))
+    console.log(projectInfo)
     if (req.user || req.session.user) {
         res.render("preview_project", {
-            title: "Tạo dự án",
+            title: "Trang trí " + projectInfo.name,
             header: true,
             footer: false,
             projectInfo,
@@ -193,7 +202,7 @@ module.exports = {
     getRegisterPage,
     getGamesPage,
     getCreateProjectPage,
-    getEditProjectPage,
+    getEditInterfaceProjectPage,
     getMyProjectPage,
     getProjectViewPage
 }

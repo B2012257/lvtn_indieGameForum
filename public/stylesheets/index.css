@@ -8,16 +8,19 @@
 .sidebar__title {
     font-weight: 500;
 }
+
 .sidebar__list {
     vertical-align: middle;
 
 }
+
 .sidebar__list__item a {
     font-size: 14px;
     text-decoration: none;
     vertical-align: middle;
     color: gray;
 }
+
 .sidebar__list__item a:hover {
     color: #8899e0;
 }
@@ -25,6 +28,7 @@
 .right__content {
     margin-left: auto;
 }
+
 .view_all__btn {
     display: inline-block;
     padding: 2px 16px;
@@ -34,6 +38,7 @@
     color: #F16262;
 
 }
+
 .view_all_game {
     display: inline-block;
     padding: 4px 20px;
@@ -42,15 +47,19 @@
     font-size: 16px;
     color: #F16262;
 }
-.ratings i{
-    color:#cecece;
+
+.ratings i {
+    color: #cecece;
 }
-.rating-color{
-    color:#fbc634 !important;
+
+.rating-color {
+    color: #fbc634 !important;
 }
+
 .game__thumbnail {
     position: relative;
 }
+
 .sale {
     position: absolute;
     top: 0;
@@ -64,6 +73,7 @@
     font-style: italic;
     transition: background-color 0.3s ease;
 }
+
 .sale:hover {
     background-color: #C13E3E;
 }

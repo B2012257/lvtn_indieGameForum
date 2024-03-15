@@ -1,4 +1,4 @@
-async function fetchApi({url, method, data}) {
+async function fetchApi({ url, method, data }) {
     const response = await fetch(url, {
         method: `${method}`,
         headers: {

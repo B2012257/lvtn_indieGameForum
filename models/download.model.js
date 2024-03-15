@@ -6,9 +6,9 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         platform: {
-            type: Sequelize.STRING,
+            type: Sequelize.ENUM,
             allowNull: false,
-            values: ['android', 'ios', 'web', 'windows', 'macos', 'linux']
+            values: ['Android', 'IOS', 'windows', 'Mac OS', 'Linux (RPM-based)', 'Linux (Debian-based)']
         },
         link: {
             type: Sequelize.STRING,
@@ -16,4 +16,4 @@ module.exports = (sequelize, Sequelize) => {
         },
 
     });
-};
+}; // end of module.exports

@@ -46,7 +46,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         releaseStatus: {
             type: Sequelize.ENUM,
-            values: ['developing', 'ready'],
+            values: ['Đã phát hành', 'Đang phát triển'],
             //allowNull: false
         },
         slug: {
