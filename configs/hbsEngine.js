@@ -13,6 +13,12 @@ module.exports = (app) => {
             momentTime: function (date) {
                 return moment(date).format("LLL");
             },
+            ifEquals: function (arg1, arg2) {
+                return (arg1 === arg2);
+            },
+            indexing: function (index) {
+                return index + 1
+            }
         }
     }));
     app.set('view engine', '.hbs');

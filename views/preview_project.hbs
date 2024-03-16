@@ -16,6 +16,9 @@
     <div class="heading_content">
         <div class="heading_content__title container d-flex justify-content-between">
             <div class="heading_content__title__left">
+                <div class="project_name">{{projectInfo.name}}
+                    <i style="font-size: 12px;">by @{{projectInfo.user.name}}</i>
+                </div>
                 <ul class="title__left__list">
                     <li class="title__left__list__item__banner title__left__list__item">
                         {{#each projectInfo.images}}
@@ -67,7 +70,7 @@
         <div class="col-8">
             <div class="pt-4">
                 <h5 class="d-inline-block mb-2">
-                    Tùy chỉnh dự án
+                    Tùy chỉnh trang dự án
                 </h5>
                 <button class="btn btn-outline-primary save_btn p-0 ps-2 pe-2 float-end">
                     <i class="fa-solid fa-floppy-disk fa-fade me-2"></i>

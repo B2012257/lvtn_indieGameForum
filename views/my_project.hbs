@@ -2,12 +2,14 @@
 <main style="margin-top: 70px" class="container">
 
     {{#each projects}}
-    <ul>
-        <li data-id="{{this.id}}"> {{this.name}}
+    {{#if (ifEquals this.user.id user.id)}}
+    <ul style="list-style: none;">
+        <li data-id="{{this.id}}">{{indexing @index}}. {{this.name}}
             <a href="/user/project/{{this.slug}}/view">Xem</a>,
-            <a href="/user/project/{{this.id}}/edit">Chinh sua giao dien</a>
+            <a href="/user/project/{{this.id}}/edit">Điều chỉnh trang</a>
         </li>
     </ul>
+    {{/if}}
     {{/each}}
 </main>
 <script src="/javascripts/my_project.js"></script>

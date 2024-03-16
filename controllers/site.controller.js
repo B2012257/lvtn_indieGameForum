@@ -2,18 +2,20 @@ const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 //[GET] /
 
-const getIndexPage = (req, res) => {
-    console.log("req")
-    console.log(req.session?.user?.id ?? req.user?.id)
+const getIndexPage = async (req, res) => {
 
-    // if (!req.user) {
-    //     return res.redirect("/login")
-    // }
+    let projectDB = await db.project.findAll({
+        include: [
+            db.tag, db.image,
+        ]
+    })
+    let projectInfo = JSON.parse(JSON.stringify(projectDB))
     return res.render("index", {
         user: req.user || req.session.user,
         title: "Trang chủ",
         header: true,
         footer: false,
+        projectInfo,
         isHomeActive: true
     })
 }
@@ -134,7 +136,7 @@ const getEditInterfaceProjectPage = async (req, res) => {
                 model: db.version,
                 include: [db.download],
                 order: [['createdAt', 'DESC']],
-                limit: 1 //Giới hạn 1 phiên bản mới nhất
+                // limit: 1 //Giới hạn 1 phiên bản mới nhất
             }
         ],
         where: {
@@ -142,7 +144,7 @@ const getEditInterfaceProjectPage = async (req, res) => {
         },
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDb))
-    console.log(projectInfo)
+    console.log(projectInfo + "as")
     if (req.user || req.session.user) {
         res.render("preview_project", {
             title: "Trang trí " + projectInfo.name,
@@ -156,12 +158,18 @@ const getEditInterfaceProjectPage = async (req, res) => {
     }
 }
 const getMyProjectPage = async (req, res) => {
+    let user = req?.user ?? req?.session?.user
+    console.log(user)
     let projectDB = await db.project.findAll({
         include: [
-            db.classification, db.tag, db.genre, db.image
+            db.classification, db.tag, db.genre, db.image, db.user
         ],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        where: {
+            userId: user.id
+        }
     })
+    console.log(req.user || req.session.user);
     let projects = JSON.parse(JSON.stringify(projectDB))
     if (req.user || req.session.user) {
         res.render("my_project", {
@@ -169,7 +177,7 @@ const getMyProjectPage = async (req, res) => {
             header: true,
             projects,
             footer: false,
-            user: req.user || req.session.user,
+            user,
         })
     } else {
         res.redirect("/login")
@@ -182,12 +190,16 @@ const getProjectViewPage = async (req, res) => {
             slug
         },
         include: [
-            db.classification, db.tag, db.genre, db.image,
+            db.classification, db.tag, db.genre, db.image, db.user, {
+                model: db.version,
+                include: [db.download],
+                order: [['createdAt', 'DESC']],
+                // limit: 1 //Giới hạn 1 phiên bản mới nhất
+            }
         ]
         , order: [[db.image, 'createdAt', 'DESC']]
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
-    console.log(projectInfo);
     res.render("project_view", {
         title: 'Xem ' + slug,
         header: true,

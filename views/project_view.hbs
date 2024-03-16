@@ -18,6 +18,10 @@
             <div class="heading_content__title__left">
                 <ul class="title__left__list">
                     <li class="title__left__list__item__banner title__left__list__item">
+                        <div class="project_name">{{projectInfo.name}}
+                            <i style="font-size: 12px;">by @{{projectInfo.user.name}}</i>
+                        </div>
+
                         {{#each projectInfo.images}}
                         {{#if this.isCoverImage}}
                         <img class="title__left__list__item__banner_small" src="{{this.url}}" alt="" width="300"
@@ -36,12 +40,21 @@
                 </ul>
             </div>
             <div class="heading_content__title__right">
+                <button class="btn btn-outline-success buy_btn">
+                    <i class="fa-regular fa-credit-card me-2"></i>
+                    Mua</button>
                 <button class="btn btn-outline-primary follow_btn">
                     <i class="fa-solid fa-plus fa-bounce me-2"></i>
                     Theo dõi</button>
                 <button class="btn btn-outline-danger">
                     <i class="fa-regular fa-heart"></i>
                 </button>
+                {{#if (ifEquals user.id projectInfo.user.id)}}
+                <a title="Điều chỉnh" href="/user/project/{{projectInfo.id}}/edit" class="btn btn-outline-info">
+                    <i class="fa-solid fa-palette"></i>
+                </a>
+                {{/if}}
+
             </div>
 
         </div>
@@ -65,7 +78,9 @@
 <main class="container">
     <div class="row">
         <div class="col-8 pt-4">
-
+            <div id="editor" class="mt">
+                {{{projectInfo.long_description}}}
+            </div>
         </div>
         <div class="col-4 pt-4">
             <h5 class="d-inline-block">Thông tin dự án

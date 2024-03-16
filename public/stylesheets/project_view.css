@@ -1,9 +1,17 @@
+:root {
+    /* --bs-body-text-align: center; */
+}
+
 .banner {
     width: 100%;
     min-height: 300px;
     background-color: #f4f4f4;
     cursor: pointer;
 
+}
+
+.image {
+    text-align: center;
 }
 
 .banner img {
@@ -70,4 +78,25 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     width: 300px;
     height: 170px;
+}
+
+.project_name {
+    position: absolute;
+    bottom: 50px;
+    left: 300px;
+    z-index: 2;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    width: 100%;
+    text-shadow: .1em .1em 0 hsl(200 50% 30%);
+}
+
+.heading_content__title__right {
+    position: relative;
+}
+
+.edit_page {
+    position: absolute;
+    top: 0;
 }
