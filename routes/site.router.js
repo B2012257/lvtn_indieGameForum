@@ -17,7 +17,9 @@ router.get('/logout', (req, res) => {
 router.get('/user/project/create', siteController.getCreateProjectPage)
 router.get('/user/project/:id/edit', siteController.getEditInterfaceProjectPage)
 router.get('/user/projects', siteController.getMyProjectPage)
-router.get('/user/project/:slug/view', siteController.getProjectViewPage)
+router.get('/project/:slug/view', siteController.getProjectViewPage) //xem dự án
+router.get('/project/:id/pay', siteController.getPayViewPage) //trang thanh toan dự án
+
 router.get('/games', siteController.getGamesPage)
 router.get('/', siteController.getIndexPage)
 

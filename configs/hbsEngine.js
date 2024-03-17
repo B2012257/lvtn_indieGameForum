@@ -14,7 +14,10 @@ module.exports = (app) => {
                 return moment(date).format("LLL");
             },
             ifEquals: function (arg1, arg2) {
-                return (arg1 === arg2);
+                //convert to string to compare
+                arg1 = arg1.toString();
+                arg2 = arg2.toString();
+                return (arg1.trim() === arg2.trim());
             },
             indexing: function (index) {
                 return index + 1

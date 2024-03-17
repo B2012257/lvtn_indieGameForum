@@ -147,7 +147,8 @@
                                 </select>
 
                             </div>
-                            <label for="inputReleaseDate" class="col-sm-2 col-form-label right__content__label">Ngày
+                            {{!-- <label for="inputReleaseDate"
+                                class="col-sm-2 col-form-label right__content__label">Ngày
                                 phát
                                 hành:</label>
                             <div class="col-sm-10">
@@ -156,7 +157,7 @@
                                         name="releaseDate">
                                 </div>
 
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="mb-3 row border-bottom">
                             <label class="col-sm-2 col-form-label right__content__label">Giá:</label>
@@ -181,8 +182,9 @@
                                     style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
                                     class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
                                 <div class="col-5 mt-2 mb-2">
-                                    <input class="form-control" type="text" id="payInput" onblur="validatePrice(event)"
-                                        style="display: none;" placeholder="VND">
+                                    <input class="form-control" type="text" name="priceValue" id="payInput"
+                                        oninput="validatePrice(event)" style="display: none;" value="0"
+                                        placeholder="VND">
                                     <p id="payAmountError" style="display: none;">Vui lòng chỉ nhập số nguyên!</p>
                                 </div>
 
@@ -282,14 +284,14 @@
                             <div class="col-12 ps-4 pe-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft"
-                                        checked value="draft">
+                                        checked value="0">
                                     <label class="form-check-label right__content__label" for="flexRadioDraft">
                                         Bản nháp - Chỉ có bạn mới có thể xem
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic"
-                                        value="public">
+                                        value="1">
                                     <label class="form-check-label right__content__label" for="flexRadioPublic">
                                         Công khai - Mọi người đều có thể xem
                                     </label>

@@ -40,13 +40,17 @@
                 </ul>
             </div>
             <div class="heading_content__title__right">
-                <button class="btn btn-outline-success buy_btn">
-                    <i class="fa-regular fa-credit-card me-2"></i>
-                    Mua</button>
-                <button class="btn btn-outline-primary follow_btn">
+                <a href="/project/{{projectInfo.id}}/pay" class="btn-action-project btn btn-outline-success buy_btn 
+                {{#unless (ifEquals projectInfo.releaseStatus " Đã phát hành") }} disabled {{/unless}} {{!-- Kiểm tra
+                    nếu chưa phát hành thì cũng không được mua --}} {{#if (ifEquals user.id projectInfo.user.id) }}
+                    disabled{{/if}}" {{!-- Kiểm tra nếu là tác giả thì không được mua --}}>
+
+                    <i class=" fa-regular fa-credit-card me-2"></i>
+                    Mua</a>
+                <button class="btn-action-project btn btn-outline-primary follow_btn">
                     <i class="fa-solid fa-plus fa-bounce me-2"></i>
                     Theo dõi</button>
-                <button class="btn btn-outline-danger">
+                <button class="btn-action-project btn btn-outline-danger">
                     <i class="fa-regular fa-heart"></i>
                 </button>
                 {{#if (ifEquals user.id projectInfo.user.id)}}
@@ -78,9 +82,17 @@
 <main class="container">
     <div class="row">
         <div class="col-8 pt-4">
-            <div id="editor" class="mt">
-                {{{projectInfo.long_description}}}
+            {{#with projectInfo}}
+            <div id="project_id" class="d-none">{{this.id}}
             </div>
+            <p id="project_long_description" class="d-none">
+                {{long_description}}
+            </p>
+            <div id="editor" class="mt">
+                {{!-- {{{long_description}}} --}}
+            </div>
+            {{/with}}
+
         </div>
         <div class="col-4 pt-4">
             <h5 class="d-inline-block">Thông tin dự án
@@ -102,10 +114,19 @@
                 </li>
 
 
-                <li class="list-group-item">Giá: {{price}}</li>
+                <li class="list-group-item">Giá:
+
+                    <span class="text-success">{{price}}</span>
+                </li>
                 {{#if versions}}
                 <li class="list-group-item">Trạng thái phát hành:
-                    {{releaseStatus}}.</li>
+                    {{#if (ifEquals releaseStatus " Đã phát hành") }}
+                    <span class="text-success">{{releaseStatus}}.</span>
+                    {{else}}
+                    <span class="text-warning">{{releaseStatus}}.</span>
+
+                    {{/if}}
+                </li>
                 {{#each versions}}
 
                 <li class="list-group-item">Phiên bản hiện tại: {{this.version_number}}.</li>
@@ -137,5 +158,7 @@
         </div>
     </div>
 </main>
-{{!--
-<script src="/javascripts/my_project.js"></script> --}}
+<script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
+
+
+<script src="/javascripts/project_view.js"></script>

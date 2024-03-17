@@ -1,14 +1,19 @@
 <link rel="stylesheet" href="/stylesheets/my_project.css">
 <main style="margin-top: 70px" class="container">
-
+    {{#unless projects}}
+    <ul style="list-style: none;">
+        <li>Chưa có dự án nào</li>
+    </ul>
+    {{/unless}}
     {{#each projects}}
     {{#if (ifEquals this.user.id user.id)}}
     <ul style="list-style: none;">
         <li data-id="{{this.id}}">{{indexing @index}}. {{this.name}}
-            <a href="/user/project/{{this.slug}}/view">Xem</a>,
+            <a href="/project/{{this.slug}}/view">Xem</a>,
             <a href="/user/project/{{this.id}}/edit">Điều chỉnh trang</a>
         </li>
     </ul>
+
     {{/if}}
     {{/each}}
 </main>

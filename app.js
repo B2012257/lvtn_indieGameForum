@@ -19,6 +19,8 @@ const classifications = require('./configs/classifications.json')
 const genres = require('./configs/genres.json')
 const tags = require('./configs/tags.json')
 
+
+
 db.sequelize.sync()
   .then(() => {
     //Kiểm tra và thêm các dụ liệu mặc định vào trang web
@@ -133,6 +135,7 @@ app.use(function (err, req, res, next) {
     title: "Page not found",
     error_code: "404",
     error_msg: "Không tìm thấy trang.",
+    user_suggest: "Vui lòng kiểm tra lại đường dẫn hoặc quay về trang chủ.",
     header: true,
     user: req.user || req.session.user,
     errors: res.locals.error

@@ -16,8 +16,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         long_description: {
             type: Sequelize.TEXT('long'),
-            allowNull: false,
-            defaultValue: ''
+            allowNull: true,
+            // defaultValue: "Default description"
         },
         isPublic: {
             type: Sequelize.BOOLEAN,
@@ -37,7 +37,7 @@ module.exports = (sequelize, Sequelize) => {
         price: {
             type: Sequelize.DECIMAL(10, 0),
             allowNull: false,
-            defaultValue: 0.00
+            defaultValue: 0.00,
         },
         project_folder_id: {
             type: Sequelize.STRING,

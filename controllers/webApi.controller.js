@@ -159,7 +159,6 @@ const uploadProject = async (req, res) => {
         let newVersion = await db.version.create({
             projectId: project.id,
         })
-        console.log('versionId', newVersion)
 
         for (const file of newArrayFiles) {
             let fileResponse = await ggdrive.uploadCompressedFile({

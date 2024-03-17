@@ -3,6 +3,7 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
     ckfinder: {
         uploadUrl: '/api/upload-image',
     },
+
     // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
     toolbar: {
         items: [
@@ -111,6 +112,7 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
             }
         ]
     },
+
     // The "superbuild" contains more premium features that require additional configuration, disable them below.
     // Do not turn them on unless you read the documentation and know how to configure them and setup the editor.
     removePlugins: [
@@ -151,6 +153,9 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
 
 // Xử lí khi trình soạn thảo đã sẵn sàng
 editor.then(async editor => {
+    window.editor = editor;
+
+
     const content = getDescription();
     // Đặt nội dung vào trình soạn thảo
     await editor.setData(content);
@@ -167,7 +172,6 @@ function getDescription() {
 }
 function saveDescription(editor) {
     const editorData = editor.getData();
-    console.log(editorData);
     let projectId = document.querySelector("#project_id").textContent
     fetch("/api/v1/project/update/description", {
         method: 'POST',

@@ -7,6 +7,11 @@
     font-family: 'Roboto', sans-serif;
 }
 
+.btn {
+    padding: 2px 14px;
+    border-radius: 20px;
+}
+
 .card {
     border: none;
 }

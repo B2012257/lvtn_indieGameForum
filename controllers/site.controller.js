@@ -7,7 +7,10 @@ const getIndexPage = async (req, res) => {
     let projectDB = await db.project.findAll({
         include: [
             db.tag, db.image,
-        ]
+        ],
+        where: {
+            isPublic: true
+        }
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     return res.render("index", {
@@ -208,6 +211,35 @@ const getProjectViewPage = async (req, res) => {
         user: req.user || req.session.user,
     })
 }
+const getPayViewPage = async (req, res) => {
+    let id = req.params.id
+    let projectDB = await db.project.findOne({
+        where: {
+            id
+        },
+        include: [
+            db.classification, db.tag, db.genre, db.user, {
+                model: db.version,
+                include: [db.download],
+                // limit: 1 //Giới hạn 1 phiên bản mới nhất
+            }, {
+                model: db.image,
+                where: {
+                    isCoverImage: true
+                }
+            }
+        ]
+        , order: [[db.image, 'createdAt', 'DESC']]
+    })
+    let projectInfo = JSON.parse(JSON.stringify(projectDB))
+    res.render("pay_view", {
+        title: 'Thanh toán ' + projectInfo.name,
+        header: true,
+        footer: false,
+        projectInfo,
+        user: req.user || req.session.user,
+    })
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
@@ -216,5 +248,6 @@ module.exports = {
     getCreateProjectPage,
     getEditInterfaceProjectPage,
     getMyProjectPage,
-    getProjectViewPage
+    getProjectViewPage,
+    getPayViewPage
 }

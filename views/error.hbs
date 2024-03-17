@@ -9,14 +9,16 @@
                 <span class="display-1 fw-bold"> {{error_code }} </span>
                 <p class="fs-3 ">
 
-                    <span class="text-danger">  Opps! </span>
+                    <span class="text-danger"> Opps! </span>
                     {{error_msg}}
-                </p></div>
+                </p>
+            </div>
         </div>
         <p class="lead mt-2">
-            Trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
+            {{user_suggest}}
             <image class="align-baseline" src="/images/why.gif" width="50px"> </image>
         </p>
         <a href="#" onclick="history.back()" class="btn btn-primary">Quay về</a>
+        {{redirectMessage}} <a href="{{redirect}}"> {{redirectName}}</a>
     </div>
 </div>
