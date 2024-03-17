@@ -86,21 +86,7 @@ const getCreateProjectPage = async (req, res) => {
         .then((row) => {
             genres = JSON.parse(JSON.stringify(row))
         })
-    // let genres = [
-    //     {
-    //         id: 1,
-    //         name: "Kinh dị"
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Phiêu lưu"
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Sinh tồn"
-    //     },
-    // ]
-    //Sau này lấy tag từ bacekend
+
 
     let tags;
     await db.tag.findAll(
@@ -204,7 +190,7 @@ const getProjectViewPage = async (req, res) => {
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     res.render("project_view", {
-        title: 'Xem ' + slug,
+        title: 'Xem ' + projectDB.name,
         header: true,
         footer: false,
         projectInfo,
@@ -213,27 +199,25 @@ const getProjectViewPage = async (req, res) => {
 }
 const getPayViewPage = async (req, res) => {
     let id = req.params.id
+    console.log(id);
     let projectDB = await db.project.findOne({
-        where: {
-            id
-        },
+
         include: [
             db.classification, db.tag, db.genre, db.user, {
                 model: db.version,
                 include: [db.download],
+                order: [['createdAt', 'DESC']],
                 // limit: 1 //Giới hạn 1 phiên bản mới nhất
-            }, {
-                model: db.image,
-                where: {
-                    isCoverImage: true
-                }
-            }
-        ]
-        , order: [[db.image, 'createdAt', 'DESC']]
+            },
+            db.image,
+        ],
+        where: {
+            id
+        },
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     res.render("pay_view", {
-        title: 'Thanh toán ' + projectInfo.name,
+        title: 'Thanh toán ' + projectInfo?.name,
         header: true,
         footer: false,
         projectInfo,
