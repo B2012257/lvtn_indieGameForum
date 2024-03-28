@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         amount: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DECIMAL(10, 2),
             allowNull: false
         },
         lastPrice: {

@@ -28,11 +28,10 @@
                 </div>
                 <p class="dis my-3 info">{{projectInfo.short_description}}</p>
                 <p class="dis mb-3 updates">Free updates forever</p>
-                <p class="dis mb-3 different">Three different colored sets:</p>
                 <div class="dis">
-                    <p class="black"><span class="fas fa-arrow-right mb-3 pe-2"></span>Black</p>
+                    {{!-- <p class="black"><span class="fas fa-arrow-right mb-3 pe-2"></span>Black</p>
                     <p class="white"><span class="fas fa-arrow-right mb-3 pe-2"></span>White</p>
-                    <p class="pastel"><span class="fas fa-arrow-right mb-3 pe-2"></span>Pastel</p>
+                    <p class="pastel"><span class="fas fa-arrow-right mb-3 pe-2"></span>Pastel</p> --}}
                 </div>
 
             </div>
@@ -49,7 +48,7 @@
                 <div class="d-flex flex-column dis">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p>Giá</p>
-                        <p>100.000 VND</p>
+                        <p>{{projectInfo.price}}</p>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="d-flex align-items-center">
@@ -58,24 +57,24 @@
                                     <span id="code" class="pe-2"></span>
                             </p>
                         </div>
-                        <p></span>10% (10.000 VND)</p>
+                        <p></span>0% (0 VND)</p>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p class="fw-bold">Tổng thanh toán</p>
-                        <p class="fw-bold"></span>90.000 VND</p>
+                        <p class="fw-bold"></span>{{projectInfo.price}} VND</p>
                     </div>
                     <div class="row">
                         <div class="col">
                             <form class="" action="/user/payment/vnpay/pay/{{projectInfo.id}}" method="POST">
-                                <button type="submit" class="w-100 btn btn-primary mt-2">VNPay 90.000 VND
+                                <button type="submit" class="w-100 btn btn-primary mt-2">VNPay VND
                                 </button>
                             </form>
 
                         </div>
                         <div class="col">
                             <form class="flex-1" action="/user/payment/paypal/pay/{{projectInfo.id}}" method="POST">
-                                <button type="submit" class="w-100 btn btn-primary mt-2">Paypal 4.0$
+                                <button type="submit" class="w-100 btn btn-primary mt-2">Paypal USD
                                 </button>
                             </form>
                         </div>

@@ -83,7 +83,7 @@
     width: 5%;
 }
 
-.carousel-item aside {
+.carousel-item a {
     min-height: 350px;
     position: relative;
     cursor: pointer;

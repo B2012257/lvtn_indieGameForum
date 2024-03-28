@@ -17,7 +17,7 @@ passport.use(new GoogleStrategy({
         // console.log(accessToken, refreshToken, profile)
         //Kiem tra xem co trong db chua
         let email = profile.emails[0].value
-
+        const avatarUrl = profile.photos[0].value;
         const isExist = await db.user.findOne(
             {
                 where: {
@@ -32,7 +32,8 @@ passport.use(new GoogleStrategy({
                 id: isExist.id,
                 name: profile.displayName,
                 email,
-                token
+                token,
+                avatarUrl
             }
             console.log(user)
             return done(null, user);
@@ -52,7 +53,8 @@ passport.use(new GoogleStrategy({
                     name: profile.displayName,
                     googleId: profile.id,
                     email,
-                    roleId: newRoleUser.id
+                    roleId: newRoleUser.id,
+                    avatarUrl
                 })
                 .then(row => {
                     return done(null, row)
@@ -64,6 +66,7 @@ passport.use(new GoogleStrategy({
         }
     }));
 passport.serializeUser((user, done) => {
+    console.log(user);
     done(null, user);
 });
 

@@ -8,7 +8,8 @@ module.exports = (sequelize, Sequelize) => {
         version_number: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: '1.0'
+            defaultValue: '1.0',
+            unique: true
         },
         release_Date: {
             type: Sequelize.DATE,
@@ -18,6 +19,12 @@ module.exports = (sequelize, Sequelize) => {
         install_guide: {
             type: Sequelize.STRING,
             defaultValue: ""
+        },
+        versionFolderId: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            defaultValue: ""
+
         }
     });
 };

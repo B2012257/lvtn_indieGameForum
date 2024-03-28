@@ -7,6 +7,13 @@ const platform = {
     android: 'Android',
 
 }
+const experience = {
+    1: 'Tệ',
+    3: 'Trung bình',
+    5: 'Tốt',
+    7: 'Rất tốt',
+    10: 'Xuất sắc'
+}
 module.exports = {
-    platform
+    platform, experience
 }

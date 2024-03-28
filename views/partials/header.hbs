@@ -32,8 +32,8 @@
                 {{#if user}}
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    {{#if user.avatar}}
-                    <img src="{{user.avatar}}" alt="mdo" width="32" height="32" class="rounded-circle">
+                    {{#if user.avatarUrl}}
+                    <img src="{{user.avatarUrl}}" alt="mdo" width="32" height="32" class="rounded-circle">
                     {{user.name}}
                     {{else}}
                     <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
@@ -44,7 +44,7 @@
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
                     <li><a class="dropdown-item" href="/user/projects">Dự án của tôi</a></li>
                     <li><a class="dropdown-item" href="/user/project/create">Đăng tải dự án mới</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="/user/libary">Thư viện</a></li>
                     <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
                     <li>
                         <hr class="dropdown-divider">

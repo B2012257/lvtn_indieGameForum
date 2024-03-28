@@ -691,16 +691,17 @@
         platformName.innerHTML += fileName
     }
     async function uploadProjectFile() {
-        //Lấy tât cả các file đã chọn
+        //Lấy tât cả các file đã chọn và số phiên bản
         return new Promise((resolve, reject) => {
 
             let formDatas = new FormData()
             if (projectFiles.length > 0) {
                 toggleVisibility({ isToggle: true, elementClassName: "upload_project_file", value: "3. Đang tải lên tệp dự án..." })
             }
+
+            formDatas.append('version', document.getElementById('inputVersion').value);
             for (let i = 0; i < projectFiles.length; i++) {
                 projectFiles[i].file.platform = projectFiles[i].platform
-                console.log(projectFiles[i].file)
                 formDatas.append(projectFiles[i].file.platform, projectFiles[i].file);
             }
             console.log(formDatas)

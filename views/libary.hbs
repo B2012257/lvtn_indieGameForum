@@ -1,0 +1,71 @@
+<main class="container" style="margin-top: 71px">
+
+    <div class="row">
+
+        {{!-- <div class="col-md-4">
+            <div class="card" style="width: 18rem;">
+                <img src="https://i.imgur.com/ZTkt4I5.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                        the
+                        card's content.</p>
+                    <a href="#" class="btn mr-2"><i class="fas fa-link"></i> Visit Site</a>
+                    <a href="#" class="btn"><i class="fab fa-github"></i> Github</a>
+                </div>
+            </div>
+        </div> --}}
+        <div class="container">
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title m-b-0">Danh sách dự án đã mua</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>
+                                            <label class="customcheckbox m-b-20">
+                                                <input type="checkbox" id="mainCheckbox">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </th>
+                                        <th scope="col">Tên dự án</th>
+                                        <th scope="col">Nhà phát triển</th>
+                                        <th scope="col">Ngày mua</th>
+                                        <th scope="col">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="customtable">
+                                    {{#each project}}
+                                    <tr>
+                                        <td>{{indexing @index}}</td>
+                                        <td>{{this.name}}</td>
+                                        <td>{{this.user.name}}</td>
+                                        <td></td>
+                                        <td>
+                                            <a href="/project/{{this.slug}}/view">Xem</a>
+                                            <a href="/project/{{this.slug}}/rating">Đánh giá</a>
+
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script>
+
+</script>

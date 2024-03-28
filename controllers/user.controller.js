@@ -8,12 +8,13 @@ const transporter = require("../services/nodemailer/index")
 const querystring = require('qs');
 const crypto = require("crypto");
 const vnpay = require('vnpay');
+const { log } = require('console');
 const VNPay = vnpay.VNPay
 
 // Cấu hình VNPay
 const vnp_TmnCode = '65Z5FVGZ'; // Mã website của bạn
 const vnp_HashSecret = 'UQYGOWVNTZAWLCNRSNRTPLSURADBATEI'; // Khóa bảo mật của bạn
-const returnUrl = 'http://localhost:3000/user/order/vnpay_return';
+const returnUrl = 'http://localhost:3000/user/order/vnpay_return/';
 
 const vnpayClient = new VNPay({
     api_Host: 'https://sandbox.vnpayment.vn',
@@ -39,7 +40,6 @@ const uploadProject = async (req, res) => {
     try {
 
         const projectInfo = req.body
-        console.log(JSON.stringify(projectInfo))
         //Tìm project trong db thông qua folder_id và project_name để lưu các thông tin còn thiếu
         //Nếu không tìm thấy thì báo lỗi vui lòng thử lại và không lưu thông tin, trả về client
 
@@ -53,26 +53,24 @@ const uploadProject = async (req, res) => {
             })
             if (project_db) {
                 //Cập nhật số phiên bản
-                let version = projectInfo.version
-                db.version.update({
-                    version_number: version
-                }, {
-                    where: {
-                        projectId: project_db.id
-                    }
-                })
-                    .then(row => {
-                        console.log(row)
-                    })
-                    .catch(err => {
-                        console.log(err)
+                // let version = projectInfo.version
+                // db.version.update({
+                //     version_number: version
+                // }, {
+                //     where: {
+                //         projectId: project_db.id
+                //     }
+                // })
+                //     .then(row => {
+                //     })
+                //     .catch(err => {
+                //         console.log(err)
 
-                    })
+                //     })
                 //Lưu thông tin vào db//
                 //Kiểm tra tags nếu tìm thấy thì lưu id vào project_tag, còn không tìm thấy thì lưu mới vào db và lưu vào project_tag
                 let project_tags = []
                 project_tags = projectInfo.tags.split(",") // array of tags
-                console.log(project_tags)
                 project_tags.forEach(async projectTagName => {
                     if (projectTagName.trim() === "") { return console.log("Tag rỗng") }
                     else
@@ -87,7 +85,6 @@ const uploadProject = async (req, res) => {
                         })
                             .then(async ([tagInstance, created]) => {
                                 await project_db.addTag(tagInstance.id);
-                                console.log('Tag đã được thêm vào project.');
                                 // Kiểm tra nếu tag được tạo mới hoặc đã tồn tại
                                 // if (created) {
                                 //     console.log('Tag:', tagInstance.id);
@@ -137,7 +134,6 @@ const uploadProject = async (req, res) => {
                     }
                 })
                     .then(row => {
-                        console.log(row)
                         res.redirect(`/user/project/${project_db.id}/edit`);
 
                     })
@@ -158,22 +154,27 @@ const uploadProject = async (req, res) => {
         console.log(error);
     }
 }
-
+let project_id = 0;
+let total = 0
+let project_name = ""
 const payWithPaypal = async (req, res) => {
-    let project_id = req.params.id;
+    project_id = req.params.id;
     let payer_email = req.session?.user?.email ?? req.user?.email;
     // console.log(process.env.PAYPAL_MODE, process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET)
     //Tính toán tiền phải thanh toán
     // Qui đổi ngoại tệ
     // Tỷ giá hối đoái từ VND sang USD (ví dụ)
-    const VND_TO_USD_EXCHANGE_RATE = 0.000043;
-    const { price } = await db.project.findOne({
+    const VND_TO_USD_EXCHANGE_RATE = 0.000040;
+    let project_db = await db.project.findOne({
         where: {
             id: project_id
         },
     })
-    console.log(price, payer_email);
-    const amount = price * VND_TO_USD_EXCHANGE_RATE; // Lấy số tiền từ yêu cầu
+    project_db = JSON.parse(JSON.stringify(project_db))
+    project_name = project_db.name
+    let amount = project_db.price * VND_TO_USD_EXCHANGE_RATE; // Lấy số tiền từ yêu cầu
+    amount = Math.round(amount * 100) / 100
+    total = amount
     console.log(amount);
     // Tạo đơn hàng
     const create_payment_json = {
@@ -216,13 +217,13 @@ const paypalSuccess = async (req, res) => {
         "payer_id": payerId,
     };
 
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+
+    paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
         if (error) {
             console.log(error.response);
             throw error;
         } else {
-            console.log(payment);
-            res.send('Thanh toán thành công!');
+            console.log(payment)
             // Gửi email thông báo khi thanh toán thành công
             const mailOptions = {
                 from: 'Admin Indie Game VN (-.-)',
@@ -274,8 +275,8 @@ const paypalSuccess = async (req, res) => {
         <p>Your payment was successful. Thank you for your purchase!</p>
         <p>Details of your purchase:</p>
         <ul>
-            <li><strong>Product:</strong> Product Name</li>
-            <li><strong>Price:</strong> $25.00</li>
+            <li><strong>Product:</strong>${project_name}</li>
+            <li><strong>Price:</strong> $${total}</li>
         </ul>
         <p>If you have any questions, please feel free to contact us.</p>
         <p>
@@ -287,11 +288,58 @@ const paypalSuccess = async (req, res) => {
 </html>
 `
             };
+
+            // Lưu thông tin giao dịch vào db
+
+            //Lấy ra phương thức thanh toán
+            let payment_method_db = await db.payment_method.findOne({
+                where: {
+                    name: "paypal"
+                }
+            })
+            //Lấy ra userId và ProjectId
+            let project_db = await db.project.findOne({
+                where: {
+                    id: project_id
+                },
+                include: [
+                    {
+                        model: db.version,
+                        order: [['createdAt', 'DESC']],
+                    }
+                ]
+            })
+            project_db = JSON.parse(JSON.stringify(project_db))
+            let payer = await db.user.findOne({
+                where: {
+                    email: payer_email
+                },
+
+            })
+            console.log(project_db)
+            //Lưu thông tin giao dịch
+            await db.payment.create({
+                userId: payer.id,
+                projectId: project_db.id,
+                status: "Success",
+                dateOfPayment: new Date(),
+                amount: payment.transactions[0].amount.total,
+                lastPrice: payment.transactions[0].amount.total,
+                paymentMethodId: payment_method_db.id
+            })
+            //share thư mục phiên bản file tải game
+            await ggdrive.shareFile({ fileId: project_db.versions[0].versionFolderId, emailToShare: payer.email, shareToUser: true })
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
                     console.log(error);
                 } else {
                     console.log('Email sent: ' + info.response);
+                    // 
+                    res.render('payment_return', {
+                        title: 'Thông tin thanh toán',
+                        message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
+
+                    })
                 }
             });
 
@@ -301,12 +349,24 @@ const paypalSuccess = async (req, res) => {
 const paypalCancel = async (req, res) => {
     res.send("Thanh toán đã bị hủy bỏ")
 }
+let payvnpay_email = ""
 const payWithVnpay = async (req, res) => {
+    project_id = req.params.id;
+    payvnpay_email = req.session?.user?.email ?? req.user?.email;
     //randome tnx 
-    const tnx = '12345678' + Math.floor(Math.random() * 1000); // Generate your own transaction code
+    const tnx = 'Zacofnj8' + Math.floor(Math.random() * 1000); // Generate your own transaction code
+
+    let project_db = await db.project.findOne({
+        where: {
+            id: project_id
+        },
+    })
+    project_db = JSON.parse(JSON.stringify(project_db))
+    project_name = project_db.name
+    let amount = project_db.price; // Lấy số tiền từ yêu cầu
 
     const urlString = vnpayClient.buildPaymentUrl({
-        vnp_Amount: 100000,
+        vnp_Amount: amount,
         vnp_IpAddr: '192.168.0.1',
         vnp_ReturnUrl: returnUrl,
         vnp_TxnRef: tnx,
@@ -314,28 +374,199 @@ const payWithVnpay = async (req, res) => {
     })
     res.redirect(urlString)
 }
+function sortObject(obj) {
+    let sorted = {};
+    let str = [];
+    let key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            str.push(encodeURIComponent(key));
+        }
+    }
+    str.sort();
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+    }
+    return sorted;
+}
 const payWithVnpayReturn = async (req, res) => {
-    var vnp_Params = req.query;
+    let vnp_Params = req.query;
 
-    var secureHash = vnp_Params['vnp_SecureHash'];
-
+    let secureHash = vnp_Params['vnp_SecureHash'];
+    let amount = vnp_Params['vnp_Amount'];
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
 
     vnp_Params = sortObject(vnp_Params);
 
-    var tmnCode = vnp_TmnCode;
-    var secretKey = vnp_HashSecret;
+    let tmnCode = vnp_TmnCode;
+    let secretKey = vnp_HashSecret;
 
-    var signData = querystring.stringify(vnp_Params, { encode: false });
-    var hmac = crypto.createHmac("sha512", secretKey);
-    var signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
+    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
+
 
     if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-        res.render('success', { code: vnp_Params['vnp_ResponseCode'] })
+        //Xử lý kết quả thanh toán
+        // Gửi email thông báo khi thanh toán thành công
+
+        //Lấy ra phương thức thanh toán
+        let payment_method_db = await db.payment_method.findOne({
+            where: {
+                name: "vnpay"
+            }
+        })
+        //Lấy ra userId và ProjectId
+        let project_db = await db.project.findOne({
+            where: {
+                id: project_id
+            },
+            include: [
+                {
+                    model: db.version,
+                    order: [['createdAt', 'DESC']],
+                }
+            ]
+        })
+        project_db = JSON.parse(JSON.stringify(project_db))
+        const mailOptions = {
+            from: 'Admin Indie Game VN (-.-)',
+            to: payvnpay_email,
+            subject: 'Thông báo thanh toán dự án thành công',
+            text: 'Your payment was successful. Thank you for your purchase.',
+            html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
+        /* CSS inline được sử dụng để đảm bảo hiển thị chính xác trên các máy khách email khác nhau */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #007bff;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Confirmation</h2>
+        <p>Your payment was successful. Thank you for your purchase!</p>
+        <p>Details of your purchase:</p>
+        <ul>
+            <li><strong>Product:</strong>${project_db.name}</li>
+            <li><strong>Price:</strong> ${amount} VND</li>
+        </ul>
+        <p>If you have any questions, please feel free to contact us.</p>
+        <p>
+            Regards,<br>
+            IndieGameVN
+        </p>
+    </div>
+</body>
+</html>
+`
+        };
+
+        // Lưu thông tin giao dịch vào db
+
+
+        let payer = await db.user.findOne({
+            where: {
+                email: payvnpay_email
+            },
+
+        })
+
+        //Lưu thông tin giao dịch
+        await db.payment.create({
+            userId: payer.id,
+            projectId: project_db.id,
+            status: "Success",
+            dateOfPayment: new Date(),
+            amount: amount,
+            lastPrice: amount,
+            paymentMethodId: payment_method_db.id
+        })
+        //share thư mục phiên bản file tải game
+        await ggdrive.shareFile({ fileId: project_db.versions[0].versionFolderId, emailToShare: payer.email, shareToUser: true })
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+                // 
+                res.render('payment_return', {
+                    title: 'Thông tin thanh toán',
+                    message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
+
+                })
+            }
+        });
+
+        res.render('payment_return', {
+            title: 'Chi tiết thanh toán VNPay',
+            message: "Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về."
+        })
     } else {
-        res.render('success', { code: '97' })
+        res.render('payment_return', {
+            title: 'Chi tiết thanh toán VNPay',
+            message: "Thanh toán thất bại! Vui lòng thử lại."
+        })
+    }
+}
+const ratingProject = async (req, res) => {
+    let user = req.session?.user ?? req.user;
+    let project_id = req.body.id;
+    let commentContent = req.body.comment
+    let ratingScore = req.body.experience
+    console.log(user,
+        project_id,
+        commentContent,
+        ratingScore,);
+    try {
+        let projectdb = await db.project.findOne({
+            where: {
+                id: project_id
+            }
+        })
+        await db.user_rating.create({
+            userId: user.id,
+            projectId: project_id,
+            numberStarRate: ratingScore,
+            contentRate: commentContent
+        })
+        projectdb = JSON.parse(JSON.stringify(projectdb))
+        res.redirect(`/project/${projectdb.slug}/rating`)
+    } catch (e) {
+        console.log(e);
     }
 }
 module.exports = {
@@ -344,5 +575,6 @@ module.exports = {
     paypalSuccess,
     paypalCancel,
     payWithVnpay,
+    ratingProject,
     payWithVnpayReturn
 }

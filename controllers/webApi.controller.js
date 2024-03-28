@@ -2,9 +2,9 @@ const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 const { platform } = require('../configs/constraint')
 
-//[POST] /api/v1/upload-cover-image
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
+
 let folderIdPublic;
 let project_name_and_random
 const uploadImage = async (req, res) => {
@@ -17,10 +17,10 @@ const uploadImage = async (req, res) => {
     //tạo thư mục dự án trên DRIVE
     folderIdPublic = await drive.createFolder({
         name: project_name_and_random,
+        // parents: process.env.PROJECT_FOLDER_ID_DRIVE,
         shareToUser: true,
         shareToEmail: req.session?.user?.email ?? req.user?.email
     })
-    console.log("vao 2", folderIdPublic)
     const file = req.file
     //Nếu tạo thành công
     if (folderIdPublic) {
@@ -48,7 +48,6 @@ const uploadImage = async (req, res) => {
                             isCoverImage: true
                         })
                             .then(row => {
-                                console.log(row);
                                 res.json({
                                     folderIdPublic,
                                     status: 200, message: "Upload file success!",
@@ -136,8 +135,12 @@ const saveDescription = async (req, res) => {
 
 //Api tải lên file dự án vào drive
 const uploadProject = async (req, res) => {
+    console.log("concack");
     //Lưu 1 version vào db,  sau đó lưu vào bảng Dowload link trò chơi
+    let version = req.body.version
+
     const files = { ...req.files }
+    console.log(files);
     let urlResponse = []
     const newArrayFiles = [];
     //Biến đổi để dễ code hơn
@@ -156,8 +159,17 @@ const uploadProject = async (req, res) => {
                 project_folder_id: folderIdPublic
             }
         })
+        //Tạo 1 thử mục version
+        let versionFolderId = await ggdrive.createFolder({
+            name: version,
+            parents: project.project_folder_id,
+            // shareToUser: true,
+            // shareToEmail: req.session?.user?.email ?? req.user?.email
+        })
         let newVersion = await db.version.create({
             projectId: project.id,
+            versionFolderId,
+            version_number: version
         })
 
         for (const file of newArrayFiles) {
@@ -165,7 +177,7 @@ const uploadProject = async (req, res) => {
                 file: file,
                 shareToUser: true,
                 shareTo: req.session?.user?.email ?? req.user?.email,
-                parent: folderIdPublic
+                parent: versionFolderId
             })
             //Tạo 1 dowload và lưu vào db
             await db.download.create({

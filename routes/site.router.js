@@ -18,8 +18,11 @@ router.get('/logout', (req, res) => {
 router.get('/user/project/create', authMiddleware.isLogin, siteController.getCreateProjectPage)
 router.get('/user/project/:id/edit', authMiddleware.isLogin, siteController.getEditInterfaceProjectPage)
 router.get('/user/projects', authMiddleware.isLogin, siteController.getMyProjectPage)
-router.get('/project/:slug/view', authMiddleware.isLogin, siteController.getProjectViewPage) //xem dự án
+router.get('/project/:slug/view', siteController.getProjectViewPage) //xem dự án
+
 router.get('/project/:id/pay', authMiddleware.isLogin, siteController.getPayViewPage) //trang thanh toan dự án
+router.get('/user/libary', authMiddleware.isLogin, siteController.getLibaryPage)
+router.get('/project/:slug/rating', siteController.getRatingPage)
 
 router.get('/games', siteController.getGamesPage)
 router.get('/', siteController.getIndexPage)

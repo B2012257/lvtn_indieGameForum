@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/stylesheets/project_view.css">
+<link rel="stylesheet" href="/stylesheets/project_rate.css">
 <div class="heading" style="margin-top: 72px; padding-bottom: 10px">
     {{!-- <div class="change_theme">
         <div class="change_background_btn">
@@ -32,11 +32,12 @@
 
                     </li>
                     <li class="title__left__list__item">
-                        <a href="#" class="active pt-2 pb-2 text-decoration-none text-black">Tổng quan</a>
+                        <a href="/project/{{projectInfo.slug}}/view"
+                            class=" pt-2 pb-2 text-decoration-none text-black">Tổng
+                            quan</a>
                     </li>
                     <li class="title__left__list__item">
-                        <a href="/project/{{projectInfo.slug}}/rating"
-                            class="pt-2 pb-2 text-decoration-none text-black text-primary">Đánh giá</a>
+                        <a href="#" class="pt-2 active pb-2 text-decoration-none text-black text-primary">Đánh giá</a>
                     </li>
                 </ul>
             </div>
@@ -51,9 +52,9 @@
                     Vào thư viện</a>
                 {{else}}
                 <a href="/project/{{projectInfo.id}}/pay" class="btn-action-project btn btn-outline-success buy_btn 
-                                                {{#unless (ifEquals projectInfo.releaseStatus " Đã phát hành") }}
-                    disabled {{/unless}} {{!-- Kiểm tra nếu chưa phát hành thì cũng không được mua --}} {{#if (ifEquals
-                    user.id projectInfo.user.id) }} disabled{{/if}} {{#unless projectInfo.versions}}
+                                                            {{#unless (ifEquals projectInfo.releaseStatus " Đã phát
+                    hành") }} disabled {{/unless}} {{!-- Kiểm tra nếu chưa phát hành thì cũng không được mua --}} {{#if
+                    (ifEquals user.id projectInfo.user.id) }} disabled{{/if}} {{#unless projectInfo.versions}}
                     disabled{{/unless}}" {{!-- Kiểm tra nếu là tác giả thì không được mua --}}{{#unless
                     projectInfo.versions}} title="Phiên bản tải xuống chưa có sẳn" {{/unless}}>
                     <i class=" fa-regular fa-credit-card me-2"></i>
@@ -96,38 +97,117 @@
             </div>
 
         </div>
-        <div class="carousel container p-0 mt-4">
 
-            <ul class="carousel__thumbnails gap-2 pb-2">
-                {{#if projectInfo.images}}
-                {{#each projectInfo.images}}
-                {{#unless this.isCoverImage}}
-                <li>
-                    <img src="{{this.url}}" alt=""></label>
-                </li>
-                {{/unless}}
-
-                {{/each}}
-                {{/if}}
-            </ul>
-        </div>
     </div>
 </div>
 <main class="container">
+
     <div class="row">
-        <div class="col-8 pt-4">
+        <div class="col-12 pt-4 comment-wrapper">
             {{#with projectInfo}}
             <div id="project_id" class="d-none">{{this.id}}
             </div>
-            <p id="project_long_description" class="d-none">
-                {{long_description}}
-            </p>
-            <div id="editor" class="mt">
+
+            <div id="" class="mt">
             </div>
             {{/with}}
+            {{#if user}}
+            {{!-- Nếu đã dăng nhâp --}}
+            {{#if isOnwerGame}}
+            {{!-- Nếu đã mua game --}}
+            {{#unless isRateGame}}
+            {{!-- Nếu chưa đánh giá --}}
+            <div class=" container mt-5 mb-5 d-flex justify-content-center ">
+
+                <div class="card">
+                    <div class="p-3">
+                        <div class="first text-center"> <img src="https://i.imgur.com/KCcF6WN.png" width="80">
+                            <h3 class="mt-2">Thanks you</h3>
+                            <p class="text-black-50">Cảm ơn bạn vì đã mua dự án này! Để lại đánh giá để góp ý cho nhà
+                                phát triển</p>
+                        </div>
+                        {{!-- Form đánh giá --}}
+                        {{!-- Kiểm tra người mua rồi mới được hiện form đánh giá --}}
+                        <div class="border p-3 rounded">
+                            <form action="/user/project/{{projectInfo.slug}}/rating" method="POST">
+                                <div class="row">
+                                    <input type="text" hidden name="id" value="{{projectInfo.id}}">
+                                    <div class="col"> <label class="radio">
+                                            <input type="radio" name="experience" value="1">
+                                            <span>Tệ</span> </label> </div>
+                                    <div class="col"> <label class="radio">
+                                            <input type="radio" name="experience" value="3">
+                                            <span>Trung bình</span> </label> </div>
+                                    <div class="col"> <label class="radio">
+                                            <input type="radio" name="experience" value="5" checked>
+                                            <span>Tốt</span> </label>
+                                    </div>
+                                    <div class="col"> <label class="radio">
+                                            <input type="radio" name="experience" value="7">
+                                            <span>Quá tốt</span> </label> </div>
+                                    <div class="col"> <label class="radio">
+                                            <input type="radio" name="experience" value="10">
+                                            <span>Tốt nhất</span> </label> </div>
+                                </div>
+                                <div class="mt-4">
+                                    <textarea class="area form-control" rows="4" placeholder="add comments"
+                                        name="comment"> </textarea>
+                                </div>
+                                <div class="button mt-4 text-right">
+                                    <button type="submit" class="btn btn-success submit-button">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{/unless}}
+                {{/if}}
+                {{/if}}
+            </div>
+
+            <div class="container-sm d-flex justify-content-center ">
+                <div class="row w-75">
+                    <div class="col-sm-12">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Đánh giá gần đây</h4>
+                            </div>
+                            {{#if ratingInfo}}
+                            {{#each ratingInfo}}
+                            <div class="comment-widgets m-b-20">
+
+                                <div class="d-flex flex-row comment-row">
+                                    <div class="p-2">
+                                        <span class="round"><img src="https://avatars.githubusercontent.com/u/98681?v=4"
+                                                alt="user" width="50"></span>
+                                    </div>
+                                    <div class="comment-text w-100">
+                                        <p hidden> {{this.user.id}}</p>
+                                        <p hidden> {{this.id}}</p>
+
+                                        <span class="me-1">{{this.user.name}}</span>
+                                        <span class="badge bg-secondary">{{this.experienceRate}}</span>
+                                        <div class="comment-footer">
+                                            <small class="text-secondary">{{momentTime this.updatedAt}}</small>
+                                            <p class="">{{this.contentRate}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            {{/each}}
+                            {{/if}}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
-        <div class="col-4 pt-4">
+        {{!-- <div class="col-4 pt-4">
             <h5 class="d-inline-block">Thông tin dự án
             </h5>
             <a class="text-decoration-none float-end" href="#">Điều chỉnh</a>
@@ -170,8 +250,6 @@
                 </li>
 
                 {{/each}}
-                {{else}}
-                <li class="list-group-item text-danger">Phiên bản tải xuống chưa có sẳn</li>
                 {{/if}}
                 <li class="list-group-item">Nhà phát triển: {{user.name}}.</li>
 
@@ -190,10 +268,10 @@
                 </li>
             </ul>
             {{/with}}
-        </div>
+        </div> --}}
     </div>
 </main>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
 
 
-<script src="/javascripts/project_view.js"></script>
+<script src="/javascripts/project_rate.js"></script>

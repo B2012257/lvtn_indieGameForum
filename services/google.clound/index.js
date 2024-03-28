@@ -171,12 +171,12 @@ var that = module.exports = {
     },
     //Create new folder with name, return id of this folder
     // id for folder projects. to save all projects in website
-    async createFolder({ name, parents = [process.env.PROJECT_FOLDER_ID_DRIVE], shareToEmail, shareToUser }) {
+    async createFolder({ name, parents, shareToEmail, shareToUser }) {
 
         const metadata = {
             name: name,
             mimeType: 'application/vnd.google-apps.folder',
-            parents: parents || ['']
+            parents: (parents) ? [parents] : [process.env.PROJECT_FOLDER_ID_DRIVE] //[folder id]
         };
         try {
             const file = await drive.files.create({

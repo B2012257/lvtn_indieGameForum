@@ -84,138 +84,86 @@
                                     aria-label="Slide 2"></button>
                                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
                                     aria-label="Slide 3"></button>
-                                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3"
-                                    aria-label="Slide 4"></button>
+                                {{!-- <button type="button" data-bs-target="#carouselExampleCaptions"
+                                    data-bs-slide-to="3" aria-label="Slide 4"></button> --}}
                             </div>
 
                             <div class="carousel-inner"><!--The Carousel Container-->
-
+                                {{#each hotProject}}
+                                {{#if @first}}
                                 <div class="carousel-item active"><!--The Carousel Slider-->
-                                    <aside class="card item text-bg-dark">
+                                    <a href="/project/{{this.slug}}/view" class="card item text-bg-dark">
                                         <div class="left">
-                                            <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                alt="">
+                                            {{#each this.images}}
+                                            {{#if this.isCoverImage}}
+                                            <img src="{{this.url}}" alt="">
+                                            {{/if}}
+                                            {{/each}}
                                         </div>
                                         <div class="right d-flex flex-column">
                                             <div class="row">
-                                                <h4 class="p">Project Name</h4>
+                                                <h4 class="p">{{this.name}}</h4>
                                                 <small style="font-size: 12px;" class="p">
-                                                    <i>By @ThaiPham</i>
+                                                    <i>By {{this.user.name}}</i>
                                                 </small>
                                                 <small style="font-size: 12px;" class="p">
-                                                    <i class="text-danger">20.000 Vnđ </i>
+                                                    <i class="text-danger">{{this.price}} Vnđ </i>
                                                 </small>
                                             </div>
                                             <div class="row">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
+                                                {{#each this.images}}
+                                                {{#unless this.isCoverImage}}
+                                                <img src="{{this.url}}" alt="">
+
+                                                {{/unless}}
+                                                {{/each}}
                                             </div>
                                         </div>
                                         {{!-- <h2 class="name">Tim Spence</h2>
                                         <p class="role">Head of Marketing</p>
                                         <p class="work-at">Markson Inc</p> --}}
 
-                                    </aside>
+                                    </a>
                                 </div>
-                                <div class="carousel-item"><!--The Carousel Slider-->
-                                    <aside class="card item text-bg-dark">
-                                        <div class="left">
-                                            <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                alt="">
-                                        </div>
-                                        <div class="right d-flex flex-column">
-                                            <div class="row">
-                                                <h4 class="p">Project Name</h4>
-                                                <small style="font-size: 12px;" class="p">
-                                                    <i>By @ThaiPham</i>
-                                                </small>
-                                                <small style="font-size: 12px;" class="p">
-                                                    <i class="text-danger">20.000 Vnđ </i>
-                                                </small>
-                                            </div>
-                                            <div class="row">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                            </div>
-                                        </div>
-                                        {{!-- <h2 class="name">Tim Spence</h2>
-                                        <p class="role">Head of Marketing</p>
-                                        <p class="work-at">Markson Inc</p> --}}
-
-                                    </aside>
-                                </div>
-                                <div class="carousel-item"><!--The Carousel Slider-->
-                                    <aside class="card item text-bg-dark">
-                                        <div class="left">
-                                            <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                alt="">
-                                        </div>
-                                        <div class="right d-flex flex-column">
-                                            <div class="row">
-                                                <h4 class="p">Project Name</h4>
-                                                <small style="font-size: 12px;" class="p">
-                                                    <i>By @ThaiPham</i>
-                                                </small>
-                                                <small style="font-size: 12px;" class="p">
-                                                    <i class="text-danger">20.000 Vnđ </i>
-                                                </small>
-                                            </div>
-                                            <div class="row">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                            </div>
-                                        </div>
-                                        {{!-- <h2 class="name">Tim Spence</h2>
-                                        <p class="role">Head of Marketing</p>
-                                        <p class="work-at">Markson Inc</p> --}}
-
-                                    </aside>
-                                </div>
+                                {{else}}
                                 <div class="carousel-item "><!--The Carousel Slider-->
-                                    <aside class="card item text-bg-dark">
+                                    <a href="/project/{{this.slug}}/view" class="card item text-bg-dark">
                                         <div class="left">
-                                            <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                alt="">
+                                            {{#each this.images}}
+                                            {{#if this.isCoverImage}}
+                                            <img src="{{this.url}}" alt="">
+                                            {{/if}}
+                                            {{/each}}
                                         </div>
                                         <div class="right d-flex flex-column">
                                             <div class="row">
-                                                <h4 class="p">Project Name</h4>
+                                                <h4 class="p">{{this.name}}</h4>
                                                 <small style="font-size: 12px;" class="p">
-                                                    <i>By @ThaiPham</i>
+                                                    <i>By {{this.user.name}}</i>
                                                 </small>
                                                 <small style="font-size: 12px;" class="p">
-                                                    <i class="text-danger">20.000 Vnđ </i>
+                                                    <i class="text-danger">{{this.price}} Vnđ </i>
                                                 </small>
                                             </div>
                                             <div class="row">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
-                                                <img src="https://lh3.googleusercontent.com/d/1BcLjyUEN6AkcaGu7Lj6csvJOYd8MGvMe"
-                                                    alt="">
+                                                {{#each this.images}}
+                                                {{#unless this.isCoverImage}}
+                                                <img src="{{this.url}}" alt="">
+
+                                                {{/unless}}
+                                                {{/each}}
                                             </div>
                                         </div>
                                         {{!-- <h2 class="name">Tim Spence</h2>
                                         <p class="role">Head of Marketing</p>
                                         <p class="work-at">Markson Inc</p> --}}
 
-                                    </aside>
+                                    </a>
                                 </div>
+                                {{/if}}
 
 
+                                {{/each}}
                                 <button class="carousel-control-prev" type="button"
                                     data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>

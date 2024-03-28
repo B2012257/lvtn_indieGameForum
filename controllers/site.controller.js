@@ -1,24 +1,46 @@
 const db = require("../models/index")
 const drive = require("../services/google.clound/index")
+const { experience } = require("../configs/constraint")
 //[GET] /
 
 const getIndexPage = async (req, res) => {
 
     let projectDB = await db.project.findAll({
         include: [
-            db.tag, db.image,
+            db.tag, {
+                model: db.image,
+                order: [['createdAt', 'DESC']],
+            },
         ],
         where: {
             isPublic: true
-        }
+        },
+    })
+
+    let hotProject = await db.project.findAll({
+        include: [
+            db.user,
+            {
+                model: db.image,
+                limit: 4
+            }
+        ],
+        where: {
+            isPublic: true
+        },
+        limit: 4,
+        order: [['createdAt', 'DESC']]
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
+    hotProject = JSON.parse(JSON.stringify(hotProject))
+    console.log(hotProject);
     return res.render("index", {
         user: req.user || req.session.user,
         title: "Trang chủ",
         header: true,
         footer: false,
         projectInfo,
+        hotProject,
         isHomeActive: true
     })
 }
@@ -133,7 +155,6 @@ const getEditInterfaceProjectPage = async (req, res) => {
         },
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDb))
-    console.log(projectInfo + "as")
     if (req.user || req.session.user) {
         res.render("preview_project", {
             title: "Trang trí " + projectInfo.name,
@@ -148,7 +169,6 @@ const getEditInterfaceProjectPage = async (req, res) => {
 }
 const getMyProjectPage = async (req, res) => {
     let user = req?.user ?? req?.session?.user
-    console.log(user)
     let projectDB = await db.project.findAll({
         include: [
             db.classification, db.tag, db.genre, db.image, db.user
@@ -158,7 +178,6 @@ const getMyProjectPage = async (req, res) => {
             userId: user.id
         }
     })
-    console.log(req.user || req.session.user);
     let projects = JSON.parse(JSON.stringify(projectDB))
     if (req.user || req.session.user) {
         res.render("my_project", {
@@ -179,7 +198,9 @@ const getProjectViewPage = async (req, res) => {
             slug
         },
         include: [
-            db.classification, db.tag, db.genre, db.image, db.user, {
+            db.classification, db.tag, db.genre, db.image, {
+                model: db.user
+            }, {
                 model: db.version,
                 include: [db.download],
                 order: [['createdAt', 'DESC']],
@@ -188,18 +209,34 @@ const getProjectViewPage = async (req, res) => {
         ]
         , order: [[db.image, 'createdAt', 'DESC']]
     })
+    let payment_info
+    if (req.user?.id || req.session?.user?.id) {
+        payment_info = await db.payment.findOne({
+            where: {
+                projectId: projectDB.id,
+                userId: req.user?.id || req.session?.user?.id
+            },
+            include: [db.payment_method],
+        })
+        payment_info = JSON.parse(JSON.stringify(payment_info))
+    }
+
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
+
+    // Kiểm tra nếu có payment_info thì đã mua
+    console.log(projectInfo.versions[0].downloads);
+    console.log(payment_info);
     res.render("project_view", {
         title: 'Xem ' + projectDB.name,
         header: true,
         footer: false,
         projectInfo,
+        payment_info,
         user: req.user || req.session.user,
     })
 }
 const getPayViewPage = async (req, res) => {
     let id = req.params.id
-    console.log(id);
     let projectDB = await db.project.findOne({
 
         include: [
@@ -224,6 +261,124 @@ const getPayViewPage = async (req, res) => {
         user: req.user || req.session.user,
     })
 }
+
+const getLibaryPage = async (req, res) => {
+    //Lấy ra các dự án đã mua
+    let userId = req.user?.id || req.session?.user?.id
+    let paymentDB = await db.payment.findAll({
+        where: {
+            userId
+        },
+        include: [
+            db.payment_method
+        ]
+    })
+    let project = await db.project.findAll({
+        where: {
+            id: paymentDB.map((item) => item.projectId)
+        },
+        include: [
+            db.user
+        ]
+    })
+    project = JSON.parse(JSON.stringify(project))
+    paymentDB = JSON.parse(JSON.stringify(paymentDB))
+    let paymentDbs = Array.from(paymentDB)
+
+    console.log(paymentDbs);
+    res.render("libary", {
+        title: "Thư viện dự án đã mua",
+        header: true,
+        footer: false,
+        project,
+        user: req.user || req.session.user,
+    })
+}
+
+const getRatingPage = async (req, res) => {
+    let user = req.user || req.session?.user
+    let slug = req.params.slug
+    let projectDb = await db.project.findOne({
+        where: {
+            slug
+        },
+        include: [
+            db.classification, db.tag, db.genre, db.image, {
+                model: db.user
+            }, {
+                model: db.version,
+                include: [db.download],
+                order: [['createdAt', 'DESC']],
+                // limit: 1 //Giới hạn 1 phiên bản mới nhất
+            }
+        ]
+        , order: [[db.image, 'createdAt', 'DESC']]
+    })
+    projectDb = JSON.parse(JSON.stringify(projectDb))
+
+    //Kiểm tra người dùng này có mua trò chơi chưa 
+    //Nếu chưa mua thì không được đánh giá
+    //Nếu đã đánh giá thì cũng không được đánh giá nữa
+    let isOnwerGame = false
+    let isRateGame = false
+    if (user) {
+        let payment_info = await db.payment.findOne({
+            where: {
+                projectId: projectDb.id,
+                userId: user.id,
+                status: "Success"
+            },
+        })
+        if (payment_info) isOnwerGame = true
+        let userRating = await db.user_rating.findOne({
+            where: {
+                projectId: projectDb.id,
+                userId: user.id
+            }
+        })
+        if (userRating) isRateGame = true
+    }
+
+    //Hiển thị đánh giá của người dùng
+    //Lấy danh sách người dùng đã đánh giá
+    //Lấy ra id của rating từ project trước
+    let userRatings = await db.user_rating.findAll({
+        where: {
+            projectId: projectDb.id,
+        }
+        ,
+    })
+    userRatings = JSON.parse(JSON.stringify(userRatings))
+    console.log("danh sach danh gia");
+
+    let ratingInfo = []
+    Array.from(userRatings).forEach(async (item) => {
+        console.log(item);
+        //Tìm thông tin người dùng đã đánh giá
+        let user = await db.user.findOne({
+            attributes: ['id', 'name', 'email'],
+            where: {
+                id: item.userId
+            }
+        })
+        user = JSON.parse(JSON.stringify(user))
+        item = { ...item, user: { ...user } }
+        item.experienceRate = experience[item.numberStarRate]
+        //Biển đổi điểm numberStarRate sang chữ
+        ratingInfo.push(item)
+    })
+    res.render("project_rate", {
+        title: "Đánh giá của " + projectDb.name,
+        header: true,
+        footer: false,
+        isOnwerGame,
+        isRateGame,
+        projectInfo: projectDb,
+        ratingInfo,
+        user: req.user || req.session.user,
+    })
+}
+
 module.exports = {
     getIndexPage,
     getLoginPage,
@@ -233,5 +388,7 @@ module.exports = {
     getEditInterfaceProjectPage,
     getMyProjectPage,
     getProjectViewPage,
-    getPayViewPage
+    getPayViewPage,
+    getLibaryPage,
+    getRatingPage
 }

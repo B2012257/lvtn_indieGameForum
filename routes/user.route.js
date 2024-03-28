@@ -11,9 +11,9 @@ const userController = require("../controllers/user.controller");
 router.post('/upload-project', userController.uploadProject)
 
 router.post('/payment/vnpay/pay/:id', userController.payWithVnpay)
-router.get('/order/vnpay_return', userController.payWithVnpay)
+router.get('/order/vnpay_return/', userController.payWithVnpayReturn)
 router.post('/payment/paypal/pay/:id', userController.payWithPaypal)
 router.get('/payment/paypal/success', userController.paypalSuccess)
 router.get('/payment/paypal/cancel', userController.paypalCancel)
-
+router.post('/project/:slug/rating', userController.ratingProject)
 module.exports = router

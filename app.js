@@ -64,6 +64,25 @@ db.sequelize.sync()
         }
       })
     })
+
+    // Thêm bảng payment_method
+    db.payment_method.findOrCreate({
+      where: {
+        name: "vnpay"
+      },
+      defaults: {
+        name: "vnpay",
+      }
+    })
+    // Thêm bảng payment_method
+    db.payment_method.findOrCreate({
+      where: {
+        name: "paypal"
+      },
+      defaults: {
+        name: "paypal",
+      }
+    })
     console.log("Synced db.");
   })
   .catch((err) => {
@@ -110,7 +129,7 @@ app.use(passport.session());
 app.use(passport.authenticate('session'));
 
 
-app.use(logger('dev'));
+app.use(logger('tiny'));
 
 
 app.use(express.static(path.join(__dirname, 'public')));
