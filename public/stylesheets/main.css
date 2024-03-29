@@ -7,6 +7,17 @@
     font-family: 'Roboto', sans-serif;
 }
 
+a {
+    text-decoration: none;
+}
+.clamped-text-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Số lượng dòng bạn muốn hiển thị */
+    -webkit-line-clamp: 3;
+    /* Số lượng dòng tối đa */
+}
 .btn {
     padding: 2px 14px;
     border-radius: 20px;

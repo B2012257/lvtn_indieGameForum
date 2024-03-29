@@ -1,5 +1,6 @@
+const SequelizeSlugify = require('sequelize-slugify');
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("tag", {
+    let tag = sequelize.define("tag", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -13,7 +14,23 @@ module.exports = (sequelize, Sequelize) => {
         description: {
             type: Sequelize.STRING,
             defaultValue: ""
+        }, slug: {
+            type: Sequelize.STRING,
+            unique: true
         }
 
     });
+    SequelizeSlugify.slugifyModel(tag, {
+        source: ['name'],
+        overwrite: false,
+        slugOptions: {
+            lower: true,
+            strict: true,
+            separator: '-',
+            lang: 'vi'
+            , symbols: false
+        },
+        column: 'slug'
+    })
+    return tag;
 };

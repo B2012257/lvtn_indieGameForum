@@ -24,7 +24,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         email: {
             type: Sequelize.STRING,
-            defaultValue: ""
+            defaultValue: "",
+            unique: true
         },
         avatarUrl: {
             type: Sequelize.STRING,

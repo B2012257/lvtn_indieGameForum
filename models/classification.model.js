@@ -1,5 +1,6 @@
+const SequelizeSlugify = require('sequelize-slugify');
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("classification", {
+    let classification = sequelize.define("classification", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -13,7 +14,24 @@ module.exports = (sequelize, Sequelize) => {
         description: {
             type: Sequelize.STRING,
             allowNull: true,
+        },
+        slug: {
+            type: Sequelize.STRING,
+            unique: true
         }
 
     });
+    SequelizeSlugify.slugifyModel(classification, {
+        source: ['name'],
+        overwrite: false,
+        slugOptions: {
+            lower: true,
+            strict: true,
+            separator: '-',
+            lang: 'vi'
+            , symbols: false
+        },
+        column: 'slug'
+    })
+    return classification;
 };

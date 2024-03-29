@@ -38,19 +38,28 @@
                                         <th scope="col">Tên dự án</th>
                                         <th scope="col">Nhà phát triển</th>
                                         <th scope="col">Ngày mua</th>
+                                        <th scope="col">Tổng thanh toán</th>
+                                        <th scope="col">Phương thức thanh toán</th>
+                                        <th scope="col">Trạng thái</th>
+
                                         <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody class="customtable">
-                                    {{#each project}}
+                                    {{#each paymentReturn}}
                                     <tr>
                                         <td>{{indexing @index}}</td>
-                                        <td>{{this.name}}</td>
-                                        <td>{{this.user.name}}</td>
-                                        <td></td>
+                                        <td>{{this.project.name}}</td>
+                                        <td>{{this.project.user.name}}</td>
+                                        <td>{{momentTime this.dateOfPayment}}</td>
+                                        <td>{{this.lastPrice}}</td>
+                                        <td>{{this.payment_method.name}}</td>
+
+                                        <td> {{this.status}}</td>
+
                                         <td>
-                                            <a href="/project/{{this.slug}}/view">Xem</a>
-                                            <a href="/project/{{this.slug}}/rating">Đánh giá</a>
+                                            <a href="/project/{{this.project.slug}}/view">Xem</a> |
+                                            <a href="/project/{{this.project.slug}}/rating">Đánh giá</a>
 
                                         </td>
                                     </tr>

@@ -1,5 +1,6 @@
+const SequelizeSlugify = require('sequelize-slugify');
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("genre", {
+    let genre = sequelize.define("genre", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
@@ -14,7 +15,24 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true,
             defaultValue: 'Không có mô tả'
+        },
+        slug: {
+            type: Sequelize.STRING,
+            unique: true
         }
 
     });
+    SequelizeSlugify.slugifyModel(genre, {
+        source: ['name'],
+        overwrite: false,
+        slugOptions: {
+            lower: true,
+            strict: true,
+            separator: '-',
+            lang: 'vi'
+            , symbols: false
+        },
+        column: 'slug'
+    })
+    return genre;
 };

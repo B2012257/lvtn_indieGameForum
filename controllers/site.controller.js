@@ -62,12 +62,55 @@ const getRegisterPage = (req, res) => {
     })
 }
 // [GET] /games
-const getGamesPage = (req, res) => {
+const getGamesPage = async (req, res) => {
+    //Phân trang trò chơi
+    let page = req.query.page || 1 //Lấy ra page trên query
+    let limitPerPage = 20 //Giới hạn số lượng trên 1 trang
+    let offset = (page - 1) * limitPerPage //Tính offset bắt đầu từ bao nhiêu
+
+
+    // Sắp xếp trò chơi mắc định sẽ là giảm dần theo thời gian cập nhật
+    let order = req.query.order || "DESC"
+    let orderBy = req.query.orderBy || "updatedAt"
+
+    let orderQuery = [[orderBy, order]]
+
+    // Hiển thị danh sách trò chơi phân trang và sắp xếp
+    let projectDB = await db.project.findAll({
+        where: {
+            isPublic: true
+        },
+        offset,
+        limit: limitPerPage,
+        order: orderQuery,
+        include: [{
+            model: db.image,
+            where: {
+                isCoverImage: true
+            }
+        }, db.tag, db.classification, db.genre
+        ]
+    })
+
+    projectDB = JSON.parse(JSON.stringify(projectDB))
+
+    // Tính toán thông tin phân trang
+    const totalProjects = await db.project.count();
+    const totalPages = Math.ceil(totalProjects / limitPerPage);
+    const nextPage = (page < totalPages) ? parseInt(page) + 1 : null;
+
+    console.log(totalProjects, totalPages, nextPage);
     res.render("games", {
         user: req.user || req.session.user,
         title: "Kho trò chơi",
         header: true,
         footer: true,
+        totalPages,
+        nextPage,
+        nextPageNumer: parseInt(page) + 1,
+        previousPage: (page == 1) ? true : false,
+        previousPageNumber: parseInt(page) - 1,
+        projectInfo: projectDB,
         isGamesActive: true
     })
 }
@@ -224,8 +267,6 @@ const getProjectViewPage = async (req, res) => {
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
 
     // Kiểm tra nếu có payment_info thì đã mua
-    console.log(projectInfo.versions[0].downloads);
-    console.log(payment_info);
     res.render("project_view", {
         title: 'Xem ' + projectDB.name,
         header: true,
@@ -264,6 +305,7 @@ const getPayViewPage = async (req, res) => {
 
 const getLibaryPage = async (req, res) => {
     //Lấy ra các dự án đã mua
+
     let userId = req.user?.id || req.session?.user?.id
     let paymentDB = await db.payment.findAll({
         where: {
@@ -273,30 +315,37 @@ const getLibaryPage = async (req, res) => {
             db.payment_method
         ]
     })
-    let project = await db.project.findAll({
-        where: {
-            id: paymentDB.map((item) => item.projectId)
-        },
-        include: [
-            db.user
-        ]
-    })
-    project = JSON.parse(JSON.stringify(project))
-    paymentDB = JSON.parse(JSON.stringify(paymentDB))
-    let paymentDbs = Array.from(paymentDB)
 
-    console.log(paymentDbs);
+    paymentDB = JSON.parse(JSON.stringify(paymentDB))
+    let paymentReturn = []  //Danh sách trả về
+    await Array.from(paymentDB)
+        .forEach(async (item) => {
+            let project = await db.project.findOne({
+                where: {
+                    id: item.projectId
+                },
+                include: [db.user]
+            })
+            // console.log(project);
+            project = JSON.parse(JSON.stringify(project))
+            item = { ...item, project: { ...project } }
+            console.log(item);
+            paymentReturn.push(item)
+        })
+
+    // console.log(paymentReturn);
     res.render("libary", {
         title: "Thư viện dự án đã mua",
         header: true,
         footer: false,
-        project,
+        paymentReturn,
         user: req.user || req.session.user,
     })
 }
 
 const getRatingPage = async (req, res) => {
     let user = req.user || req.session?.user
+    console.log("user trong rating", user);
     let slug = req.params.slug
     let projectDb = await db.project.findOne({
         where: {
@@ -353,10 +402,9 @@ const getRatingPage = async (req, res) => {
 
     let ratingInfo = []
     Array.from(userRatings).forEach(async (item) => {
-        console.log(item);
         //Tìm thông tin người dùng đã đánh giá
         let user = await db.user.findOne({
-            attributes: ['id', 'name', 'email'],
+            attributes: ['id', 'name', 'email', 'avatarUrl'],
             where: {
                 id: item.userId
             }

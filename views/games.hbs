@@ -1,0 +1,65 @@
+<main style="margin-top: 71px;">
+    <div class="row">
+        <img src="/images/8083292.jpg" alt="">
+    </div>
+    <div class="container w-100">
+        <div class="col-12 w-100 ">
+            <div class="filter mt-2 mb-4">
+                <div class="">Bộ lọc:</div>
+                <form id="filterForm" action="/games" method="GET">
+                    <label for="orderBy">Sắp xếp theo:</label>
+                    <select class="btn border me-4" id="orderBy" name="orderBy">
+                        <option value="name">Tên</option>
+                        <option value="price">Giá</option>
+                        <option value="createdAt">Ngày đăng</option>
+                        <option value="updatedAt">Ngày cập nhật</option>
+
+                        <!-- Thêm các lựa chọn khác nếu cần -->
+                    </select>
+
+                    <label for="order">Thứ tự:</label>
+                    <select class="btn border" id="order" name="order">
+                        <option value="ASC">Tăng dần</option>
+                        <option value="DESC">Giảm dần</option>
+                    </select>
+
+                    <button class="btn btn-primary ms-2" type="submit">Filter</button>
+                </form>
+
+            </div>
+            <div class="w-100 d-flex gap-4 justify-content-center flex-wrap">
+                {{#each projectInfo}}
+                <div class="card project-item mb-4"
+                    style="flex-basis: 300px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                    {{#each images}}
+                    <img src="{{this.url}}" class="game__thumbnail" width="100%" height="200px">
+                    {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
+                    {{/each}}
+
+                    <div class="card-body project-body ">
+
+                        <a href="/project/{{this.slug}}/view" class="card-title project-name d-block">{{this.name}}</a>
+
+                        <a href="/search?q=classification&name={{this.classification.slug}}"
+                            class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
+                        <br />
+                        <div class="tags" style="min-height: 50px;">
+                            {{#each this.tags}}
+
+                            <a href="/search?q=tag&name={{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
+                            {{/each}}
+                        </div>
+
+                        <p class="card-text mt-1 mb-1 clamped-text-3" style="min-height: 72px">
+                            {{this.short_description}} </p>
+                        <p class="mt-1 mb-1">Giá: {{this.price}} Vnd</p>
+                    </div>
+
+                </div>
+                {{/each}}
+
+            </div>
+        </div>
+    </div>
+    {{>pagination}}
+</main>
