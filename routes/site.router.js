@@ -24,7 +24,13 @@ router.get('/project/:id/pay', authMiddleware.isLogin, siteController.getPayView
 router.get('/user/libary', authMiddleware.isLogin, siteController.getLibaryPage)
 router.get('/project/:slug/rating', siteController.getRatingPage)
 
-router.get('/games', siteController.getGamesPage)
+router.get('/tags/:slug', siteController.getTagsPage)
+
+router.get('/genres', siteController.getGenresPage)
+
+router.get('/project/:classification', siteController.getProjectViewByClassificationPage)
+router.get('/forum', siteController.getForumPage)
+
 router.get('/', siteController.getIndexPage)
 
 module.exports = router;

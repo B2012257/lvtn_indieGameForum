@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/stylesheets/projects.css">
 <main style="margin-top: 71px;">
     <div class="row">
         <img src="/images/8083292.jpg" alt="">
@@ -6,21 +7,23 @@
         <div class="col-12 w-100 ">
             <div class="filter mt-2 mb-4">
                 <div class="">Bộ lọc:</div>
-                <form id="filterForm" action="/games" method="GET">
+                <form id="filterForm" action="/project/{{classificationSlug}}" method="GET">
                     <label for="orderBy">Sắp xếp theo:</label>
                     <select class="btn border me-4" id="orderBy" name="orderBy">
-                        <option value="name">Tên</option>
-                        <option value="price">Giá</option>
-                        <option value="createdAt">Ngày đăng</option>
-                        <option value="updatedAt">Ngày cập nhật</option>
+                        <option {{#if (ifEquals currentOrderBy "name" )}} selected {{/if}} value="name">Tên</option>
+                        <option {{#if (ifEquals currentOrderBy "price" )}} selected {{/if}} value="price">Giá</option>
+                        <option {{#if (ifEquals currentOrderBy "createdAt" )}} selected {{/if}} value="createdAt">Ngày
+                            đăng</option>
+                        <option {{#if (ifEquals currentOrderBy "updatedAt" )}} selected {{/if}} value="updatedAt">Ngày
+                            cập nhật</option>
 
                         <!-- Thêm các lựa chọn khác nếu cần -->
                     </select>
 
                     <label for="order">Thứ tự:</label>
                     <select class="btn border" id="order" name="order">
-                        <option value="ASC">Tăng dần</option>
-                        <option value="DESC">Giảm dần</option>
+                        <option {{#if (ifEquals currentOrder "ASC" )}} selected {{/if}} value="ASC">Tăng dần</option>
+                        <option {{#if (ifEquals currentOrder "DESC" )}} selected {{/if}} value="DESC">Giảm dần</option>
                     </select>
 
                     <button class="btn btn-primary ms-2" type="submit">Filter</button>
@@ -46,7 +49,7 @@
                         <div class="tags" style="min-height: 50px;">
                             {{#each this.tags}}
 
-                            <a href="/search?q=tag&name={{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
+                            <a href="/tags/{{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
                             {{/each}}
                         </div>
 

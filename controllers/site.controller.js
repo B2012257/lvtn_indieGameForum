@@ -62,10 +62,21 @@ const getRegisterPage = (req, res) => {
     })
 }
 // [GET] /games
-const getGamesPage = async (req, res) => {
-    //Phân trang trò chơi
+const getProjectViewByClassificationPage = async (req, res) => {
+
+    let classificationSlug = req.params.classification
+
+    //Lấy ra danh sách dự án theo thể loại
+    let whereCondition = {}
+
+    if (classificationSlug !== 'all') {
+        whereCondition = {
+            slug: classificationSlug
+        }
+    }
+    //Phân trang dự án
     let page = req.query.page || 1 //Lấy ra page trên query
-    let limitPerPage = 20 //Giới hạn số lượng trên 1 trang
+    let limitPerPage = 4 //Giới hạn số lượng trên 1 trang
     let offset = (page - 1) * limitPerPage //Tính offset bắt đầu từ bao nhiêu
 
 
@@ -75,6 +86,7 @@ const getGamesPage = async (req, res) => {
 
     let orderQuery = [[orderBy, order]]
 
+    console.log(whereCondition);
     // Hiển thị danh sách trò chơi phân trang và sắp xếp
     let projectDB = await db.project.findAll({
         where: {
@@ -88,25 +100,31 @@ const getGamesPage = async (req, res) => {
             where: {
                 isCoverImage: true
             }
-        }, db.tag, db.classification, db.genre
+        }, db.tag, {
+            model: db.classification,
+            where: whereCondition
+        }, db.genre
         ]
     })
 
     projectDB = JSON.parse(JSON.stringify(projectDB))
 
     // Tính toán thông tin phân trang
-    const totalProjects = await db.project.count();
+    const totalProjects = await db.project.count(); //Tính lại tổng số dự án dựa theo điều kiện
     const totalPages = Math.ceil(totalProjects / limitPerPage);
     const nextPage = (page < totalPages) ? parseInt(page) + 1 : null;
 
     console.log(totalProjects, totalPages, nextPage);
-    res.render("games", {
+    res.render("projects", {
         user: req.user || req.session.user,
-        title: "Kho trò chơi",
+        title: "Kho dự án",
         header: true,
         footer: true,
+        currentOrder: order,
+        currentOrderBy: orderBy,
         totalPages,
         nextPage,
+        classificationSlug,
         nextPageNumer: parseInt(page) + 1,
         previousPage: (page == 1) ? true : false,
         previousPageNumber: parseInt(page) - 1,
@@ -427,16 +445,85 @@ const getRatingPage = async (req, res) => {
     })
 }
 
+const getTagsPage = async (req, res) => {
+    let tagSlug = req.params.slug
+    //Khi xem tất cả các tag thì không cần where và không hiển thị tất cả trò chơi của tag
+    let whereCondition = {}
+    let showGameOfTag = false
+    if (tagSlug !== "all") {
+        whereCondition = { slug: tagSlug }
+        showGameOfTag = true
+    }
+    let tags = []
+    let totalProject = await db.project.count()
+    let tagDB = await db.tag.findAll({
+        attributes: ['id', 'name', 'description', 'slug'],
+        where: whereCondition,
+        order: [['createdAt', 'ASC']]
+    })
+    tagDB = JSON.parse(JSON.stringify(tagDB))
+    //Đếm xem mỗi tag có bao nhiêu dự án đang sử dụng
+    Array.from(tagDB).forEach(async (tagItem) => {
+        let projectOfTag = await db.project.findAll({
+            include: [{
+                model: db.tag,
+                where: {
+                    id: tagItem.id
+                },
+            },
+            {
+                model: db.image,
+                where: {
+                    isCoverImage: true
+                }
+            },
+            db.genre, db.classification
+            ],
+
+        })
+        projectOfTag = JSON.parse(JSON.stringify(projectOfTag))
+        tagItem.projects = { ...projectOfTag }
+        tagItem.projectCount = projectOfTag.length
+        tagItem.percent = (projectOfTag.length / totalProject) * 100
+        tagItem.percent = Number.parseFloat(tagItem.percent).toFixed(2)
+        tags.push(tagItem)
+    })
+    //Mỗi tag đếm xem có bao nhiêu dự án đang sử dụng trên tổng dự án
+    //Tính ra bao nhiêu phần trăm
+    //Trả về tất cả tags
+    console.log(showGameOfTag);
+    res.render("tags", {
+        title: "Các nhãn dự án",
+        header: true,
+        tags,
+        showGameOfTag,
+        totalProject: parseInt(totalProject),
+        user: req.user || req.session.user,
+    })
+}
+const getGenresPage = async (req, res) => {
+
+}
+const getForumPage = async (req, res) => {
+    res.render("forum", {
+        title: "Diễn đàn",
+        header: true,
+        footer: false,
+        user: req.user || req.session.user,
+    })
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
     getRegisterPage,
-    getGamesPage,
+    getProjectViewByClassificationPage,
     getCreateProjectPage,
     getEditInterfaceProjectPage,
     getMyProjectPage,
     getProjectViewPage,
     getPayViewPage,
     getLibaryPage,
-    getRatingPage
+    getRatingPage,
+    getTagsPage,
+    getGenresPage, getForumPage,
 }

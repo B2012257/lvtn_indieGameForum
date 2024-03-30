@@ -1,0 +1,100 @@
+<link rel="stylesheet" href="/stylesheets/tags.css">
+<main style="margin-top: 71px;">
+    <div class="container mt-5 mb-3">
+        <div class="row">
+            <div class="filter mt-2 mb-4">
+                <div class="">Bộ lọc:</div>
+                <form id="filterForm" action="/project/{{classificationSlug}}" method="GET">
+                    <label for="orderBy">Sắp xếp theo:</label>
+                    <select class="btn border me-4" id="orderBy" name="orderBy">
+                        <option value="name">Tên</option>
+                        <option value="price">Giá</option>
+                        <option value="createdAt">Ngày
+                            đăng</option>
+                        <option value="updatedAt">Ngày
+                            cập nhật</option>
+
+                        <!-- Thêm các lựa chọn khác nếu cần -->
+                    </select>
+
+                    <label for="order">Thứ tự:</label>
+                    <select class="btn border" id="order" name="order">
+                        <option value="ASC">Tăng dần</option>
+                        <option value="DESC">Giảm dần</option>
+                    </select>
+
+                    <button class="btn btn-primary ms-2" type="submit">Filter</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="row">
+            {{#each tags}}
+            <div class="col-md-4">
+                <a href="/tags/{{slug}}" class="card p-3 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-row align-items-center">
+                            <div class="c-details">
+                                <h6 class="mb-0 tag_name">{{this.name}}</h6>
+                            </div>
+                        </div>
+                        <div class="badge bg-secondary text-white"> Nhãn </div>
+                    </div>
+                    <div class="mt-1">
+                        <p class="mb-1" style="min-height: 60px;">{{this.description}}</p>
+                        <div class="mt-1">
+                            <div class="progress border ">
+                                <div class="progress-bar " role="progressbar" style="width: {{this.percent}}%"
+                                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="float-end">{{this.percent}}%</span>
+                            <div class="mt-3">
+                                <span class="text1">{{this.projectCount}} dự án
+                                    <span class="text2">trên
+                                        tổng {{@root.totalProject}} dự
+                                        án
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {{#if @root.showGameOfTag}}
+            <div class="row col-8 gap-4">
+
+                {{#each projects}}
+                <div class="card project-item mb-4 border p-0"
+                    style="flex-basis: 300px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                    {{#each images}}
+                    <img src="{{this.url}}" class="game__thumbnail w-100" width="100%" height="200px">
+                    {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
+                    {{/each}}
+
+                    <div class="card-body project-body p-2 ps-3 pe-3">
+
+                        <a href="/project/{{this.slug}}/view" class="card-title project-name d-block">{{this.name}}</a>
+
+                        <a href="/project/{{this.classification.slug}}"
+                            class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
+                        <br />
+                        <div class="genres mb-1">
+
+                            <a href="/genres/{{this.genre.slug}}"
+                                class="badge bg-danger-subtle text-black">{{this.genre.name}}</a>
+                        </div>
+
+                        <p class="card-text mt-1 mb-1 clamped-text-3" style="min-height: 72px">
+                            {{this.short_description}} </p>
+                        <p class="mt-1 mb-1">Giá: {{this.price}} Vnd</p>
+                    </div>
+
+                </div>
+                {{/each}}
+            </div>
+
+            {{/if}}
+            {{/each}}
+        </div>
+    </div>
+</main>

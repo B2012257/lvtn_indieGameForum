@@ -17,7 +17,7 @@ module.exports = (app) => {
                 //convert to string to compare
                 arg1 = arg1.toString();
                 arg2 = arg2.toString();
-                return (arg1.trim() === arg2.trim());
+                return (arg1.toUpperCase().trim() === arg2.toUpperCase().trim());
             },
             indexing: function (index) {
                 return index + 1
