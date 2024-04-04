@@ -224,6 +224,8 @@ const paypalSuccess = async (req, res) => {
             throw error;
         } else {
             console.log(payment)
+            console.log(payment.id)
+
             // Gửi email thông báo khi thanh toán thành công
             const mailOptions = {
                 from: 'Admin Indie Game VN (-.-)',
@@ -320,6 +322,7 @@ const paypalSuccess = async (req, res) => {
             //Lưu thông tin giao dịch
             await db.payment.create({
                 userId: payer.id,
+                transactionId: payment.id,
                 projectId: project_db.id,
                 status: "Success",
                 dateOfPayment: new Date(),
@@ -364,13 +367,13 @@ const payWithVnpay = async (req, res) => {
     project_db = JSON.parse(JSON.stringify(project_db))
     project_name = project_db.name
     let amount = project_db.price; // Lấy số tiền từ yêu cầu
-
+    console.log(amount);
     const urlString = vnpayClient.buildPaymentUrl({
         vnp_Amount: amount,
         vnp_IpAddr: '192.168.0.1',
         vnp_ReturnUrl: returnUrl,
         vnp_TxnRef: tnx,
-        vnp_OrderInfo: `Thanh toan cho ma GD: ${tnx}`,
+        vnp_OrderInfo: `Thanh toan cho ma GD: ${tnx},`,
     })
     res.redirect(urlString)
 }
@@ -394,6 +397,10 @@ const payWithVnpayReturn = async (req, res) => {
 
     let secureHash = vnp_Params['vnp_SecureHash'];
     let amount = vnp_Params['vnp_Amount'];
+
+    let vnp_OrderInfo = vnp_Params['vnp_OrderInfo'];
+    let vnp_TransactionNo = vnp_Params['vnp_TransactionNo'];
+    console.log(amount);
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
 
@@ -406,7 +413,8 @@ const payWithVnpayReturn = async (req, res) => {
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
 
-
+    // console.log(secureHash, signed);
+    amount = amount.toString().slice(0, -2) //Xoá 2 số 0 cuối cùng (dư)
     if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
         //Xử lý kết quả thanh toán
@@ -496,23 +504,21 @@ const payWithVnpayReturn = async (req, res) => {
         };
 
         // Lưu thông tin giao dịch vào db
-
-
         let payer = await db.user.findOne({
             where: {
                 email: payvnpay_email
             },
-
         })
 
         //Lưu thông tin giao dịch
         await db.payment.create({
             userId: payer.id,
+            transactionId: vnp_TransactionNo,
             projectId: project_db.id,
             status: "Success",
             dateOfPayment: new Date(),
-            amount: amount,
-            lastPrice: amount,
+            amount: amount, // Giá gốc
+            lastPrice: amount, // Giá đã qa giảm giá
             paymentMethodId: payment_method_db.id
         })
         //share thư mục phiên bản file tải game
@@ -526,15 +532,16 @@ const payWithVnpayReturn = async (req, res) => {
                 res.render('payment_return', {
                     title: 'Thông tin thanh toán',
                     message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
-
+                    , redirect: '/user/libary'
                 })
             }
         });
-
         res.render('payment_return', {
-            title: 'Chi tiết thanh toán VNPay',
-            message: "Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về."
+            title: 'Thông tin thanh toán',
+            message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
+            , redirect: '/user/libary'
         })
+
     } else {
         res.render('payment_return', {
             title: 'Chi tiết thanh toán VNPay',
@@ -569,6 +576,147 @@ const ratingProject = async (req, res) => {
         console.log(e);
     }
 }
+
+const editProject = async (req, res) => {
+    let project_id = req.params.projectId;
+    let publicQuery = req.query.public?.toLowerCase() || undefined
+
+    //Nếu có chỉnh sửa dự án public thì thực hiện
+    if (publicQuery) {
+        try {
+            await db.project.update({
+                isPublic: publicQuery === 'true' ? true : false
+            }, {
+                where: {
+                    id: project_id
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        finally {
+            res.redirect(`/user/project/${project_id}/edit`)
+
+        }
+    }
+}
+const payWithFree = async (req, res) => {
+    let project_id = req.params.id;
+    let payer_email = req.session?.user?.email ?? req.user?.email;
+
+    let project_db = await db.project.findOne({
+        where: {
+            id: project_id
+        },
+        include: [
+            {
+                model: db.version,
+                order: [['createdAt', 'DESC']],
+            }
+        ]
+    })
+    project_db = JSON.parse(JSON.stringify(project_db))
+    console.log("payer_email", payer_email);
+    const mailOptions = {
+        from: 'Admin Indie Game VN (-.-)',
+        to: payer_email,
+        subject: 'Thông báo thanh toán dự án thành công',
+        text: 'Your payment was successful. Thank you for your purchase.',
+        html: `
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
+        /* CSS inline được sử dụng để đảm bảo hiển thị chính xác trên các máy khách email khác nhau */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #007bff;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Xác nhận thanh toán thành công</h2>
+        <p>Thanh toán thành công. Cảm ơn bạn!</p>
+        <p>Chi tiết thanh toán:</p>
+        <ul>
+            <li><strong>Product:</strong>${project_db.name}</li>
+            <li><strong>Price:</strong> Miễn Phí</li>
+        </ul>
+        <p>If you have any questions, please feel free to contact us.</p>
+        <p>Nếu bạn có câu hỏi nào, xin vui lòng liên hệ với chúng tôi</p>
+
+        <p>
+            Regards,<br>
+            IndieGameVN
+        </p>
+    </div>
+</body>
+</html>
+        `
+    }
+    // Lưu thông tin giao dịch vào db
+    let payer = await db.user.findOne({
+        where: {
+            email: payer_email
+        },
+    })
+    console.log(payer);
+    //Lưu thông tin giao dịch
+    await db.payment.create({
+        userId: payer.id,
+        projectId: project_db.id,
+        status: "Success",
+        dateOfPayment: new Date(),
+        amount: 0, // Giá gốc
+        lastPrice: 0, // Giá đã qa giảm giá
+
+    })
+    console.log({ fileId: project_db.versions[0].versionFolderId, emailToShare: payer.email, shareToUser: true });
+    //share thư mục phiên bản file tải game
+    await ggdrive.shareFile({ fileId: project_db.versions[0].versionFolderId, emailToShare: payer.email, shareToUser: true })
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            // 
+            res.render('payment_return', {
+                title: 'Thông tin thanh toán',
+                message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
+                , redirect: '/user/libary'
+            })
+        }
+    });
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -576,5 +724,7 @@ module.exports = {
     paypalCancel,
     payWithVnpay,
     ratingProject,
-    payWithVnpayReturn
+    payWithVnpayReturn,
+    editProject,
+    payWithFree
 }

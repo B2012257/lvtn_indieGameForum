@@ -21,7 +21,10 @@ module.exports = (app) => {
             },
             indexing: function (index) {
                 return index + 1
-            }
+            },
+            json: function (context) {
+                return JSON.stringify(context);
+            },
         }
     }));
     app.set('view engine', '.hbs');

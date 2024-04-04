@@ -9,7 +9,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false,
             defaultValue: '1.0',
-            unique: true
         },
         release_Date: {
             type: Sequelize.DATE,

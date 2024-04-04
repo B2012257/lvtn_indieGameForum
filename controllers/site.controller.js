@@ -1,8 +1,165 @@
 const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 const { experience } = require("../configs/constraint")
-//[GET] /
+const e = require("express")
 
+
+//Số dự án mới trong tuần
+let newProjectStatisticWeek = async ({ userId }) => {
+    let dataJson = []
+
+    //Lấy ngày bắt đầu và kết thúc của tuần hiện tại
+    let currentDate = new Date()
+    let currentDay = currentDate.getDay()
+    let currentMonth = currentDate.getMonth()
+    let currentYear = currentDate.getFullYear()
+    //Lấy từ thứ 2 đến chủ nhật
+    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + 1)
+    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + (7 - currentDay))
+
+    //Đổi ra ngày tháng năm và lấy từ thứ 2 - Chủ nhật
+
+    startDate = startDate.toLocaleDateString()
+    endDate = endDate.toLocaleDateString()
+    console.log(startDate, endDate);
+
+    let results = await db.project.findAndCountAll({
+        where: {
+            userId,
+            createdAt: {
+                [db.Sequelize.Op.between]: [startDate, endDate]
+            },
+            isPublic: true
+        }
+
+    })
+    results = JSON.parse(JSON.stringify(results))
+    //Lấy ra ngày tạo dự án
+    let createdAt
+    results.rows.forEach(item => {
+        createdAt = new Date(item.createdAt).toLocaleDateString()
+    })
+    console.log("createdAt", createdAt);
+
+    //Tạo data cho biểu đồ 7 ngày với dạng {date: dd/mm/yyyy, count: số lượng}
+    for (let i = 0; i < 7; i++) {
+        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        date = date.toLocaleDateString()
+        let count = 0
+        //Chỉ lấy ngày/tháng
+        date = date.split("/").slice(0, 2).reverse().join("/")
+
+        // Kiểm tra date có trùng với createdAt không
+        results.rows.forEach(item => {
+            createdAt = new Date(item.createdAt).toLocaleDateString()
+            createdAt = createdAt.split("/").slice(0, 2).reverse().join("/")
+
+            if (date === createdAt) {
+                count = count + 1
+                //Kiểm tra nếu trong dataJson đã có ngày này chưa, nếu có thì ghi đè giá trị count mới
+                let index = dataJson.findIndex(item => item.date === date)
+                if (index !== -1) {
+                    dataJson[index].count = count
+                } else {
+                    dataJson.push({
+                        date: date,
+                        count
+                    })
+                }
+            } else {
+                let index = dataJson.findIndex(item => item.date === date)
+                if (index !== -1) {
+                    dataJson[index].count = count
+                } else {
+                    dataJson.push({
+                        date: date,
+                        count: 0
+                    })
+                }
+            }
+        })
+
+
+    }
+    console.log(dataJson);
+    return dataJson
+}
+//Thống kê số lượng dự án của người dùng trong tuần, trả về dữ liệu biểu đồ trong 1 tuần
+let paidStatisticWeek = async ({ userId }) => {
+    let dataJson = []
+
+    //Lấy ngày bắt đầu và kết thúc của tuần hiện tại
+    let currentDate = new Date()
+    let currentDay = currentDate.getDay()
+    let currentMonth = currentDate.getMonth()
+    let currentYear = currentDate.getFullYear()
+    //Lấy từ thứ 2 đến chủ nhật
+    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + 1)
+    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + (7 - currentDay))
+
+    //Đổi ra ngày tháng năm và lấy từ thứ 2 - Chủ nhật
+
+    startDate = startDate.toLocaleDateString()
+    endDate = endDate.toLocaleDateString()
+    console.log(startDate, endDate);
+    //Tìm các prpject của user trong tuần
+
+    let projectResults = await db.project.findAndCountAll({
+        where: {
+            userId,
+        }
+    })
+    projectResults = JSON.parse(JSON.stringify(projectResults)) //Mảng các dự án của user
+
+    // console.log(projectResults);
+    let results = await db.payment.findAndCountAll({
+        where: {
+            projectId: projectResults.rows.map(item => item.id),
+            createdAt: {
+                [db.Sequelize.Op.between]: [startDate, endDate]
+            }
+        }
+    })
+    results = JSON.parse(JSON.stringify(results))
+
+    // Tạo data cho biểu đồ 7 ngày
+    let data = []
+
+    for (let i = 0; i < 7; i++) {
+        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        date = date.toLocaleDateString()
+        let count = 0
+        results.rows.forEach(item => {
+            //Lấy ra ngày thanh toán
+            let dateOfPayment = new Date(item.dateOfPayment).toLocaleDateString()
+            //Nếu ngày thanh toán trùng với ngày thì tăng count
+            if (dateOfPayment === date) {
+                count++
+            }
+        })
+        data.push(count)
+    }
+    //Tạo data dạng json key là ngày và value là số lượng format key dạng dd/mm/yyyy
+    for (let i = 0; i < 7; i++) {
+        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        date = date.toLocaleDateString()
+        //Chỉ lấy ngày/tháng
+        date = date.split("/").slice(0, 2).reverse().join("/")
+        dataJson.push({
+            date: date,
+            count: data[i]
+        })
+    }
+
+    return dataJson
+
+}
+const statisticMonth = () => {
+
+}
+const statisticSixMonth = () => {
+
+}
 const getIndexPage = async (req, res) => {
 
     let projectDB = await db.project.findAll({
@@ -240,12 +397,26 @@ const getMyProjectPage = async (req, res) => {
         }
     })
     let projects = JSON.parse(JSON.stringify(projectDB))
+    let paidWeekStatistic = await paidStatisticWeek({ userId: user.id })
+    let newProjectWeekStatistic = await newProjectStatisticWeek({ userId: user.id })
+
+
+    //Đếm tổng dự án
+    let totalProject = await db.project.count({
+        where: {
+            userId: user.id
+        }
+    })
+
     if (req.user || req.session.user) {
         res.render("my_project", {
             title: "Dự án của tôi",
             header: true,
             projects,
             footer: false,
+            paidWeekStatistic,
+            newProjectWeekStatistic,
+            totalProject,
             user,
         })
     } else {
@@ -311,12 +482,20 @@ const getPayViewPage = async (req, res) => {
             id
         },
     })
+    //Kiểm tra nếu game miển phí thì không cần thanh toán
+
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
+    let isFreeGame = false
+    if (projectInfo.price == 0) {
+        isFreeGame = true
+    }
+    console.log(isFreeGame);
     res.render("pay_view", {
         title: 'Thanh toán ' + projectInfo?.name,
         header: true,
         footer: false,
         projectInfo,
+        isFreeGame,
         user: req.user || req.session.user,
     })
 }
@@ -512,6 +691,41 @@ const getForumPage = async (req, res) => {
         user: req.user || req.session.user,
     })
 }
+
+const getProjectBillPage = async (req, res) => {
+    // Lấy thông tin thanh tóan project của người dùng để làm hoá đơn
+    let projectId = req.params.id
+    let user = req.user || req.session.user
+    let project = await db.project.findOne({
+        where: {
+            id: projectId
+        }
+    })
+    let payment = await db.payment.findOne({
+        where: {
+            projectId,
+            userId: user.id
+        }
+    })
+    let paymentMethod = await db.payment_method.findOne({
+        where: {
+            id: payment.paymentMethodId
+        }
+    })
+
+    let projectInfo = JSON.parse(JSON.stringify(project))
+    let paymentInfo = JSON.parse(JSON.stringify(payment))
+    let paymentMethodInfo = JSON.parse(JSON.stringify(paymentMethod))
+    res.render("project_bill", {
+        title: "Hoá đơn dự án",
+        header: true,
+        footer: false,
+        projectInfo,
+        paymentInfo,
+        paymentMethodInfo,
+        user
+    })
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
@@ -525,5 +739,7 @@ module.exports = {
     getLibaryPage,
     getRatingPage,
     getTagsPage,
-    getGenresPage, getForumPage,
+    getGenresPage,
+    getForumPage,
+    getProjectBillPage,
 }

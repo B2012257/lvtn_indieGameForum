@@ -42,9 +42,9 @@
                 <a href="/project/{{projectInfo.slug}}/view" class="btn btn-outline-primary follow_btn">
                     <i class="fa-regular fa-eye"></i>
                     Xem</a>
-                <button class="btn btn-outline-danger">
+                {{!-- <button class="btn btn-outline-danger">
                     <i class="fa-regular fa-heart"></i>
-                </button>
+                </button> --}}
             </div>
 
         </div>
@@ -135,9 +135,21 @@
                 <li class="list-group-item">Trạng thái hiển thị:
                     {{#if isPublic}}
                     <span class="text-success">Công khai.</span>
+                    <form class="d-inline" action="/user/project/{{id}}/edit?public=false" method="POST">
+                        <button type="submit" class="btn">
+                            <i class="fa-solid fa-repeat"></i>
+                        </button>
+                    </form>
                     {{else}}
                     <span class="text-danger">Riêng tư.</span>
+                    <form class="d-inline" action="/user/project/{{id}}/edit?public=true" method="POST">
+                        <button type="submit" class="btn">
+                            <i class="fa-solid fa-repeat"></i>
+                        </button>
+                    </form>
                     {{/if}}
+
+
                 </li>
             </ul>
             {{/with}}

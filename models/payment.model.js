@@ -7,6 +7,12 @@ module.exports = (sequelize, Sequelize) => {
                 key: 'id'
             }
         },
+        transactionId: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            defaultValue: "id"
+        }
+        ,
         projectId: {
             type: Sequelize.STRING,
             references: {

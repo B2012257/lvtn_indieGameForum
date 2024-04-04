@@ -49,7 +49,9 @@
                                     {{#each paymentReturn}}
                                     <tr>
                                         <td>{{indexing @index}}</td>
-                                        <td>{{this.project.name}}</td>
+                                        <td>
+                                            <a href="/project/{{this.project.slug}}/view">{{this.project.name}}</a>
+                                        </td>
                                         <td>{{this.project.user.name}}</td>
                                         <td>{{momentTime this.dateOfPayment}}</td>
                                         <td>{{this.lastPrice}}</td>
@@ -58,7 +60,7 @@
                                         <td> {{this.status}}</td>
 
                                         <td>
-                                            <a href="/project/{{this.project.slug}}/view">Xem</a> |
+                                            <a href="/project/{{this.project.slug}}/bill">Hoá đơn</a> |
                                             <a href="/project/{{this.project.slug}}/rating">Đánh giá</a>
 
                                         </td>

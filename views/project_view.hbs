@@ -57,7 +57,14 @@
                     disabled{{/unless}}" {{!-- Kiểm tra nếu là tác giả thì không được mua --}}{{#unless
                     projectInfo.versions}} title="Phiên bản tải xuống chưa có sẳn" {{/unless}}>
                     <i class=" fa-regular fa-credit-card me-2"></i>
-                    Mua</a>
+
+                    {{!-- Nếu game miễn phí thì là chữ tải xuống, ngược lại thì chữ Mua --}}
+                    {{#if (ifEquals projectInfo.price "0")}}
+                    Tải xuống
+                    {{else}}
+                    Mua
+                    {{/if}}
+                </a>
                 <button class="btn-action-project btn btn-outline-primary follow_btn">
                     <i class="fa-solid fa-plus fa-bounce me-2"></i>
                     Theo dõi</button>
@@ -185,11 +192,13 @@
 
 
                 <li class="list-group-item">Trạng thái hiển thị:
+
                     {{#if isPublic}}
                     <span class="text-success">Công khai.</span>
                     {{else}}
                     <span class="text-danger">Riêng tư.</span>
                     {{/if}}
+
                 </li>
             </ul>
             {{/with}}

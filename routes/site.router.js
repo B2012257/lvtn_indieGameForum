@@ -19,6 +19,7 @@ router.get('/user/project/create', authMiddleware.isLogin, siteController.getCre
 router.get('/user/project/:id/edit', authMiddleware.isLogin, siteController.getEditInterfaceProjectPage)
 router.get('/user/projects', authMiddleware.isLogin, siteController.getMyProjectPage)
 router.get('/project/:slug/view', siteController.getProjectViewPage) //xem dự án
+router.get('/project/:slug/bill', siteController.getProjectBillPage) //xem dự án
 
 router.get('/project/:id/pay', authMiddleware.isLogin, siteController.getPayViewPage) //trang thanh toan dự án
 router.get('/user/libary', authMiddleware.isLogin, siteController.getLibaryPage)

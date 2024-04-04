@@ -209,7 +209,12 @@
                                     <div class="card-body">
 
                                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
+                                        <div class="tags" style="min-height: 20px;">
+                                            {{#each this.tags}}
 
+                                            <a href="/tags/{{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
+                                            {{/each}}
+                                        </div>
                                         <p class="mt-2 card-text clamped-text-3">{{this.short_description}}</p>
                                         {{#if (ifEquals this.price '0')}}
                                         <p>Miễn phí</p>

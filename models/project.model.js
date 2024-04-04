@@ -11,8 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: 'New project'
         },
         short_description: {
-            type: Sequelize.STRING,
-            defaultValue: ''
+            type: Sequelize.TEXT('medium'),
         },
         long_description: {
             type: Sequelize.TEXT('long'),
@@ -52,7 +51,15 @@ module.exports = (sequelize, Sequelize) => {
         slug: {
             type: Sequelize.STRING,
             unique: true
-        }
+        },
+        viewCount: {
+            type: Sequelize.INTEGER,
+            defaultValue: 0
+        },
+        likeCount: {
+            type: Sequelize.INTEGER,
+            defaultValue: 0
+        },
 
     }, {
         paranoid: true
