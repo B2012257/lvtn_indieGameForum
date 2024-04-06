@@ -25,6 +25,29 @@ module.exports = (app) => {
             json: function (context) {
                 return JSON.stringify(context);
             },
+            vndFormat: function (amount) {
+                var parts = parseFloat(amount).toFixed(2).toString().split('.');
+                var integerPart = parts[0];
+                var decimalPart = parts[1];
+
+                // Tạo mảng các ký tự từ phần nguyên
+                var integerArray = integerPart.split('').reverse();
+                var formattedInteger = '';
+
+                // Thêm dấu chấm phân cách hàng nghìn
+                for (var i = 0; i < integerArray.length; i++) {
+                    if (i % 3 === 0 && i !== 0) {
+                        formattedInteger += '.';
+                    }
+                    formattedInteger += integerArray[i];
+                }
+
+                // Đảo ngược lại chuỗi phần nguyên để có định dạng đúng
+                formattedInteger = formattedInteger.split('').reverse().join('');
+
+                // Trả về chuỗi đã chuẩn hoá
+                return formattedInteger + ' VND';
+            },
         }
     }));
     app.set('view engine', '.hbs');

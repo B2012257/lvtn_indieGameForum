@@ -54,13 +54,27 @@
                                         </td>
                                         <td>{{this.project.user.name}}</td>
                                         <td>{{momentTime this.dateOfPayment}}</td>
-                                        <td>{{this.lastPrice}}</td>
-                                        <td>{{this.payment_method.name}}</td>
-
+                                        <td>
+                                            {{#unless this.payment_method}}
+                                            {{vndFormat "0"}}
+                                            {{else}}
+                                            {{#if (ifEquals this.payment_method.name 'vnpay')}}
+                                            {{vndFormat this.lastPrice}}
+                                            {{else}}
+                                            $ {{this.lastPrice}}
+                                            {{/if}}
+                                            {{/unless}}
+                                        </td>
+                                        <td>
+                                            {{#if this.payment_method}}
+                                            {{this.payment_method.name}}
+                                            {{else}}
+                                            Không
+                                            {{/if}}
                                         <td> {{this.status}}</td>
 
                                         <td>
-                                            <a href="/project/{{this.project.slug}}/bill">Hoá đơn</a> |
+                                            <a href="/project/{{this.project.id}}/bill">Hoá đơn</a> |
                                             <a href="/project/{{this.project.slug}}/rating">Đánh giá</a>
 
                                         </td>

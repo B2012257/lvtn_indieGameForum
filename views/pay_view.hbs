@@ -64,6 +64,7 @@
                         <p class="fw-bold">Tổng thanh toán</p>
                         <p class="fw-bold"></span>{{projectInfo.price}} VND</p>
                     </div>
+                    <p>Trò chơi sẽ được chuyển tiếp vào email của bạn</p>
                     {{#if isFreeGame}}
                     <div class="col">
                         <form class="" action="/user/payment/free/{{projectInfo.id}}" method="POST">
@@ -72,7 +73,8 @@
                         </form>
 
                     </div>
-                    {{/if}}
+                    {{else}}
+
                     <div class="row">
                         <div class="col">
                             <form class="" action="/user/payment/vnpay/pay/{{projectInfo.id}}" method="POST">
@@ -88,6 +90,8 @@
                             </form>
                         </div>
                     </div>
+                    {{/if}}
+
 
                 </div>
             </div>

@@ -2,7 +2,9 @@ const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 const { experience } = require("../configs/constraint")
 const e = require("express")
-
+const { where } = require("sequelize")
+const { order } = require("paypal-rest-sdk")
+require('dotenv').config();
 
 //Số dự án mới trong tuần
 let newProjectStatisticWeek = async ({ userId }) => {
@@ -386,20 +388,83 @@ const getEditInterfaceProjectPage = async (req, res) => {
     }
 }
 const getMyProjectPage = async (req, res) => {
+    //orderBy=name&order=ASC&saled=ASC
+    let orderBy = req.query.orderBy || "name"
+    let order = req.query.order || "DESC" // Mặc định giảm dần
+    let orderQuery = [[orderBy, order]]
+
+    if (orderBy === "saled") {
+        orderQuery = [['name', 'DESC']]
+
+    }
+
+    console.log(orderQuery);
     let user = req?.user ?? req?.session?.user
     let projectDB = await db.project.findAll({
         include: [
             db.classification, db.tag, db.genre, db.image, db.user
         ],
-        order: [['createdAt', 'DESC']],
+        order: orderQuery,
         where: {
             userId: user.id
         }
     })
     let projects = JSON.parse(JSON.stringify(projectDB))
+    //Nếu orderBy bằng saled thì sắp xếp projects theo số lượt bán
+    //Sắp xếp theo số lượng bán của từng project
+    for (const project of projects) {
+        let projectSaledCount = await db.payment.findAndCountAll({
+            where: {
+                projectId: project.id
+            }
+        })
+        projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
+        project.saledCount = projectSaledCount.count
+        // projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
+    }
+
+    //Sắp xếp theo saledCount nếu orderBy = saled
+    // Sắp xếp mảng theo thuộc tính saledCount tăng dần
+    if (orderBy === "saled") {
+        if (order === "ASC")
+            projects = projects.sort((a, b) => a.saledCount - b.saledCount);
+
+        // Sắp xếp mảng theo thuộc tính saledCount giảm dần
+        else if (order === "DESC")
+            projects = projects.sort((a, b) => b.saledCount - a.saledCount);
+    }
+
+
+
+    console.log(projects);
     let paidWeekStatistic = await paidStatisticWeek({ userId: user.id })
     let newProjectWeekStatistic = await newProjectStatisticWeek({ userId: user.id })
+    // Tính tổng doanh thu
+    let totalRevenue = 0
+    //Lấy project do người này tạo ra
+    let projectOfThisUser = await db.project.findAll({
+        where: {
+            userId: user.id
+        }
+    })
+    projectOfThisUser = JSON.parse(JSON.stringify(projectOfThisUser))
 
+    for (const projectItem of projectOfThisUser) {
+        let payments = await db.payment.findAll({
+            where: {
+                projectId: projectItem.id
+            },
+            include: [db.payment_method]
+        })
+        payments = JSON.parse(JSON.stringify(payments))
+
+        for (const item of payments) {
+            if (item?.payment_method?.name === "paypal") {
+                item.lastPrice = Math.round(parseFloat(item.lastPrice) * parseFloat(process.env.USD_TO_VND_EXCHANGE_RATE)) * 1000
+            }
+            totalRevenue = totalRevenue + (parseFloat(item.lastPrice) - (parseFloat(item.lastPrice) * 0.02))
+        }
+    }
 
     //Đếm tổng dự án
     let totalProject = await db.project.count({
@@ -407,7 +472,6 @@ const getMyProjectPage = async (req, res) => {
             userId: user.id
         }
     })
-
     if (req.user || req.session.user) {
         res.render("my_project", {
             title: "Dự án của tôi",
@@ -417,6 +481,9 @@ const getMyProjectPage = async (req, res) => {
             paidWeekStatistic,
             newProjectWeekStatistic,
             totalProject,
+            orderBy,
+            order,
+            totalRevenue: totalRevenue,
             user,
         })
     } else {
@@ -695,34 +762,32 @@ const getForumPage = async (req, res) => {
 const getProjectBillPage = async (req, res) => {
     // Lấy thông tin thanh tóan project của người dùng để làm hoá đơn
     let projectId = req.params.id
-    let user = req.user || req.session.user
+    let user = req.user ?? req.session?.user
     let project = await db.project.findOne({
         where: {
             id: projectId
-        }
+        },
+        include: [db.user, db.image]
     })
     let payment = await db.payment.findOne({
         where: {
             projectId,
             userId: user.id
-        }
-    })
-    let paymentMethod = await db.payment_method.findOne({
-        where: {
-            id: payment.paymentMethodId
-        }
+        },
+        include: [db.payment_method]
     })
 
-    let projectInfo = JSON.parse(JSON.stringify(project))
+
     let paymentInfo = JSON.parse(JSON.stringify(payment))
-    let paymentMethodInfo = JSON.parse(JSON.stringify(paymentMethod))
+    let projectInfo = JSON.parse(JSON.stringify(project))
+    console.log(paymentInfo, projectInfo);
+
     res.render("project_bill", {
         title: "Hoá đơn dự án",
         header: true,
         footer: false,
         projectInfo,
         paymentInfo,
-        paymentMethodInfo,
         user
     })
 }

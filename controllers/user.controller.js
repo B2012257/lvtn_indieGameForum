@@ -10,6 +10,7 @@ const crypto = require("crypto");
 const vnpay = require('vnpay');
 const { log } = require('console');
 const VNPay = vnpay.VNPay
+const VND_TO_USD_EXCHANGE_RATE = process.env.VND_TO_USD_EXCHANGE_RATE
 
 // Cấu hình VNPay
 const vnp_TmnCode = '65Z5FVGZ'; // Mã website của bạn
@@ -164,7 +165,6 @@ const payWithPaypal = async (req, res) => {
     //Tính toán tiền phải thanh toán
     // Qui đổi ngoại tệ
     // Tỷ giá hối đoái từ VND sang USD (ví dụ)
-    const VND_TO_USD_EXCHANGE_RATE = 0.000040;
     let project_db = await db.project.findOne({
         where: {
             id: project_id
@@ -273,14 +273,16 @@ const paypalSuccess = async (req, res) => {
 </head>
 <body>
     <div class="container">
-        <h2>Payment Confirmation</h2>
-        <p>Your payment was successful. Thank you for your purchase!</p>
-        <p>Details of your purchase:</p>
+        <h2>Xác nhận thanh toán thành công</h2>
+        <p>Thanh toán thành công. Cảm ơn bạn!</p>
+        <p>Chi tiết thanh toán:</p>
         <ul>
             <li><strong>Product:</strong>${project_name}</li>
-            <li><strong>Price:</strong> $${total}</li>
+            <li><strong>Price:</strong> ${payment.transactions[0].amount.total}</li>
         </ul>
         <p>If you have any questions, please feel free to contact us.</p>
+        <p>Nếu bạn có câu hỏi nào, xin vui lòng liên hệ với chúng tôi</p>
+
         <p>
             Regards,<br>
             IndieGameVN
@@ -326,7 +328,7 @@ const paypalSuccess = async (req, res) => {
                 projectId: project_db.id,
                 status: "Success",
                 dateOfPayment: new Date(),
-                amount: payment.transactions[0].amount.total,
+                amount: (project_db.price * VND_TO_USD_EXCHANGE_RATE),
                 lastPrice: payment.transactions[0].amount.total,
                 paymentMethodId: payment_method_db.id
             })
@@ -366,7 +368,7 @@ const payWithVnpay = async (req, res) => {
     })
     project_db = JSON.parse(JSON.stringify(project_db))
     project_name = project_db.name
-    let amount = project_db.price; // Lấy số tiền từ yêu cầu
+    let amount = project_db.price; // Lấy số tiền từ yêu cầu //Tính toán từ giảm giá
     console.log(amount);
     const urlString = vnpayClient.buildPaymentUrl({
         vnp_Amount: amount,
@@ -485,14 +487,16 @@ const payWithVnpayReturn = async (req, res) => {
 </head>
 <body>
     <div class="container">
-        <h2>Payment Confirmation</h2>
-        <p>Your payment was successful. Thank you for your purchase!</p>
-        <p>Details of your purchase:</p>
+        <h2>Xác nhận thanh toán thành công</h2>
+        <p>Thanh toán thành công. Cảm ơn bạn!</p>
+        <p>Chi tiết thanh toán:</p>
         <ul>
-            <li><strong>Product:</strong>${project_db.name}</li>
-            <li><strong>Price:</strong> ${amount} VND</li>
+            <li><strong>Product:</strong>${project_name}</li>
+            <li><strong>Price:</strong> ${amount}</li>
         </ul>
         <p>If you have any questions, please feel free to contact us.</p>
+        <p>Nếu bạn có câu hỏi nào, xin vui lòng liên hệ với chúng tôi</p>
+
         <p>
             Regards,<br>
             IndieGameVN
@@ -517,7 +521,7 @@ const payWithVnpayReturn = async (req, res) => {
             projectId: project_db.id,
             status: "Success",
             dateOfPayment: new Date(),
-            amount: amount, // Giá gốc
+            amount: project_db.price, // Giá gốc
             lastPrice: amount, // Giá đã qa giảm giá
             paymentMethodId: payment_method_db.id
         })
@@ -698,7 +702,7 @@ const payWithFree = async (req, res) => {
         dateOfPayment: new Date(),
         amount: 0, // Giá gốc
         lastPrice: 0, // Giá đã qa giảm giá
-
+        transactionId: "free" + Math.round(Math.random() * 10000),
     })
     console.log({ fileId: project_db.versions[0].versionFolderId, emailToShare: payer.email, shareToUser: true });
     //share thư mục phiên bản file tải game

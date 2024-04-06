@@ -1,0 +1,169 @@
+<main class="container" style="margin-top: 71px">
+
+    <div class="container mt-6 mb-7">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-xl-7">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <a href="/user/libary" class="btn ps-0 mb-2"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+                        <h2>
+                            Hi {{user.name}},
+                        </h2>
+                        <p class="fs-sm">
+                            Đây là biên nhận thanh toán <strong>
+                                {{#if paymentInfo.payment_method}}
+                                {{#if (ifEquals paymentInfo.payment_method.name 'vnpay')}}
+                                <span class="text-success">{{vndFormat paymentInfo.lastPrice}}</span>
+                                {{else}}
+                                <span class="text-success">${{paymentInfo.lastPrice}}</span>
+
+                                {{/if}}
+                                {{else}}
+                                <span class="text-success">{{ vndFormat paymentInfo.lastPrice}}</span>
+                                {{/if}}
+                            </strong> của bạn cho giao dịch mua dự án
+                            <strong>
+                                {{projectInfo.name}}
+
+                            </strong>
+                        </p>
+
+                        <div class="border-top border-gray-200 pt-4 mt-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-muted mb-2">Mã giao dịch</div>
+                                    <strong>{{paymentInfo.transactionId}}</strong>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div class="text-muted mb-2">Ngày thanh toán</div>
+                                    <strong>{{momentTime paymentInfo.dateOfPayment }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-top border-gray-200 mt-4 py-1">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-muted mb-2">Khách hàng</div>
+                                    <strong>
+                                        {{user.name}}
+                                    </strong>
+                                    <p class="fs-sm">
+                                        {{user.email}}
+
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <div class="text-muted mb-2">Thanh toán cho</div>
+                                    <strong>
+                                        {{projectInfo.user.name}}
+                                    </strong>
+                                    <p class="fs-sm">
+                                        {{projectInfo.user.email}}
+
+                                        <br>
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table border-bottom border-gray-200 mt-3">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Chi tiết</th>
+                                    <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Giá
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="align-middle">
+                                    <td class="px-0">
+                                        {{#each projectInfo.images}}
+                                        {{#if this.isCoverImage}}
+                                        <img src="{{url}}" alt="" height="100px">
+                                        {{/if}}
+                                        {{/each}}
+                                        <a class="ms-2"
+                                            href="/project/{{projectInfo.slug}}/view">{{projectInfo.name}}</a>
+                                    </td>
+                                    <td class="text-end px-0">
+                                        {{#if paymentInfo.payment_method}}
+                                        {{vndFormat projectInfo.price}}
+                                        {{#unless (ifEquals paymentInfo.payment_method.name 'vnpay')}}
+                                        (${{paymentInfo.amount}})
+                                        {{/unless}}</td>
+                                    {{else}}
+                                    {{vndFormat paymentInfo.amount}}
+                                    {{/if}}
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="border-bottom border-gray-200">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-muted mb-2">
+                                        <strong>Phương thức thanh toán</strong>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    {{#if paymentInfo.payment_method}}
+                                    <strong>
+                                        {{paymentInfo.payment_method.name}}
+                                    </strong>
+                                    {{else}}
+                                    <strong>
+                                        Không
+                                    </strong>
+                                    {{/if}}
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5">
+                            <div class="d-flex justify-content-end">
+                                <p class="text-muted me-3">Tạm tính:</p>
+                                {{#if paymentInfo.payment_method}}
+                                {{#if (ifEquals paymentInfo.payment_method.name 'vnpay')}}
+                                <span>{{vndFormat paymentInfo.amount}}</span>
+                                {{else}}
+                                <span>${{paymentInfo.amount}}</span>
+                                {{/if}}
+                                {{else}}
+                                <span>{{vndFormat paymentInfo.amount}}</span>
+                                {{/if}}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <p class="text-muted me-3">Giảm giá:</p>
+                                <span>0%</span>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <h5 class="me-3">Tổng thanh toán:</h5>
+                                {{#if paymentInfo.payment_method}}
+                                {{#if (ifEquals paymentInfo.payment_method.name 'vnpay')}}
+                                <h5 class="text-success">{{vndFormat paymentInfo.lastPrice}} </h5>
+                                {{else}}
+                                <h5 class="text-success">${{paymentInfo.lastPrice}}</h5>
+
+                                {{/if}}
+                                {{else}}
+                                <h5 class="text-success">{{vndFormat paymentInfo.lastPrice}}</h5>
+
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+
+</script>

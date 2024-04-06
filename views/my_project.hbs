@@ -14,7 +14,7 @@
             <div class="w-100 card bg-info" style=" padding: 10px 30px; line-height:30px">
                 <div class="card-body">
                     <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-heart"></i> Lượt thích:
-                    210
+                    0
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
             <div class="w-100 card bg-primary-subtle" style=" padding: 10px 30px; line-height:30px">
                 <div class="card-body">
                     <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-dollar-sign"></i> Doanh
-                    thu: 400.000 VND
+                    thu: {{vndFormat totalRevenue}} (2% phí nền tảng)
                 </div>
             </div>
         </div>
@@ -30,7 +30,15 @@
             <div class="mt-3">
                 <h4>Thống kê dự án</h4>
             </div>
-            <div class="row">
+            <div class="">
+                <select class="btn border" name="" id="">
+                    <option class="btn" value="week">Xem theo tuần</option>
+                    <option class="btn" value="week">Xem theo tháng</option>
+
+                </select>
+                <button class="btn border bg-success text-white "> Xem</button>
+            </div>
+            <div class="row mt-2">
 
                 <div class="col-6">
                     <div style="width: 100%;display: inline-block">
@@ -48,25 +56,48 @@
             </div>
 
             <div class="mt-3">
+
                 <script id="chartDataNewPaid" type="application/json">
                                         {{{json paidWeekStatistic}}}
                                     </script>
                 <h4>Các dự án đã tải lên</h4>
+                <div class="">Bộ lọc:</div>
+                <form id="filterForm" action="/user/projects/{{classificationSlug}}" method="GET">
+                    <label class="ms-4" for="orderBy">Sắp xếp theo:</label>
+                    <select class="btn border" id="orderBy" name="orderBy">
+                        <option {{#if (ifEquals orderBy "name" )}} selected {{/if}} value="name">Tên</option>
+                        <option {{#if (ifEquals orderBy "price" )}} selected {{/if}} value="price">Giá</option>
+                        <option {{#if (ifEquals orderBy "createdAt" )}} selected {{/if}} value="createdAt">Ngày
+                            đăng</option>
+                        <option {{#if (ifEquals orderBy "updatedAt" )}} selected {{/if}} value="updatedAt">Ngày
+                            cập nhật</option>
+                        <option {{#if (ifEquals orderBy "saled" )}} selected {{/if}} value="saled">Lượt bán</option>
+                        <!-- Thêm các lựa chọn khác nếu cần -->
+                    </select>
+
+                    <label class="ms-4" for="order">Thứ tự:</label>
+                    <select class="btn border" id="order" name="order">
+                        <option {{#if (ifEquals order "ASC" )}} selected {{/if}} value="ASC">Tăng dần</option>
+                        <option {{#if (ifEquals order "DESC" )}} selected {{/if}} value="DESC">Giảm dần</option>
+                    </select>
+
+                    <button class="btn btn-primary ms-2" type="submit">Filter</button>
+                </form>
                 {{#unless projects}}
-                <ul style="list-style: none;">
+                <ul class="text-center" style="list-style: none;">
                     <li>Chưa có dự án nào</li>
-                    {{#each paidWeekStatistic}}
-                    <p class="p-0 m-0" data-date={{this.date}}:> {{this.count}}</p>
-                    {{/each}}
                 </ul>
                 {{/unless}}
 
 
             </div>
-            <li class="d-flex gap-2" style="" data-id="{{this.id}}">
+
+
+            <li class="d-flex gap-2 mt-2" style="" data-id="{{this.id}}">
+
                 {{#each projects}}
                 {{#if (ifEquals this.user.id user.id)}}
-                <div class="card project-item" style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                <div class="card project-item " style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
                     {{#each images}}
                     {{#if this.isCoverImage}}
                     <img src="{{this.url}}" class="game__thumbnail" width="100%" height="100%"
@@ -74,22 +105,27 @@
                     {{/if}}
                     {{/each}}
                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
-                    <div class="card-body pb-0">
+                    <div class="card-body pb-0 ">
+                        <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0 </p>
+                        <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-heart text-danger"></i> 20 </p>
+                        {{#if isPublic}}
+                        <p class="p-0 m-0 visibility"><i class="me-1 fa-solid fa-lock-open"></i> Công khai </p>
+                        {{else }}
+                        <p class="p-0 m-0 visibility"><i class="me-1 fa-solid fa-lock"></i> Riêng tư </p>
 
+                        {{/if}}
                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
 
                         <p class="mt-2  card-text clamped-text-3 ">{{this.short_description}}</p>
                         {{#if (ifEquals this.price '0')}}
                         <p>Miễn phí</p>
                         {{else}}
-                        <p>Giá: {{this.price}}Vnd</p>
+                        <p>Giá: {{vndFormat this.price}}</p>
                         {{/if}}
 
 
                     </div>
-                    <p class="p-0 m-0"><i class="fa-solid fa-eye"></i> 451 lượt xem</p>
-                    <p class="p-0 m-0"><i class="fa-solid fa-heart"></i> 326 yêu thích</p>
-                    <p class="p-0 m-0"><i class="fa-solid fa-download"></i> 201 lượt tải</p>
+                    <p class="p-0 m-0 "><i class="fa-solid fa-coins"></i> {{this.saledCount}} lượt mua</p>
 
 
                     <div class="">
