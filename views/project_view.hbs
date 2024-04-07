@@ -107,11 +107,11 @@
         </div>
         <div class="carousel container p-0 mt-4">
 
-            <ul class="carousel__thumbnails gap-2 pb-2 gallery2">
+            <ul class="carousel__thumbnails gap-2 pb-2 gallery">
                 {{#if projectInfo.images}}
                 {{#each projectInfo.images}}
                 {{#unless this.isCoverImage}}
-                <a href="{{url}}" data-pswp-width="600" data-pswp-height="240">
+                <a href="{{url}}" data-pswp-width="600" data-pswp-height="238">
                     <img src="{{this.url}}" alt=""></label>
                 </a>
                 {{/unless}}
@@ -215,12 +215,10 @@
 <script src="/javascripts/photoswipe-lightbox.umd.min.js"></script>
 <script type="text/javascript">
     let lightbox = new PhotoSwipeLightbox({
-        galery: '.gallery2',
+        gallery: '.gallery',
         children: 'a',
         // dynamic import is not supported in UMD versionmouseMovePan: true,
 
-        initialZoomLevel: 'fit',
-        secondaryZoomLevel: 1.5,
         maxZoomLevel: 1,
         pswpModule: PhotoSwipe
     });

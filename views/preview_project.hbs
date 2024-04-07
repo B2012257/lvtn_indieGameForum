@@ -13,10 +13,10 @@
                     <i style="font-size: 12px;">by @{{projectInfo.user.name}}</i>
                 </div>
                 <ul class="title__left__list">
-                    <li class="title__left__list__item__banner title__left__list__item galery">
+                    <li class="title__left__list__item__banner title__left__list__item gallery">
                         {{#each projectInfo.images}}
                         {{#if this.isCoverImage}}
-                        <a href="{{url}}" data-pswp-width="900" data-pswp-height="510">
+                        <a href="{{url}}" data-pswp-src="{{url}}" data-pswp-width="900" data-pswp-height="510">
                             <img class="title__left__list__item__banner_small" src="{{this.url}}" width="300"
                                 height="170">
                         </a>
@@ -70,11 +70,11 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-6 gallery">
+                                        <div class="col-6 gallery pswp-gallery">
                                             {{#each projectInfo.images}}
                                             {{#if this.isCoverImage}}
                                             <a href="{{url}}" data-pswp-width="900" data-pswp-height="510">
-                                                <img src=" {{url}}" alt="" width="100%">
+                                                <img src="{{url}}" alt="" width="100%">
 
                                             </a>
                                             {{/if}}
@@ -89,7 +89,7 @@
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="row flex-wrap row-gap-1 gallery">
+                                            <div class="row flex-wrap row-gap-1 gallery pswp-gallery">
                                                 {{#each projectInfo.images}}
                                                 {{#unless this.isCoverImage}}
                                                 <a href="{{url}}" data-pswp-width="600" data-pswp-height="340"
@@ -114,7 +114,7 @@
 
         </div>
         <div class="carousel container p-0 mt-4">
-            <ul class="carousel__thumbnails gap-2 pb-2 galery">
+            <ul class="carousel__thumbnails gap-2 pb-2 gallery">
                 {{#if projectInfo.images}}
                 {{#each projectInfo.images}}
                 {{#unless this.isCoverImage}}
@@ -233,12 +233,13 @@
 <script src="/javascripts/photoswipe.umd.min.js"></script>
 <script src="/javascripts/photoswipe-lightbox.umd.min.js"></script>
 <script type="text/javascript">
+
+
     let lightbox = new PhotoSwipeLightbox({
         gallery: '.gallery',
         children: 'a',
         // dynamic import is not supported in UMD versionmouseMovePan: true,
 
-        initialZoomLevel: 'fit',
         secondaryZoomLevel: 1.5,
         maxZoomLevel: 1,
         pswpModule: PhotoSwipe
