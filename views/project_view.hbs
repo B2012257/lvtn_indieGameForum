@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="/stylesheets/project_view.css">
+<link rel="stylesheet" href="/stylesheets/photoswipe.css">
+
 <div class="heading" style="margin-top: 72px; padding-bottom: 10px">
     {{!-- <div class="change_theme">
         <div class="change_background_btn">
@@ -105,13 +107,13 @@
         </div>
         <div class="carousel container p-0 mt-4">
 
-            <ul class="carousel__thumbnails gap-2 pb-2">
+            <ul class="carousel__thumbnails gap-2 pb-2 gallery2">
                 {{#if projectInfo.images}}
                 {{#each projectInfo.images}}
                 {{#unless this.isCoverImage}}
-                <li>
+                <a href="{{url}}" data-pswp-width="600" data-pswp-height="240">
                     <img src="{{this.url}}" alt=""></label>
-                </li>
+                </a>
                 {{/unless}}
 
                 {{/each}}
@@ -145,14 +147,14 @@
             {{#with projectInfo}}
             <ul class="list-group">
                 <li class="list-group-item">Phân loại: <a class="text-decoration-none"
-                        href="">{{classification.name}}.</a>
+                        href="/project/{{classification.slug}}" href="">{{classification.name}}.</a>
                 </li>
                 <li class="list-group-item">Thể loại:
-                    <a class="text-decoration-none" href="">{{genre.name}}.</a>
+                    <a href="/genres/{{genre.slug}}" class="text-decoration-none" href="">{{genre.name}}.</a>
                 </li>
                 <li class="list-group-item">Nhãn:
                     {{#each tags}}
-                    <a class="text-decoration-none" href="">{{this.name}},</a>
+                    <a href="/tags/{{slug}}" class="text-decoration-none" href="">{{this.name}},</a>
                     {{/each}}
                 </li>
 
@@ -209,3 +211,18 @@
 
 
 <script src="/javascripts/project_view.js"></script>
+<script src="/javascripts/photoswipe.umd.min.js"></script>
+<script src="/javascripts/photoswipe-lightbox.umd.min.js"></script>
+<script type="text/javascript">
+    let lightbox = new PhotoSwipeLightbox({
+        galery: '.gallery2',
+        children: 'a',
+        // dynamic import is not supported in UMD versionmouseMovePan: true,
+
+        initialZoomLevel: 'fit',
+        secondaryZoomLevel: 1.5,
+        maxZoomLevel: 1,
+        pswpModule: PhotoSwipe
+    });
+    lightbox.init();
+</script>

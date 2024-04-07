@@ -123,7 +123,7 @@ let paidStatisticWeek = async ({ userId }) => {
     startDate = startDate.toLocaleDateString()
     endDate = endDate.toLocaleDateString()
     //Tìm các prpject của user trong tuần
-
+    console.log(startDate, endDate);
     let projectResults = await db.project.findAndCountAll({
         where: {
             userId,
@@ -149,13 +149,14 @@ let paidStatisticWeek = async ({ userId }) => {
         let date = new Date(startDate)
         date.setDate(date.getDate() + i)
         date = date.toLocaleDateString()
-        date = moment.utc(date).format('MM/DD/YYYY');
+        date = moment(date).format('MM/DD/YYYY');
         // console.log(date, "date");
         let count = 0
         results.rows.forEach(item => {
             //Lấy ra ngày thanh toán
-            let formattedDate = moment.utc(item.dateOfPayment).format('MM/DD/YYYY');
+            let formattedDate = moment(item.createdAt).format('MM/DD/YYYY');
             //Nếu ngày thanh toán trùng với ngày thì tăng count
+            console.log(formattedDate, date);
             if (formattedDate === date) {
                 count++
             }
@@ -174,7 +175,7 @@ let paidStatisticWeek = async ({ userId }) => {
             count: data[i]
         })
     }
-
+    console.log(dataJson, "dataJson");
     return dataJson
 
 }
@@ -387,6 +388,69 @@ const getCreateProjectPage = async (req, res) => {
 
 }
 const editInfoProject = async (req, res) => {
+    let projectId = req.params.id
+    let projectDb = await db.project.findOne({
+        where: {
+            id: projectId
+        }
+    })
+    let { name, classification, description, genre, tags, short_description, long_description, releaseStatus, options, priceValue, visibility } = req.body
+    // cập nhật thông tin dự án
+
+    try {
+        if (options === "free") priceValue = 0
+        let project = await db.project.update({
+            name, classificationId: classification, description, genreId: genre, short_description, long_description, releaseStatus, options, price: priceValue, isPublic: visibility
+
+        }, {
+            where: {
+                id: projectId
+            }
+        })
+
+        //cập nhật tags: 
+        //Lấy id của mấy tags cũ
+        //Kiểm tra tags nếu tìm thấy thì lưu id vào project_tag, còn không tìm thấy thì lưu mới vào db và lưu vào project_tag
+        let project_tags = []
+        project_tags = tags.split(",") // array of tags
+        project_tags.forEach(async projectTagName => {
+            if (projectTagName.trim() === "") { return console.log("Tag rỗng") }
+            else
+                await db.tag.findOrCreate({
+                    where: {
+                        name: projectTagName
+                    },
+                    defaults: {
+                        name: projectTagName
+                    },
+                    attributes: ['id']
+                })
+                    .then(async ([tagInstance, created]) => {
+                        await projectDb.addTag(tagInstance.id);
+                        // Kiểm tra nếu tag được tạo mới hoặc đã tồn tại
+                        // if (created) {
+                        //     console.log('Tag:', tagInstance.id);
+
+                        //     // Kiểm tra xem project_db có phải là mô hình project không
+                        //     // Sử dụng addTag để thêm tag vào project
+
+                        // } else {
+                        //     await project_db.addTag(tagInstance.id);
+                        //     console.log('Tag đã được thêm vào project.');
+
+                        // }
+                    });
+        });
+
+        res.redirect("/user/project/" + projectId + "/edit")
+        //Xóa tất cả tag cũ
+
+    } catch (e) {
+        console.log(e);
+        console.log("Lỗi cập nhật thông tin dự án");
+    }
+}
+const getEditInfoProjectPage = async (req, res) => {
     //Lấy ra thông tin dự án
     let projectId = req.params.id
     let projectDB = await db.project.findOne({
@@ -405,6 +469,8 @@ const editInfoProject = async (req, res) => {
     genres = JSON.parse(JSON.stringify(genres))
     classifications = JSON.parse(JSON.stringify(classifications))
     //
+
+    console.log(projectDB);
     res.render("edit_info_project", {
         title: "Chỉnh sửa thông tin dự án",
         header: true,
@@ -496,7 +562,6 @@ const getMyProjectPage = async (req, res) => {
 
 
 
-    console.log(projects);
     let paidWeekStatistic = await paidStatisticWeek({ userId: user.id })
     let newProjectWeekStatistic = await newProjectStatisticWeek({ userId: user.id })
     // Tính tổng doanh thu
@@ -867,5 +932,6 @@ module.exports = {
     getGenresPage,
     getForumPage,
     getProjectBillPage,
+    getEditInfoProjectPage,
     editInfoProject
 }

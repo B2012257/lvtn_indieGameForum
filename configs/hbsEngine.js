@@ -25,6 +25,10 @@ module.exports = (app) => {
             json: function (context) {
                 return JSON.stringify(context);
             },
+            trimString: function (str) {
+                return str.trim();
+            }
+            ,
             vndFormat: function (amount) {
                 var parts = parseFloat(amount).toFixed(2).toString().split('.');
                 var integerPart = parts[0];

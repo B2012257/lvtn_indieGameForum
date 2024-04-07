@@ -10,7 +10,7 @@
                 <h6>Thông tin dự án</h6>
                 <div class="right__content ps-1 pt-2">
                     {{#with projectDB}}
-                    <form id="upload_project_form" action="/user/upload-project" method="POST"
+                    <form id="upload_project_form" action="/user/project/{{id}}/editInfo" method="POST"
                         enctype="application/x-www-form-urlencoded">
                         <div class="mb-3 row">
                             <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
@@ -31,7 +31,9 @@
                                     <select name="classification" class="form-select" id="selectClassification">
                                         <option value="0" selected>Open this select menu</option>
                                         {{#each @root.classifications}}
-                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                                        <option {{#if (ifEquals this.id @root.projectDB.classification.id)}} selected
+                                            {{/if}} value="{{this.id}}" title="{{this.description}}">{{this.name}}
+                                        </option>
                                         {{/each}}
                                     </select>
                                     <label for="selectClassification">Chọn một phân loại</label>
@@ -48,7 +50,8 @@
                                     <select name="genre" class="form-select" id="inputGenre">
                                         <option value="0" selected>Open this select menu</option>
                                         {{#each @root.genres}}
-                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                                        <option {{#if (ifEquals this.id @root.projectDB.genre.id)}} selected {{/if}}
+                                            value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                     <label for="inputGenre">Chọn một thể loại</label>
@@ -65,7 +68,10 @@
                                     Kinh di
                                     <i class="fa-solid fa-xmark delete_tag" title="Xóa nhãn này"></i>
                                 </span> --}}
-
+                                {{#each tags}}
+                                <span class="badge tagNameChoosing text-bg-secondary mb-1 me-1">{{name}}<i
+                                        class="fa-solid fa-xmark delete_tag"></i></span>
+                                {{/each}}
 
                                 <input class="form-control inputTags" name="tags" id="inputTag"
                                     placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
@@ -87,7 +93,7 @@
                             <div class="col-sm-10">
                                 <textarea maxlength="200" class="form-control rounded-1" name="short_description"
                                     id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án">
-                                    {{short_description}}</textarea>
+                                    {{trimString short_description}}</textarea>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -97,7 +103,7 @@
                             <div class="col-sm-10">
                                 <textarea class="form-control rounded-1" name="long_description"
                                     id="inputLongDescription" rows="6" placeholder="Mô tả chi tiết">
-                                    {{long_description}}</textarea>
+                                    {{trimString long_description}}</textarea>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -300,6 +306,11 @@
 </main>
 
 <script>
+    let long_description = document.getElementById('inputLongDescription');
+    let short_description = document.getElementById('inputShortDescription');
+
+    long_description.textContent = long_description.value.trim();
+    short_description.textContent = short_description.value.trim();
     window.addEventListener('beforeunload', function (event) {
         // Xóa bộ nhớ đệm
         projectFiles = []
@@ -449,6 +460,11 @@
         return Array.from(tags).some(tag => tag.textContent.trim().toLocaleLowerCase() === tagName.trim().toLocaleLowerCase());
     }
     let tagsChoosing = [] //Biển lưu danh sách tag để gữi lên server
+    //Lấy các tags trả từ server về và thêm vào tagsChoosing
+    let tagsChoosingElements = document.querySelectorAll('.tagNameChoosing')
+    tagsChoosingElements.forEach(tag => {
+        tagsChoosing.push(tag.textContent.trim())
+    })
     function chooseTag(tagName) {
         //<span class="badge text-bg-secondary mb-1">
         //                            Kinh di
@@ -482,12 +498,7 @@
 
         document.querySelector(".tags_wrapper").insertBefore(tagBadge, document.querySelector(".tags_wrapper").firstChild);
     }
-    //handle submit form
-    const objectUpload = {
-        cover: 'Ảnh bìa',
-        screenshot: 'Ảnh chụp màn hình',
-        project: 'File dự án'
-    }
+    // handle submit form
     const form = document.getElementById('upload_project_form');
     form.addEventListener("submit", async (event) => {
         event.preventDefault()
@@ -502,44 +513,17 @@
         //   })
         //   .finally(() => {
         //   })
-        await uploadCoverImage()
-            .then(value => {
-                //Tải thành công
-                toggleVisibility({ isToggle: false, elementClassName: "upload_cover_image", value: "1. Đã tải lên ảnh bìa." })
-                // Nhan duoc folderId
-                document.querySelector('#inputPjFolderId').value = value.folderIdPublic
-                console.log(value)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        await uploadScreenShot()
-            .then(value => {
-                toggleVisibility({ isToggle: false, elementClassName: "upload_screenshots", value: "2. Đã tải lên ảnh màn hình." })
 
-                console.log(value)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        await uploadProjectFile()
-            .then(value => {
-                console.log(value)
-                toggleVisibility({ isToggle: false, elementClassName: "upload_project_file", value: "3. Đã tải tệp dự án." })
 
-            })
-            .catch(err => {
-                console.log(err)
-            })
-
-        //Thêm danh sách tag vào form
         toggleVisibility({ isToggle: true, elementClassName: "loadding_icon" })
 
         toggleVisibility({ isToggle: true, elementClassName: "success_icon" })
+
         document.querySelector('.inputTags').value = tagsChoosing
+
         setTimeout(() => {
             form.submit()
-        }, 2000)
+        }, 1000)
         //Submit form
     })
     // Xóa ảnh khỏi mảng files

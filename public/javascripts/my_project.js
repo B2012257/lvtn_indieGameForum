@@ -5,7 +5,18 @@ let charDataOfNewProjectCountWeek = JSON.parse(document.querySelector("#chartDat
     new Chart(
         document.getElementById('view-acquisitions'),
         {
-
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Biểu đồ dự án mới đăng trong tuần'
+                    }
+                }
+            },
             data: {
                 labels: charDataOfNewProjectCountWeek.map(row => row.date),
                 datasets: [
@@ -35,23 +46,31 @@ let charDataOfNewProjectCountWeek = JSON.parse(document.querySelector("#chartDat
     new Chart(
         document.getElementById('sold-acquisitions'),
         {
+            type: 'line',
             options: {
-                scales: {
-                    beginAtZero: true,
-
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Biểu đồ lượng mua hàng trong tuần'
+                    }
                 }
             },
             data: {
                 labels: charDataOfPaymentCountWeek.map(row => row.date),
                 datasets: [
-
                     {
-                        type: 'line',
+
                         label: 'Lượt mua',
-                        data: charDataOfPaymentCountWeek.map(row => row.count)
+                        data: charDataOfPaymentCountWeek.map(row => row.count),
+                        borderColor: 'orange',
+                        backgroundColor: 'yellow'
                     },
 
-                ]
+                ],
             },
 
             //Thiết lập bước nhảy là 1 đơn vị

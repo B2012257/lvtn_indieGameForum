@@ -212,7 +212,8 @@
                                         <div class="tags" style="min-height: 20px;">
                                             {{#each this.tags}}
 
-                                            <a href="/tags/{{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
+                                            <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                                class="badge bg-danger fw-normal">{{this.name}}</a>
                                             {{/each}}
                                         </div>
                                         <p class="mt-2 card-text clamped-text-3">{{this.short_description}}</p>
