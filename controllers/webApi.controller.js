@@ -4,6 +4,7 @@ const { platform } = require('../configs/constraint')
 
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
+const { where } = require("sequelize")
 
 let folderIdPublic;
 let project_name_and_random
@@ -15,12 +16,18 @@ const uploadImage = async (req, res) => {
     let project_name = req.body.pj_name
     project_name_and_random = project_name + random4NumberUntil()
     //tạo thư mục dự án trên DRIVE
-    folderIdPublic = await drive.createFolder({
-        name: project_name_and_random,
-        // parents: process.env.PROJECT_FOLDER_ID_DRIVE,
-        shareToUser: true,
-        shareToEmail: req.session?.user?.email ?? req.user?.email
-    })
+    try {
+        folderIdPublic = await drive.createFolder({
+            name: project_name_and_random,
+            // parents: process.env.PROJECT_FOLDER_ID_DRIVE,
+            shareToUser: true,
+            shareToEmail: req.session?.user?.email ?? req.user?.email
+        })
+    } catch (error) {
+        console.log(error);
+        console.log("Hết hạn token google");
+    }
+
     const file = req.file
     //Nếu tạo thành công
     if (folderIdPublic) {
@@ -199,10 +206,33 @@ const uploadProject = async (req, res) => {
 const uploadImageFromCkEditor = async (req, res) => {
 
 }
+const search = async (req, res) => {
+    //Tìm kiếm dựa theo kết quả tìm kiếm, theo tên, thể loại và tags
+
+    let search = req.query.q
+    let projects = await db.project.findAll({
+        where: {
+            name: {
+                [db.Sequelize.Op.like]: `%${search}%`
+            }
+        },
+        include: [
+            {
+                model: db.image,
+                where: {
+                    isCoverImage: true
+                }
+            },
+            db.genre, db.tag
+        ]
+    })
+    res.json(projects)
+}
 module.exports = {
     uploadImage,
     uploadImages,
     uploadProject,
     saveDescription,
-    uploadImageFromCkEditor
+    uploadImageFromCkEditor,
+    search
 }

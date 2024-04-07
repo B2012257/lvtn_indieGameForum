@@ -49,5 +49,5 @@ router.post('/upload-project', upload.fields([
 
 //[POST] /api/v1/project/update/description 
 router.post('/project/update/description', apiController.saveDescription);
-
+router.get('/search', apiController.search)
 module.exports = router;

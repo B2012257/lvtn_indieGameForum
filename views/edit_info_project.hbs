@@ -1,0 +1,714 @@
+<link rel="stylesheet" href="/stylesheets/upload_project.css">
+<main style="margin-top: 70px" class="container">
+    <div class="card pt-4" style="margin: auto; width: 900px">
+        <div class="card-header bg-body-secondary">
+            Chỉnh sửa thông tin dự án
+        </div>
+        <div class="card-body row p-3">
+
+            <div class="right col-12">
+                <h6>Thông tin dự án</h6>
+                <div class="right__content ps-1 pt-2">
+                    {{#with projectDB}}
+                    <form id="upload_project_form" action="/user/upload-project" method="POST"
+                        enctype="application/x-www-form-urlencoded">
+                        <div class="mb-3 row">
+                            <label for="inputName" class="col-sm-2 col-form-label right__content__label">Tên dự
+                                án:</label>
+                            <div class="col-sm-10">
+                                <input value="{{name}}" required type="text" class="form-control rounded-1"
+                                    id="inputPjName" name="name">
+                                <input type="text" class="form-control rounded-1" id="inputPjFolderId" hidden
+                                    name="folder_id">
+
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="selectClassification" class="col-sm-2 col-form-label right__content__label">Phân
+                                loại:</label>
+                            <div class="col-sm-10">
+                                <div class="form-floating">
+                                    <select name="classification" class="form-select" id="selectClassification">
+                                        <option value="0" selected>Open this select menu</option>
+                                        {{#each @root.classifications}}
+                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <label for="selectClassification">Chọn một phân loại</label>
+                                </div>
+                                {{!-- <input type="text" class="form-control rounded-1" id="inputCategory"
+                                    name="category"> --}}
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputGenre" class="col-sm-2 col-form-label right__content__label">Thể
+                                loại</label>
+                            <div class="col-sm-10">
+                                <div class="form-floating">
+                                    <select name="genre" class="form-select" id="inputGenre">
+                                        <option value="0" selected>Open this select menu</option>
+                                        {{#each @root.genres}}
+                                        <option value="{{this.id}}" title="{{this.description}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <label for="inputGenre">Chọn một thể loại</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
+                                <i>(Có thể chọn nhiều nhãn)</i>
+                            </label>
+                            <div class="col-sm-10 tags_wrapper">
+                                {{!-- <span class="badge text-bg-secondary mb-1">
+                                    Kinh di
+                                    <i class="fa-solid fa-xmark delete_tag" title="Xóa nhãn này"></i>
+                                </span> --}}
+
+
+                                <input class="form-control inputTags" name="tags" id="inputTag"
+                                    placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
+                                <ul id="tag_suggests">
+                                    {{#each @root.tags}}
+                                    <li class="tag_suggests__item">
+                                        {{this.name}}
+                                        <label class="float-end clickToAddLabel">Chọn </label>
+                                    </li>
+                                    {{/each}}
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputShortDescription" class="col-sm-2 col-form-label right__content__label">Mô
+                                tả
+                                ngắn <i>(Tối đa 200 từ)</i></label>
+                            <div class="col-sm-10">
+                                <textarea maxlength="200" class="form-control rounded-1" name="short_description"
+                                    id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án">
+                                    {{short_description}}</textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputLongDescription" class="col-sm-2 col-form-label right__content__label">Mô
+                                tả
+                                chi tiết</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control rounded-1" name="long_description"
+                                    id="inputLongDescription" rows="6" placeholder="Mô tả chi tiết">
+                                    {{long_description}}</textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="selectRelease" class="col-sm-2 col-form-label right__content__label">Trạng thái
+                                phát
+                                hành</label>
+                            <div class="col-sm-10">
+                                <select name="releaseStatus" id="selectRelease" class="form-control rounded-1">
+                                    <option {{#if (ifEquals releaseStatus "Đã phát hành" )}} selected {{/if}}
+                                        value="Đã phát hành">Sẵn sàng phát hành - Dự án đã hoàn thành</option>
+                                    <option {{#if (ifEquals releaseStatus "Đang phát triển" )}} selected {{/if}}
+                                        value="Đang phát triển">Đang phát triển - Dự án đang phát triển hoặc truy
+                                        cập sớm
+                                    </option>
+                                </select>
+
+                            </div>
+                            {{!-- <label for="inputReleaseDate"
+                                class="col-sm-2 col-form-label right__content__label">Ngày
+                                phát
+                                hành:</label>
+                            <div class="col-sm-10">
+                                <div class="col-sm-10">
+                                    <input type="date" class="form-control rounded-1" id="inputReleaseDate"
+                                        name="releaseDate">
+                                </div>
+
+                            </div> --}}
+                        </div>
+                        <div class="mb-3 row border-bottom">
+                            <label class="col-sm-2 col-form-label right__content__label">Giá:</label>
+                            <div class="col-sm-10">
+                                <input value="free" type="radio" class="btn-check" name="options" id="option1"
+                                    autocomplete="off" {{#if (ifEquals price 0)}} checked {{/if}} checked>
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option1">Miễn
+                                    phí</label>
+
+                                {{!-- <input value="donate" type="radio" class="btn-check" name="options" id="option2"
+                                    autocomplete="off">
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option2">Ủng hộ</label>
+                                --}}
+
+                                <input value="pay" type="radio" class="btn-check" name="options" id="option3"
+                                    autocomplete="off" {{#unless (ifEquals price 0)}} checked {{/unless}}>
+                                <label
+                                    style="font-size: 14px; font-style: italic; vertical-align: middle; margin: 0 10px 0 0; font-weight: bold"
+                                    class="btn pt-0 pb-0 ps-2 pe-2 btn-outline-success" for="option3">Trả phí</label>
+                                <div class="col-5 mt-2 mb-2">
+                                    <input class="form-control" type="text" name="priceValue" id="payInput"
+                                        oninput="validatePrice(event)" {{#if (ifEquals price 0)}} style="display: none;"
+                                        {{/if}} value="{{price}}" placeholder="VND">
+                                    <p id="payAmountError" style="display: none;">Vui lòng chỉ nhập số nguyên!</p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {{!-- <div class="mb-3 row">
+                            <label for="inputUploadFile" class="col-sm-2 col-form-label right__content__label">Tải
+                                lên:</label>
+
+                            <div class="col-sm-10">
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-windows platform_icon"></i>
+                                    <span class="platform_name">Windows: </span>
+                                    <label class="inputUploadFile" for="inputWindowsUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputWindowsUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                    <span class="platform_name">Linux (RPM-based): </span>
+                                    <label class="inputUploadFile" for="inputLinuxRPMUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputLinuxRPMUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                    <span class="platform_name">Linux (Debian-based): </span>
+                                    <label class="inputUploadFile" for="inputLinuxDBUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputLinuxDBUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-apple platform_icon"></i>
+
+                                    <span class="platform_name">Mac OS: </span>
+                                    <label class="inputUploadFile" for="inputMacOsUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputMacOsUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                    <i class="fa-brands fa-android platform_icon"></i>
+
+
+                                    <span class="platform_name">Android: </span>
+                                    <label class="inputUploadFile" for="inputAndroidUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputAndroidUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+                                <div class="platform">
+                                    <i class="fa-solid fa-minus delete_icon" onclick="handleClickDeleteFlatform(event)"
+                                        title="Xóa nền tảng này"></i>
+                                    <i class="fa-brands fa-app-store-ios platform_icon"></i>
+                                    <span class="platform_name">IOS: </span>
+                                    <label class="inputUploadFile" for="inputIOSUploadFile"><i
+                                            class="fa-solid fa-plus"></i></label>
+                                    <input class="form-control rounded-1 fs-14px" type="file" accept=".zip,.rar,.gz"
+                                        id="inputIOSUploadFile" onchange="handleChooseProjectFile(event)" hidden>
+
+                                </div>
+
+                            </div>
+                        </div> --}}
+
+                        <div class="mb-5 row">
+                            <label class="col-sm-2 col-form-label right__content__label">Hiển thị:</label>
+
+                            <div class="col-12 ps-4 pe-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft"
+                                        {{#unless isPublic}} checked {{/unless}} value="0">
+                                    <label class="form-check-label right__content__label" for="flexRadioDraft">
+                                        Bản nháp - Chỉ có bạn mới có thể xem
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic"
+                                        value="1" {{#if isPublic}} checked {{/if}}>
+                                    <label class="form-check-label right__content__label" for="flexRadioPublic">
+                                        Công khai - Mọi người đều có thể xem
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="m-auto text-center loadding_icon d-none">
+                                <i class="fa-solid fa-circle-notch"></i>
+                                <p class="text-center">Vui lòng chờ</p>
+                            </div>
+                            <div class="m-auto text-center success_icon d-none">
+                                <i class="fa-solid fa-check"></i>
+                                <p class="text-center">Thành công</p>
+
+                            </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_cover_image d-none">
+                            </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_screenshots d-none">
+                            </div>
+                            <div class="fst-italic col-12 mb-2 uploading_msg upload_project_file d-none">
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12 mt-4">
+                                {{!-- <button class="btn w-25 btn-sm btn-success" type="submit">Lưu và xem</button> --}}
+                                <button type="submit" class="btn btn-primary" type="button">
+                                    {{!-- <div class="spinner-border spinner-border-sm" role="status">
+                                    </div> --}}
+                                    Lưu thay đổi
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {{/with}}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    window.addEventListener('beforeunload', function (event) {
+        // Xóa bộ nhớ đệm
+        projectFiles = []
+    });
+    function displaySelectedCoverImage(event, imgElementSelector) {
+        const selectedImage = document.querySelector(imgElementSelector);
+        const fileInput = event.target;
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+
+            reader.readAsDataURL(fileInput.files[0]); //chuyển ảnh thành url thành url
+
+            reader.onload = function (e) {
+                selectedImage.src = e.target.result;
+            };
+        }
+    }
+    function displaySelectedScreenshotImage(event) {
+        //Bỏ thêm ảnh cũ vào trong
+        let screenshotImageInput = document.getElementById('chooseScreenshotImages')
+        let temp = [...screenshotUpload || []]
+        screenshotUpload = [...temp, ...screenshotImageInput.files]
+        const fileInput = event.target;
+        console.log(fileInput.files)
+        const arrayFile = Array.from(fileInput.files);
+        const urlArray = [];
+        // Sử dụng Promise để xử lý việc chuyển đổi ảnh thành URL
+        const promises = arrayFile.map(file => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const imageUrl = e.target.result;
+
+                    resolve({ imageUrl, file });
+                };
+                reader.onerror = function (error) {
+                    reject(error);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Sử dụng Promise.all để đợi tất cả các tác vụ hoàn thành
+        Promise.all(promises)
+            .then((imageArray) => {
+                // imageUrls là một mảng chứa các URL của ảnh
+                //const { imageUrl } = imageObject
+
+                console.log(imageArray)
+                imageArray.forEach(object => {
+                    console.log(object.file)
+                    let divwrapper = document.createElement('div');
+                    let deteletag = document.createElement('i');
+                    let imagetag = document.createElement('img');
+
+                    deteletag.classList.add('delete_image');
+                    deteletag.classList.add('fa-solid')
+                    deteletag.classList.add('fa-xmark')
+
+                    imagetag.classList.add('screenshot');
+                    imagetag.setAttribute('filename', object.file.name)
+                    //imageTag.fileName =
+                    deteletag.title = "Xoá ảnh"
+                    deteletag.addEventListener('click', (e) => {
+                        let parent = e.target.parentElement
+                        let imageToDelete = parent.querySelector("img")
+                        parent.remove();
+                        removeImageFromFiles(screenshotUpload, imageToDelete.getAttribute('filename'))
+                    })
+                    divwrapper.classList.add('screenshot_wrapper')
+                    imagetag.src = object.imageUrl;
+                    divwrapper.appendChild(imagetag);
+                    divwrapper.appendChild(deteletag);
+                    document.querySelector(".target-screenshot-image").appendChild(divwrapper);
+                })
+
+            })
+            .catch(error => {
+                console.log('Error converting images to URLs:', error);
+            });
+    }
+    //Lấy ra các tag bỏ vào list
+    let tags = document.querySelectorAll('.tag_suggests__item')
+    let taglist = []
+
+    tags.forEach(tag => {
+        let tagName = tag.firstChild.nodeValue.trim()
+        taglist.push(tagName)
+    });
+
+    const tagSuggests = document.getElementById('tag_suggests')
+    document.querySelectorAll(".tag_suggests__item").forEach(element => {
+        element.addEventListener('click', () => {
+            let tagClickName = element.firstChild.nodeValue.trim()
+            const inputTag = document.getElementById('inputTag')
+                .value = ""
+            chooseTag(tagClickName)
+            tagSuggests.innerHTML = '';
+        })
+    })
+
+    function onSearchTag() {
+        const inputTag = document.getElementById('inputTag');
+        const filter = inputTag.value;
+
+        tagSuggests.innerHTML = '';
+        // Kiểm tra có trong list k
+        const isInList = taglist.map(element => {
+            if (element.toLowerCase().includes(filter.toLowerCase())) {
+                const tagSuggestsItem = document.createElement('li');
+                tagSuggestsItem.classList.add('tag_suggests__item');
+                tagSuggestsItem.innerHTML = `
+                    ${element}
+                    <label class="float-end clickToAddLabel">Chọn </label>
+                `;
+                tagSuggestsItem.addEventListener('click', () => {
+                    inputTag.value = "";
+                    tagSuggests.textContent = '';
+                    chooseTag(element)
+
+                })
+                tagSuggests.appendChild(tagSuggestsItem);
+                return true;
+            }
+            return false;
+        })
+
+        if (!isInList.includes(true)) {
+            const tagSuggestsItem = document.createElement('li');
+            tagSuggestsItem.classList.add('tag_suggests__item');
+            tagSuggestsItem.innerHTML = `
+                    ${filter}
+                    <label class="float-end clickToAddLabel">Chọn </label>
+                `;
+            tagSuggestsItem.addEventListener('click', () => {
+                inputTag.value = "";
+                tagSuggests.textContent = "";
+                chooseTag(filter)
+            })
+            tagSuggests.appendChild(tagSuggestsItem);
+        }
+    }
+    function isChoosedTag(tagName) {
+        let tags = document.querySelectorAll('.tagNameChoosing.badge')
+        return Array.from(tags).some(tag => tag.textContent.trim().toLocaleLowerCase() === tagName.trim().toLocaleLowerCase());
+    }
+    let tagsChoosing = [] //Biển lưu danh sách tag để gữi lên server
+    function chooseTag(tagName) {
+        //<span class="badge text-bg-secondary mb-1">
+        //                            Kinh di
+        //  < i class="fa-solid fa-xmark delete_tag" title = "Xóa nhãn này" ></ >
+        //     </span >
+        if (isChoosedTag(tagName)) {
+            return alert("Nhãn này đã được chọn")
+        }
+        //thêm tag vào list để gữi lên server
+        tagsChoosing.push(tagName)
+
+        const tagBadge = document.createElement('span');
+        const closeTagIcon = document.createElement('i');
+
+        closeTagIcon.addEventListener("click", (event) => {
+            event.target.parentElement.remove()
+        })
+
+        tagBadge.classList.add('badge');
+        tagBadge.classList.add('tagNameChoosing');
+        tagBadge.classList.add('text-bg-secondary');
+        tagBadge.classList.add('mb-1');
+        tagBadge.classList.add('me-1');
+        tagBadge.textContent = tagName;
+
+        closeTagIcon.classList.add('fa-solid');
+        closeTagIcon.classList.add('fa-xmark');
+        closeTagIcon.classList.add('delete_tag');
+
+        tagBadge.appendChild(closeTagIcon);
+
+        document.querySelector(".tags_wrapper").insertBefore(tagBadge, document.querySelector(".tags_wrapper").firstChild);
+    }
+    //handle submit form
+    const objectUpload = {
+        cover: 'Ảnh bìa',
+        screenshot: 'Ảnh chụp màn hình',
+        project: 'File dự án'
+    }
+    const form = document.getElementById('upload_project_form');
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault()
+        toggleVisibility({ isToggle: true, elementClassName: "loadding_icon" })
+        //upload project file, cover image and screenshot
+        //await Promise.all([uploadCoverImage(), uploadScreenShot()])
+        //    .then(value => {
+        //        console.log(value)
+        //    })
+        //    .catch(err => {
+        //       console.log(err)
+        //   })
+        //   .finally(() => {
+        //   })
+        await uploadCoverImage()
+            .then(value => {
+                //Tải thành công
+                toggleVisibility({ isToggle: false, elementClassName: "upload_cover_image", value: "1. Đã tải lên ảnh bìa." })
+                // Nhan duoc folderId
+                document.querySelector('#inputPjFolderId').value = value.folderIdPublic
+                console.log(value)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        await uploadScreenShot()
+            .then(value => {
+                toggleVisibility({ isToggle: false, elementClassName: "upload_screenshots", value: "2. Đã tải lên ảnh màn hình." })
+
+                console.log(value)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        await uploadProjectFile()
+            .then(value => {
+                console.log(value)
+                toggleVisibility({ isToggle: false, elementClassName: "upload_project_file", value: "3. Đã tải tệp dự án." })
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+        //Thêm danh sách tag vào form
+        toggleVisibility({ isToggle: true, elementClassName: "loadding_icon" })
+
+        toggleVisibility({ isToggle: true, elementClassName: "success_icon" })
+        document.querySelector('.inputTags').value = tagsChoosing
+        setTimeout(() => {
+            form.submit()
+        }, 2000)
+        //Submit form
+    })
+    // Xóa ảnh khỏi mảng files
+    function removeImageFromFiles(files, deletedImageName) {
+        let arrayFile = Array.from(files)
+
+        for (let i = 0; i < arrayFile.length; i++) {
+            if (arrayFile[i].name === deletedImageName.trim()) {
+                arrayFile.splice(i, 1)
+                break;
+            }
+        }
+        screenshotUpload = arrayFile
+    }
+    let screenshotUpload
+    async function uploadScreenShot() {
+        return new Promise((resolve, reject) => {
+            let formDatas = new FormData()
+
+            if (screenshotUpload && screenshotUpload.length > 0) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_screenshots", value: "2. Đang tải lên ảnh màn hình..." })
+            }
+
+            for (let i = 0; i < screenshotUpload.length; i++) {
+                formDatas.append('photos', screenshotUpload[i]);
+            }
+            fetch('/api/v1/upload-screenshot-image', {
+                method: 'POST',
+                body: formDatas,
+            })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.status === 200) resolve(res)
+                    else resolve(res)
+                })
+
+        })
+
+
+    }
+    async function uploadCoverImage() {
+        let coverImageInput = document.getElementById('chooseCoverImage');
+        let pj_name = document.querySelector('#inputPjName').value
+        let image = coverImageInput.files[0];
+        let formData = new FormData();
+        formData.append('pj_name', pj_name);
+
+        return new Promise((resolve, reject) => {
+            if (image) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_cover_image", value: "1. Đang tải lên ảnh bìa..." })
+            }
+            formData.append('coverImage', image);
+            fetch('/api/v1/upload-cover-image', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) resolve(data)
+                    else resolve(
+                        {
+                            status: 400,
+                            objectError: objectUpload.cover,
+                            msg: `Tải lên ${objectUpload.cover} không thành công!`,
+                            folderIdPublic: data.folderIdPublic
+                        }
+                    )
+                })
+                .catch(error => {
+                    console.error('Error uploading images:', error);
+                });
+        })
+    }
+    const platform = {
+        windows: "Windows",
+        mac: "Mac OS",
+        linux: "Linux",
+        android: "Android",
+        ios: "Ios"
+    }
+
+    function handleClickDeleteFlatform(event) {
+        let platformElement = event.target.parentElement
+        let platformToDelete = platformElement.querySelector('.platform_name').textContent.trim().split(":")[1]
+        platformElement.remove()
+        //Xóa khỏi mảng projectFiles
+        projectFiles = projectFiles.filter(projectFile => {
+            console.log(projectFile.file.name, platformToDelete)
+            return projectFile.file.name.toLocaleLowerCase().trim() !== platformToDelete.toLocaleLowerCase().trim()
+        });
+        // Sử dụng filter để loại bỏ phần tử có 'file.name' giống với 'clickedUsername'
+
+        //data = data.filter(item => item.file.platform !== clickedUsername);
+    }
+    let projectFiles = []
+    function handleChooseProjectFile(event) {
+        let file = event.target.files[0]
+        projectFiles.push(
+            {
+                file,
+                platform: event.target.parentElement.querySelector('.platform_name').textContent.trim().split(":")[0]
+            }
+        )
+        let fileName = file.name
+        displaySelectedProjectFileName(fileName, event) // Hiển thị tên file đã chọn
+
+    }
+    function displaySelectedProjectFileName(fileName, event) {
+        console.log(event.target.parentElement)
+        let platformElement = event.target.parentElement
+        let platformName = platformElement.querySelector('span')
+        platformName.innerHTML += fileName
+    }
+    async function uploadProjectFile() {
+        //Lấy tât cả các file đã chọn và số phiên bản
+        return new Promise((resolve, reject) => {
+
+            let formDatas = new FormData()
+            if (projectFiles.length > 0) {
+                toggleVisibility({ isToggle: true, elementClassName: "upload_project_file", value: "3. Đang tải lên tệp dự án..." })
+            }
+
+            formDatas.append('version', document.getElementById('inputVersion').value);
+            for (let i = 0; i < projectFiles.length; i++) {
+                projectFiles[i].file.platform = projectFiles[i].platform
+                formDatas.append(projectFiles[i].file.platform, projectFiles[i].file);
+            }
+            console.log(formDatas)
+            fetch('/api/v1/upload-project', {
+                method: 'POST',
+                body: formDatas,
+            })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.status === 200) resolve(res)
+                    else reject(res)
+                })
+        }
+
+        )
+    }
+    function toggleVisibility({ elementClassName, value, isToggle }) {
+        let elementToShow = document.querySelector(`.${elementClassName}`)
+        if (isToggle) elementToShow.classList.toggle('d-none')
+        if (value) elementToShow.textContent = value
+        //elementToShow.textContent = value
+        return
+    }
+    //Hiển thị input nhập giá
+    document.getElementById('option3').addEventListener('click', function () {
+        document.getElementById('payInput').style.display = 'block';
+        document.getElementById('payInput').focus()
+    });
+
+    document.getElementById('option1').addEventListener('click', function () {
+        document.getElementById('payInput').style.display = 'none';
+        document.getElementById('payAmountError').style.display = 'none';
+    });
+    function validatePrice(event) {
+        let payInput = event.target
+        let payInputValue = payInput.value
+        var payAmount = payInputValue.trim();
+        var vietnameseDongPattern = /^\d{1,9}$/;; //regex pattern
+        var isValid = vietnameseDongPattern.test(payAmount);
+
+        if (!isValid) {
+            document.getElementById('payAmountError').style.display = 'block';
+        } else {
+            document.getElementById('payAmountError').style.display = 'none';
+        }
+    }
+</script>

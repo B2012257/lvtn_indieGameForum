@@ -5,25 +5,31 @@ const e = require("express")
 const { where } = require("sequelize")
 const { order } = require("paypal-rest-sdk")
 require('dotenv').config();
-
+var moment = require('moment'); // require
+const { set } = require("../app")
 //Số dự án mới trong tuần
 let newProjectStatisticWeek = async ({ userId }) => {
     let dataJson = []
 
-    //Lấy ngày bắt đầu và kết thúc của tuần hiện tại
-    let currentDate = new Date()
-    let currentDay = currentDate.getDay()
-    let currentMonth = currentDate.getMonth()
-    let currentYear = currentDate.getFullYear()
-    //Lấy từ thứ 2 đến chủ nhật
-    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + 1)
-    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + (7 - currentDay))
+    // Lấy ngày bắt đầu và kết thúc của tuần hiện tại
+    let currentDate = new Date();
+    let currentDay = currentDate.getDay();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
 
+    // Nếu ngày hiện tại là Chủ nhật (ngày 0), trừ 6 ngày để đến thứ 2
+    let startDiff = currentDay === 0 ? 6 : currentDay - 1;
+    // Nếu ngày hiện tại không phải là Chủ nhật, tính số ngày còn lại đến hết tuần
+    let endDiff = currentDay === 0 ? 0 : 7 - currentDay;
+
+    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - startDiff);
+    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + endDiff);
+
+    console.log(startDate, endDate);
     //Đổi ra ngày tháng năm và lấy từ thứ 2 - Chủ nhật
 
     startDate = startDate.toLocaleDateString()
     endDate = endDate.toLocaleDateString()
-    console.log(startDate, endDate);
 
     let results = await db.project.findAndCountAll({
         where: {
@@ -36,6 +42,7 @@ let newProjectStatisticWeek = async ({ userId }) => {
 
     })
     results = JSON.parse(JSON.stringify(results))
+    console.log(results);
     //Lấy ra ngày tạo dự án
     let createdAt
     results.rows.forEach(item => {
@@ -45,31 +52,38 @@ let newProjectStatisticWeek = async ({ userId }) => {
 
     //Tạo data cho biểu đồ 7 ngày với dạng {date: dd/mm/yyyy, count: số lượng}
     for (let i = 0; i < 7; i++) {
-        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        // console.log(currentDay);
+        let date = new Date(startDate)
+        date.setDate(date.getDate() + i)
         date = date.toLocaleDateString()
+
+        // console.log(date, "date");
         let count = 0
         //Chỉ lấy ngày/tháng
         date = date.split("/").slice(0, 2).reverse().join("/")
 
         // Kiểm tra date có trùng với createdAt không
         results.rows.forEach(item => {
-            createdAt = new Date(item.createdAt).toLocaleDateString()
-            createdAt = createdAt.split("/").slice(0, 2).reverse().join("/")
-
+            createdAt = moment.utc(item.createdAt).format('D/M');
+            console.log(createdAt, "createdAt", date);
             if (date === createdAt) {
                 count = count + 1
                 //Kiểm tra nếu trong dataJson đã có ngày này chưa, nếu có thì ghi đè giá trị count mới
-                let index = dataJson.findIndex(item => item.date === date)
+                let index = dataJson.findIndex(item => item.date === date);
                 if (index !== -1) {
-                    dataJson[index].count = count
+                    // Nếu đã tồn tại trong dataJson, cập nhật giá trị count
+                    dataJson[index].count += count;
                 } else {
+                    // Nếu không tồn tại, thêm mới vào dataJson với giá trị count
                     dataJson.push({
                         date: date,
-                        count
-                    })
+                        count: count
+                    });
                 }
+
             } else {
                 let index = dataJson.findIndex(item => item.date === date)
+
                 if (index !== -1) {
                     dataJson[index].count = count
                 } else {
@@ -90,20 +104,24 @@ let newProjectStatisticWeek = async ({ userId }) => {
 let paidStatisticWeek = async ({ userId }) => {
     let dataJson = []
 
-    //Lấy ngày bắt đầu và kết thúc của tuần hiện tại
-    let currentDate = new Date()
-    let currentDay = currentDate.getDay()
-    let currentMonth = currentDate.getMonth()
-    let currentYear = currentDate.getFullYear()
-    //Lấy từ thứ 2 đến chủ nhật
-    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + 1)
-    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + (7 - currentDay))
+    // Lấy ngày bắt đầu và kết thúc của tuần hiện tại
+    let currentDate = new Date();
+    let currentDay = currentDate.getDay();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+
+    // Nếu ngày hiện tại là Chủ nhật (ngày 0), trừ 6 ngày để đến thứ 2
+    let startDiff = currentDay === 0 ? 6 : currentDay - 1;
+    // Nếu ngày hiện tại không phải là Chủ nhật, tính số ngày còn lại đến hết tuần
+    let endDiff = currentDay === 0 ? 0 : 7 - currentDay;
+
+    let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - startDiff);
+    let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + endDiff, 23, 59, 59);
 
     //Đổi ra ngày tháng năm và lấy từ thứ 2 - Chủ nhật
 
     startDate = startDate.toLocaleDateString()
     endDate = endDate.toLocaleDateString()
-    console.log(startDate, endDate);
     //Tìm các prpject của user trong tuần
 
     let projectResults = await db.project.findAndCountAll({
@@ -118,24 +136,27 @@ let paidStatisticWeek = async ({ userId }) => {
         where: {
             projectId: projectResults.rows.map(item => item.id),
             createdAt: {
-                [db.Sequelize.Op.between]: [startDate, endDate]
+                [db.Sequelize.Op.between]: [moment(startDate), moment(endDate)]
             }
         }
     })
     results = JSON.parse(JSON.stringify(results))
-
+    console.log(results, "results");
     // Tạo data cho biểu đồ 7 ngày
     let data = []
 
     for (let i = 0; i < 7; i++) {
-        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        let date = new Date(startDate)
+        date.setDate(date.getDate() + i)
         date = date.toLocaleDateString()
+        date = moment.utc(date).format('MM/DD/YYYY');
+        // console.log(date, "date");
         let count = 0
         results.rows.forEach(item => {
             //Lấy ra ngày thanh toán
-            let dateOfPayment = new Date(item.dateOfPayment).toLocaleDateString()
+            let formattedDate = moment.utc(item.dateOfPayment).format('MM/DD/YYYY');
             //Nếu ngày thanh toán trùng với ngày thì tăng count
-            if (dateOfPayment === date) {
+            if (formattedDate === date) {
                 count++
             }
         })
@@ -143,10 +164,11 @@ let paidStatisticWeek = async ({ userId }) => {
     }
     //Tạo data dạng json key là ngày và value là số lượng format key dạng dd/mm/yyyy
     for (let i = 0; i < 7; i++) {
-        let date = new Date(currentYear, currentMonth, currentDate.getDate() - currentDay + i + 1)
+        let date = new Date(startDate)
+        date.setDate(date.getDate() + i)
         date = date.toLocaleDateString()
+        date = moment(date).format('D/M')
         //Chỉ lấy ngày/tháng
-        date = date.split("/").slice(0, 2).reverse().join("/")
         dataJson.push({
             date: date,
             count: data[i]
@@ -224,11 +246,22 @@ const getRegisterPage = (req, res) => {
 const getProjectViewByClassificationPage = async (req, res) => {
 
     let classificationSlug = req.params.classification
-
-    //Lấy ra danh sách dự án theo thể loại
+    let searchQuery = req.query.q
     let whereCondition = {}
-
-    if (classificationSlug !== 'all') {
+    //Lấy ra danh sách dự án theo thể loại
+    let whereProjectCondition = {
+        isPublic: true
+    }
+    //Khi có seachQuery thì tìm kiếm theo tên dự án và không theo classificationSlug
+    if (searchQuery) {
+        whereProjectCondition = {
+            name: {
+                [db.Sequelize.Op.like]: `%${searchQuery}%`
+            },
+            isPublic: true
+        }
+    }
+    if (classificationSlug !== 'all' && !searchQuery) {
         whereCondition = {
             slug: classificationSlug
         }
@@ -248,9 +281,7 @@ const getProjectViewByClassificationPage = async (req, res) => {
     console.log(whereCondition);
     // Hiển thị danh sách trò chơi phân trang và sắp xếp
     let projectDB = await db.project.findAll({
-        where: {
-            isPublic: true
-        },
+        where: whereProjectCondition,
         offset,
         limit: limitPerPage,
         order: orderQuery,
@@ -354,6 +385,35 @@ const getCreateProjectPage = async (req, res) => {
         res.redirect("/login")
     }
 
+}
+const editInfoProject = async (req, res) => {
+    //Lấy ra thông tin dự án
+    let projectId = req.params.id
+    let projectDB = await db.project.findOne({
+        where: {
+            id: projectId
+        }
+        , include: [db.classification, db.tag, db.genre]
+    })
+    // Lấy danh sách phân loại
+    let classifications = await db.classification.findAll({})
+    //Lấy danh sách thể loại
+    let genres = await db.genre.findAll({})
+    let tags = await db.tag.findAll({})
+    projectDB = JSON.parse(JSON.stringify(projectDB))
+    tags = JSON.parse(JSON.stringify(tags))
+    genres = JSON.parse(JSON.stringify(genres))
+    classifications = JSON.parse(JSON.stringify(classifications))
+    //
+    res.render("edit_info_project", {
+        title: "Chỉnh sửa thông tin dự án",
+        header: true,
+        footer: false,
+        tags, genres, classifications,
+        projectDB,
+        user: req.user || req.session.user,
+
+    })
 }
 const getEditInterfaceProjectPage = async (req, res) => {
     const projectDb = await db.project.findOne({
@@ -807,4 +867,5 @@ module.exports = {
     getGenresPage,
     getForumPage,
     getProjectBillPage,
+    editInfoProject
 }

@@ -16,6 +16,8 @@ router.get('/logout', (req, res) => {
     });
 });
 router.get('/user/project/create', authMiddleware.isLogin, siteController.getCreateProjectPage)
+router.get('/user/project/:id/editInfo', authMiddleware.isLogin, siteController.editInfoProject)
+
 router.get('/user/project/:id/edit', authMiddleware.isLogin, siteController.getEditInterfaceProjectPage)
 router.get('/user/projects', authMiddleware.isLogin, siteController.getMyProjectPage)
 

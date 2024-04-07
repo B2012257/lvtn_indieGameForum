@@ -44,18 +44,19 @@
                         <a href="/project/{{this.slug}}/view" class="card-title project-name d-block">{{this.name}}</a>
 
                         <a href="/project/{{this.classification.slug}}"
-                            class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
+                            class="badge bg-primary text-decoration-none fw-normal">{{this.classification.name}}</a>
                         <br />
                         <div class="tags" style="min-height: 50px;">
                             {{#each this.tags}}
 
-                            <a href="/tags/{{this.slug}}" class="badge bg-secondary">{{this.name}}</a>
+                            <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                class="badge bg-danger fw-normal">{{this.name}}</a>
                             {{/each}}
                         </div>
 
                         <p class="card-text mt-1 mb-1 clamped-text-3" style="min-height: 72px">
                             {{this.short_description}} </p>
-                        <p class="mt-1 mb-1">Giá: {{this.price}} Vnd</p>
+                        <p class="mt-1 mb-1">Giá: {{vndFormat this.price}}</p>
                     </div>
 
                 </div>

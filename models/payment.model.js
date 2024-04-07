@@ -41,6 +41,11 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false
         },
+        createdAt: {
+            type: Sequelize.DATEONLY, // Sử dụng kiểu dữ liệu DATEONLY
+            allowNull: false,
+            defaultValue: Sequelize.NOW // Có thể cần thêm giá trị mặc định nếu cần
+        }
     },
         {
             paranoid: true,

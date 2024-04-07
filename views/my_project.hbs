@@ -109,9 +109,11 @@
                         <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0 </p>
                         <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-heart text-danger"></i> 20 </p>
                         {{#if isPublic}}
-                        <p class="p-0 m-0 visibility"><i class="me-1 fa-solid fa-lock-open"></i> Công khai </p>
+                        <p class="p-0 m-0 visibility " title="Công khai"><i class="me-1 fa-solid fa-lock-open"></i> Công
+                            khai </p>
                         {{else }}
-                        <p class="p-0 m-0 visibility"><i class="me-1 fa-solid fa-lock"></i> Riêng tư </p>
+                        <p class="p-0 m-0 visibility " title="Riêng tư"><i
+                                class="me-1 fa-solid fa-lock text-danger"></i> Riêng tư </p>
 
                         {{/if}}
                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>

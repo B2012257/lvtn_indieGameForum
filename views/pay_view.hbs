@@ -12,7 +12,7 @@
             <div class="box-inner-1 pb-3 mb-3 ">
                 <div class="d-flex justify-content-between mb-3 userdetails">
                     <p class="fw-bold">{{projectInfo.name}}</p>
-                    <p class="fw-lighter">{{projectInfo.price}} VND</p>
+                    <p class="fw-lighter">{{vndFormat projectInfo.price}}</p>
                 </div>
                 <div id="my" class="carousel slide carousel-fade img-details" data-bs-ride="carousel"
                     data-bs-interval="1000">
@@ -62,7 +62,7 @@
 
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p class="fw-bold">Tổng thanh toán</p>
-                        <p class="fw-bold"></span>{{projectInfo.price}} VND</p>
+                        <p class="fw-bold"></span>{{vndFormat projectInfo.price}}</p>
                     </div>
                     <p>Trò chơi sẽ được chuyển tiếp vào email của bạn</p>
                     {{#if isFreeGame}}

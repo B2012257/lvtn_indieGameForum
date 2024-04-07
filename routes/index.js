@@ -13,7 +13,8 @@ module.exports = (app) => {
   app.use("/redirect", passport) //google redirect
   app.use("/user", authMiddleware.isLogin, userRouter)
 
-  app.use("/api/v1", authMiddleware.isLogin, require("./api.route.js"))
+  // app.use("/api/v1", authMiddleware.isLogin, require("./api.route.js"))
+  app.use("/api/v1", require("./api.route.js"))
 
   app.use("/", siteRouter)
 

@@ -9,9 +9,9 @@ const querystring = require('qs');
 const crypto = require("crypto");
 const vnpay = require('vnpay');
 const { log } = require('console');
+const moment = require('moment');
 const VNPay = vnpay.VNPay
 const VND_TO_USD_EXCHANGE_RATE = process.env.VND_TO_USD_EXCHANGE_RATE
-
 // Cấu hình VNPay
 const vnp_TmnCode = '65Z5FVGZ'; // Mã website của bạn
 const vnp_HashSecret = 'UQYGOWVNTZAWLCNRSNRTPLSURADBATEI'; // Khóa bảo mật của bạn
@@ -172,10 +172,13 @@ const payWithPaypal = async (req, res) => {
     })
     project_db = JSON.parse(JSON.stringify(project_db))
     project_name = project_db.name
-    let amount = project_db.price * VND_TO_USD_EXCHANGE_RATE; // Lấy số tiền từ yêu cầu
+
+    let amount = parseFloat(project_db.price) * parseFloat(VND_TO_USD_EXCHANGE_RATE); // Lấy số tiền từ yêu cầu
+    console.log(amount);
     amount = Math.round(amount * 100) / 100
     total = amount
     console.log(amount);
+
     // Tạo đơn hàng
     const create_payment_json = {
         "intent": "sale",

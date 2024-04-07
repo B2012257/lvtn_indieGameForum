@@ -90,6 +90,8 @@ var that = module.exports = {
                 message: "Upload file failed!",
                 errorMessage: error
             });
+            console.log(error);
+            console.log("Hết hạn token google");
             return error;
         }
         finally {
@@ -139,6 +141,8 @@ var that = module.exports = {
                 message: "Upload file failed!",
                 errorMessage: error
             });
+            console.log(error);
+            console.log("Hết hạn token google");
             return error;
         }
         finally {
@@ -166,7 +170,8 @@ var that = module.exports = {
             })
             console.log(deleteFile.data, deleteFile.status)
         } catch (error) {
-            console.error(error);
+            console.log(error);
+            console.log("Hết hạn token google");
         }
     },
     //Create new folder with name, return id of this folder
@@ -211,6 +216,8 @@ var that = module.exports = {
             return file;
         } catch (err) {
             // TODO(developer) - Handle error
+            console.log(error);
+            console.log("Hết hạn token google");
             throw err;
         }
     }

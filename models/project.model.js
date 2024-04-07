@@ -59,7 +59,11 @@ module.exports = (sequelize, Sequelize) => {
         likeCount: {
             type: Sequelize.INTEGER,
             defaultValue: 0
-        },
+        }, createdAt: {
+            type: Sequelize.DATEONLY, // Sử dụng kiểu dữ liệu DATEONLY
+            allowNull: false,
+            defaultValue: Sequelize.NOW // Có thể cần thêm giá trị mặc định nếu cần
+        }
 
     }, {
         paranoid: true
