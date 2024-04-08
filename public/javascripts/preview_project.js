@@ -195,4 +195,142 @@ function saveDescription(editor) {
         })
 }
 
-////
+// Bắt sự kiện khi ấn thêm ảnh bìa lớn
+document.querySelector('#coverImageLarge').addEventListener('change', (e) => {
+    displaySelectedCoverImage(e, '.choosingCoverImageLarge', '.coverImageLargeHref');
+
+})
+document.querySelector('#coverImage').addEventListener('change', (e) => {
+    displaySelectedCoverImage(e, '.coverImageServer', '.coverImageHref');
+
+})
+function displaySelectedCoverImage(event, imgElementSelector, hrefSelector) {
+    const selectedImage = document.querySelector(imgElementSelector);
+    const fileInput = event.target;
+
+
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(fileInput.files[0]); //chuyển ảnh thành url thành url
+
+        reader.onload = function (e) {
+            selectedImage.src = e.target.result;
+            document.querySelector(`${hrefSelector}`).setAttribute('href', e.target.result);
+
+        };
+    }
+}
+
+//Bắt sự kiện cập nhật
+let updateBtn = document.querySelector('.update-images-btn')
+updateBtn.addEventListener('click', async (e) => {
+
+    e.preventDefault();
+    //Lấy id project
+    let projectId = document.querySelector('.projectId').textContent
+    //Lấy ảnh bìa lớn mới
+    let newCoverImageLarge = document.querySelector('#coverImageLarge')?.files[0] || "";
+    //Lấy ảnh bìa nhỏ mới
+    let newCoverImage = document.querySelector('#coverImage')?.files[0] || "";
+    //Lấy tất cả ảnh màn hình mới
+    let newScreenShot = document.querySelector('#screenshotInput')?.files || "";
+
+    //Trường hợp không thay đổi ảnh bìa lớn so với sv
+    let oldCoverImageLarge
+    //Nếu không có ảnh bìa lớn mới -> lấy ảnh cũ
+    if (newCoverImageLarge === "") {
+        oldCoverImageLarge = document.querySelector('.choosingCoverImageLarge')?.src || "";
+        console.log("Upload anh bia lon cu", oldCoverImageLarge);
+        await uploadImage({ href: oldCoverImageLarge, projectId: projectId, type: "coverImageLarge" })
+    } else {
+        console.log("Upload anh bia lon moi");
+        await uploadImage({ image: newCoverImageLarge, projectId: projectId, type: "coverImageLarge" })
+    }
+
+    //Trường hợp không thay đổi ảnh bìa nhỏ so với sv
+    //Nếu không có ảnh bìa nhỏ mới -> lấy ảnh cũ
+    let oldCoverImage
+    if (newCoverImage === "") {
+        //img
+        oldCoverImage = document.querySelector('.coverImageServer')?.src || "";
+        //upload ảnh cũ
+        console.log("Upload anh bia nho cu", oldCoverImage);
+        await uploadImage({ href: oldCoverImage, projectId: projectId, type: "coverImage" })
+    } else {
+        console.log("Upload anh bia moi");
+        await uploadImage({ image: newCoverImage, projectId: projectId, type: "coverImage" })
+    }
+    let hrefScreenShotInServer = []
+    screenshotImages = document.querySelectorAll('.screenshotInServer');
+    screenshotImages.forEach(element => {
+        hrefScreenShotInServer.push(element.src);
+    });
+
+    if (newScreenShot.length === 0) {
+        console.log("Upload ảnh màn cũ")
+        newScreenShot = "No"
+        await uploadImage({ href: hrefScreenShotInServer, projectId: projectId })
+    } else {
+        console.log("Upload ảnh màn cũ và mới")
+        await uploadImage({ href: hrefScreenShotInServer, projectId: projectId })
+        await uploadImage({ images: newScreenShot, projectId: projectId, type: "newScreenshots" })
+    }
+    location.reload();
+
+})
+//upload ảnh
+async function uploadImage({ image, images, href, projectId, type }) {
+    //Nếu upload 1 ảnh
+    let formData = new FormData();
+    formData.append('projectId', projectId);
+    console.log(image, images, href, projectId);
+    if (image) {
+        formData.append('image', image);
+        formData.append('type', type);
+
+        let response = await fetch('/api/v1/project/update/image', {
+            method: 'POST',
+            body: formData
+        })
+        let result = await response.json();
+        console.log(result);
+    }
+
+    //Nếu upload nhiều ảnh
+    if (images) {
+        Array.from(images).forEach(element => {
+            formData.append('images', element);
+            formData.append('type', type);
+
+        });
+        let response = await fetch('/api/v1/project/update/image', {
+            method: 'POST',
+            body: formData
+        })
+        let result = await response.json();
+        console.log(result);
+    }
+
+    //Nếu upload đường dẫn ảnh -> ảnh đã có sẵn ở máy chủ
+    if (href) {
+        if (typeof href === 'string') {
+            formData.append('href', href);
+            formData.append('type', type);
+
+        } else { //Nếu là mảng
+            console.log("Gọi cái này");
+            href.forEach(element => {
+                formData.append('href', element);
+            });
+            console.log(href);
+        }
+
+        let response = await fetch('/api/v1/project/update/image', {
+            method: 'POST',
+            body: formData
+        })
+        let result = await response.json();
+        console.log(result);
+    }
+}

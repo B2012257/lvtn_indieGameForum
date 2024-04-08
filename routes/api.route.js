@@ -49,5 +49,14 @@ router.post('/upload-project', upload.fields([
 
 //[POST] /api/v1/project/update/description 
 router.post('/project/update/description', apiController.saveDescription);
+
+router.post('/project/update/image', upload.fields([
+    { name: 'projectId', maxCount: 1 },
+    { name: 'type', maxCount: 1 },
+    { name: 'image', maxCount: 1 }, //file
+
+    { name: 'images', maxCount: 30 }, //files
+    { name: 'href', maxCount: 30 } // url
+]), apiController.updateImage);
 router.get('/search', apiController.search)
 module.exports = router;

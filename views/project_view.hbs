@@ -111,9 +111,13 @@
                 {{#if projectInfo.images}}
                 {{#each projectInfo.images}}
                 {{#unless this.isCoverImage}}
+                {{#unless this.isCoverImageLarge}}
+
                 <a href="{{url}}" data-pswp-width="600" data-pswp-height="238">
                     <img src="{{this.url}}" alt=""></label>
                 </a>
+                {{/unless}}
+
                 {{/unless}}
 
                 {{/each}}

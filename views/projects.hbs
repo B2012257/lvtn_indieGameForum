@@ -39,12 +39,12 @@
                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
                     {{/each}}
 
-                    <div class="card-body project-body ">
+                    <div class="card-body project-body p-3">
 
                         <a href="/project/{{this.slug}}/view" class="card-title project-name d-block">{{this.name}}</a>
 
                         <a href="/project/{{this.classification.slug}}"
-                            class="badge bg-primary text-decoration-none fw-normal">{{this.classification.name}}</a>
+                            class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
                         <br />
                         <div class="tags" style="min-height: 50px;">
                             {{#each this.tags}}

@@ -228,11 +228,200 @@ const search = async (req, res) => {
     })
     res.json(projects)
 }
+const updateImage = async (req, res) => {
+    let projcetId = req.body.projectId
+    let hrefs = req.body.href ?? []// urls
+    let type = req.body.type ?? "None" // type
+    let file = req.files?.image
+
+    let files = req.files?.images
+    console.log("file", files);
+
+    // files
+    //Nếu có file ảnh mới màn hình mới
+    let project = await db.project.findOne({
+        where: {
+            id: projcetId
+        }
+    })
+    project = JSON.parse(JSON.stringify(project))
+    if (files) {
+        console.log(files);
+        for (const file of files) {
+            console.log(file);
+            try {
+                let fileResponse = await ggdrive.uploadImageFile({
+                    image: file,
+                    parent: project.project_folder_id
+                })
+                console.log(fileResponse);
+                //Lưu ảnh mới vafo db
+                console.log("Luuw anh man hinh moi");
+
+                await db.image.create({
+                    url: fileResponse.data.webViewLink,
+                    projectId: project.id,
+                    isCoverImage: false,
+                    isCoverImageLarge: false
+                })
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+    }
+    //Nếu có file ảnh mới
+
+    if (file) {
+        //Lấy folderId của dự án
+
+        if (type === "coverImage") {
+
+            let aFile = file[0] ?? null
+            console.log(project.project_folder_id);
+            //Đẩy nó lên gg drive
+            if (aFile) {
+                let fileResponse = await ggdrive.uploadImageFile({
+                    image: aFile,
+                    parent: project.project_folder_id
+                })
+                console.log(fileResponse);
+                //Xoá ảnh cover hiện tại và lưu ảnh mới vào
+                await db.image.destroy({
+                    where: {
+                        projectId: project.id,
+                        isCoverImage: true,
+                        isCoverImageLarge: false
+                    }
+                })
+                //Lưu ảnh mới
+                console.log("Luuw anh bia nho moi");
+
+                await db.image.create({
+                    url: fileResponse.data.webViewLink,
+                    projectId: project.id,
+                    isCoverImage: true,
+                    isCoverImageLarge: false
+                })
+            }
+
+
+        }
+        if (type === "coverImageLarge") {
+            let aFile = file[0] ?? null
+            if (aFile) {
+                try {
+                    let fileResponse = await ggdrive.uploadImageFile({
+                        image: aFile,
+                        parent: project.project_folder_id
+                    })
+                    console.log(fileResponse);
+                    //Xoá ảnh cover hiện tại và lưu ảnh mới vào
+
+                    await db.image.destroy({
+                        where: {
+                            projectId: project.id,
+                            isCoverImage: false,
+                            isCoverImageLarge: true
+                        }
+                    })
+                    //Lưu ảnh mới
+                    console.log("Luuw anh bia lon moi");
+
+                    await db.image.create({
+                        url: fileResponse.data.webViewLink,
+                        projectId: project.id,
+                        isCoverImage: false,
+                        isCoverImageLarge: true
+                    })
+
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+        }
+
+    }
+    if (hrefs && hrefs.length !== 0) {
+        //Nếu href là mảng thì nó là ảnh màn hình
+        //kiểm tra hrefs có phải là mảng không
+
+        if (typeof hrefs === 'object') {
+
+
+            //Xoá tất cả ảnh màn hình cũ
+            await db.image.destroy({
+                where: {
+                    projectId: projcetId,
+                    isCoverImage: false,
+                    isCoverImageLarge: false
+                }
+            })
+
+            //Lưu ảnh mới
+            for (const href of hrefs) {
+                console.log(href);
+                await db.image.create({
+                    url: href,
+                    projectId: projcetId,
+                    isCoverImage: false,
+                    isCoverImageLarge: false
+                })
+            }
+        } else {
+            //Nếu không phải thì nó là một url của 1 ảnh
+            console.log(type);
+            if (type === "coverImage") {
+                //Xoá hết ảnh cũ
+                //vào if tpye coverImage
+
+                await db.image.destroy({
+                    where: {
+                        projectId: projcetId,
+                        isCoverImage: true,
+                        isCoverImageLarge: false
+                    }
+                })
+                //Luư ảnh mới
+
+                await db.image.create({
+                    url: hrefs,
+                    projectId: projcetId,
+                    isCoverImage: true,
+                    isCoverImageLarge: false
+                })
+            }
+            if (type === "coverImageLarge") {
+                //Xoá hết ảnh cũ
+                //vào if tpye coverImageLarge
+                await db.image.destroy({
+                    where: {
+                        projectId: projcetId,
+                        isCoverImage: false,
+                        isCoverImageLarge: true
+                    }
+                })
+                //Lưu ảnh mới
+
+                await db.image.create({
+                    url: hrefs,
+                    projectId: projcetId,
+                    isCoverImage: false,
+                    isCoverImageLarge: true
+                })
+            }
+
+        }
+    }
+    res.json({ status: 200, msg: "Success!" })
+}
 module.exports = {
     uploadImage,
     uploadImages,
     uploadProject,
     saveDescription,
     uploadImageFromCkEditor,
-    search
+    search,
+    updateImage
 }

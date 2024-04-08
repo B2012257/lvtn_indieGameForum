@@ -105,7 +105,7 @@
                     {{/if}}
                     {{/each}}
                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
-                    <div class="card-body pb-0 ">
+                    <div class="card-body pb-0 p-2">
                         <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0 </p>
                         <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-heart text-danger"></i> 20 </p>
                         {{#if isPublic}}
@@ -117,7 +117,17 @@
 
                         {{/if}}
                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
+                        <br />
 
+                        <a href="/project/{{this.classification.slug}}"
+                            class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
+                        <div class="tags" style="min-height: 50px;">
+                            {{#each this.tags}}
+
+                            <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                class="badge bg-danger fw-normal">{{this.name}}</a>
+                            {{/each}}
+                        </div>
                         <p class="mt-2  card-text clamped-text-3 ">{{this.short_description}}</p>
                         {{#if (ifEquals this.price '0')}}
                         <p>Miễn phí</p>

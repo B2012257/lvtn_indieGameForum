@@ -94,16 +94,7 @@ var that = module.exports = {
             console.log("Hết hạn token google");
             return error;
         }
-        finally {
-            try {
-                await fs.unlink(path.join(__dirname, `/../../${image.path}`), (err) => {
-                    if (err) throw err;
-                    console.log('File was deleted');
-                });
-            } catch (error) {
-                console.error('Error deleting temporary file:', error);
-            }
-        }
+
     },
     // Upload image to google drive
     uploadCompressedFile: async ({ file, shareTo, parent, shareToUser }) => {

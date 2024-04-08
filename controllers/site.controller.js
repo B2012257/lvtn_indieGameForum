@@ -191,7 +191,9 @@ const getIndexPage = async (req, res) => {
         include: [
             db.tag, {
                 model: db.image,
-                order: [['createdAt', 'DESC']],
+                where: {
+                    isCoverImageLarge: false
+                }
             },
         ],
         where: {
@@ -204,7 +206,10 @@ const getIndexPage = async (req, res) => {
             db.user,
             {
                 model: db.image,
-                limit: 4
+                limit: 4,
+                where: {
+                    isCoverImageLarge: false
+                }
             }
         ],
         where: {
@@ -253,6 +258,8 @@ const getProjectViewByClassificationPage = async (req, res) => {
     let whereProjectCondition = {
         isPublic: true
     }
+    console.log(searchQuery, "searchQuery");
+    console.log(whereProjectCondition, "whereProjectCondition");
     //Khi có seachQuery thì tìm kiếm theo tên dự án và không theo classificationSlug
     if (searchQuery) {
         whereProjectCondition = {
@@ -279,7 +286,7 @@ const getProjectViewByClassificationPage = async (req, res) => {
 
     let orderQuery = [[orderBy, order]]
 
-    console.log(whereCondition);
+    console.log(whereCondition, whereProjectCondition);
     // Hiển thị danh sách trò chơi phân trang và sắp xếp
     let projectDB = await db.project.findAll({
         where: whereProjectCondition,
@@ -299,7 +306,7 @@ const getProjectViewByClassificationPage = async (req, res) => {
     })
 
     projectDB = JSON.parse(JSON.stringify(projectDB))
-
+    console.log(projectDB, "projectDB");
     // Tính toán thông tin phân trang
     const totalProjects = await db.project.count(); //Tính lại tổng số dự án dựa theo điều kiện
     const totalPages = Math.ceil(totalProjects / limitPerPage);
@@ -622,7 +629,10 @@ const getProjectViewPage = async (req, res) => {
             slug
         },
         include: [
-            db.classification, db.tag, db.genre, db.image, {
+            db.classification, db.tag, db.genre, {
+                model: db.image
+
+            }, {
                 model: db.user
             }, {
                 model: db.version,

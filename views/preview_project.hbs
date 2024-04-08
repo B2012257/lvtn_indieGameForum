@@ -61,6 +61,25 @@
                                                 <input type="file" class="form-control" id="coverImageLarge">
                                             </div>
                                         </div>
+                                        <div class="col-6 gallery">
+                                            <span class="projectId" hidden>{{projectInfo.id}}</span>
+                                            {{#each projectInfo.images}}
+                                            {{#if this.isCoverImageLarge}}
+
+                                            <a class="coverImageLargeHref" href="{{url}}">
+
+                                                <img src="{{url}}" class="choosingCoverImageLarge w-100" width="100%">
+
+                                            </a>
+                                            {{/if}}
+                                            {{/each}}
+                                            <a {{#each projectInfo.images}} {{#if this.isCoverImageLarge}} hidden
+                                                {{/if}} {{/each}} class="coverImageLargeHref">
+
+                                                <img class="choosingCoverImageLarge w-100" width="100%">
+
+                                            </a>
+                                        </div>
                                     </div>
                                     <div class="row mb-2 pd-2 border-bottom">
                                         <div class="col-6">
@@ -71,31 +90,43 @@
                                             </div>
                                         </div>
                                         <div class="col-6 gallery pswp-gallery">
+                                            {{!-- Nếu có ảnh trên máy chủ --}}
                                             {{#each projectInfo.images}}
                                             {{#if this.isCoverImage}}
-                                            <a href="{{url}}" data-pswp-width="900" data-pswp-height="510">
-                                                <img src="{{url}}" alt="" width="100%">
-
+                                            {{#unless this.isCoverImageLarge}}
+                                            <a class="coverImageHref" href="{{url}}" data-pswp-width="900"
+                                                data-pswp-height="510">
+                                                <img src={{url}} class="coverImageServer w-100" width="100%">
                                             </a>
+                                            {{/unless}}
+
                                             {{/if}}
                                             {{/each}}
+                                            <a {{#each projectInfo.images}} {{#if this.isCoverImage}} hidden {{/if}}
+                                                {{/each}} class="coverImageHref" data-pswp-width="900"
+                                                data-pswp-height="510">
+                                                <img class="coverImageServer w-100" width="100%">
+                                            </a>
                                         </div>
+
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="coverImage">Ảnh màn hình</label>
-                                                <input type="file" class="form-control" id="coverImage">
+                                                <input type="file" class="form-control" id="screenshotInput" multiple>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="row flex-wrap row-gap-1 gallery pswp-gallery">
                                                 {{#each projectInfo.images}}
                                                 {{#unless this.isCoverImage}}
+                                                {{#unless this.isCoverImageLarge}}
                                                 <a href="{{url}}" data-pswp-width="600" data-pswp-height="340"
                                                     class="col-4">
-                                                    <img src="{{url}}" alt="" width="100%">
+                                                    <img src="{{url}}" alt="" width="100%" class="screenshotInServer">
                                                 </a>
+                                                {{/unless}}
                                                 {{/unless}}
                                                 {{/each}}
                                             </div>
@@ -105,7 +136,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Cập nhật</button>
+                                <button type="button" class="btn btn-primary update-images-btn">Cập nhật</button>
                             </div>
                         </div>
                     </div>
@@ -118,11 +149,13 @@
                 {{#if projectInfo.images}}
                 {{#each projectInfo.images}}
                 {{#unless this.isCoverImage}}
+                {{#unless this.isCoverImageLarge}}
+
                 <a href="{{url}}" data-pswp-src="{{url}}" data-pswp-width="600" data-pswp-height="240">
                     <img src="{{this.url}}" alt="">
                 </a>
                 {{/unless}}
-
+                {{/unless}}
                 {{/each}}
                 {{/if}}
             </ul>
