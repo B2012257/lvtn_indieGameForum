@@ -23,5 +23,7 @@ router.get('/:id/verify/email', userController.getVerifyEmailPage)
 router.post('/:id/verify/email', userController.verifyCode)
 router.post('/project/discount', userController.setDiscount)
 
+router.post('/project/:id/follow', userController.followProject)
+
 
 module.exports = router

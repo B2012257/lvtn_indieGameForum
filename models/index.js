@@ -36,7 +36,7 @@ db.payment = require("./payment.model.js")(sequelize, Sequelize)
 db.post = require("./post.model.js")(sequelize, Sequelize)
 db.user_rating = require("./user_rating.model.js")(sequelize, Sequelize)
 db.image = require("./image.model.js")(sequelize, Sequelize)
-
+db.user_follow = require("./user_follow.model.js")(sequelize, Sequelize)
 // Define relationships role and user
 db.role.hasMany(db.user) // 1 -> N
 db.user.belongsTo(db.role); // 1 -> 1
@@ -110,8 +110,8 @@ db.user.belongsToMany(db.project, { through: db.payment });
 db.project.belongsToMany(db.user, { through: db.payment });
 
 //Define relationships project and user for following
-db.user.belongsToMany(db.project, { through: 'user_follow' });
-db.project.belongsToMany(db.user, { through: 'user_follow' });
+db.user.belongsToMany(db.project, { through: db.user_follow });
+db.project.belongsToMany(db.user, { through: db.user_follow });
 
 //Define relationships project and tag 
 db.tag.belongsToMany(db.project, { through: 'project_tag' });

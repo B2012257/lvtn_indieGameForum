@@ -67,11 +67,25 @@
                     Mua
                     {{/if}}
                 </a>
-                <button class="btn-action-project btn btn-outline-primary follow_btn">
-                    <i class="fa-solid fa-plus fa-bounce me-2"></i>
-                    Theo dõi</button>
+                <form class="btn-action-project btn btn-outline-primary follow_btn" {{#if isFollowing}}
+                    action="/user/project/{{projectInfo.id}}/unfollow" {{else}}
+                    action="/user/project/{{projectInfo.id}}/follow" {{/if}} method="POST">
+                    {{#if isFollowing}}
+                    <button type="submit" class="border-0 bg-transparent btn btn-outline-primary ">
+                        <i class="fa-solid fa-minus fa-bounce me-2"></i>
+                        Bỏ theo dõi
+                    </button>
+                    {{else}}
+                    <button type="submit" class="border-0 bg-transparent btn btn-outline-primary ">
+                        <i class="fa-solid fa-plus fa-bounce me-2"></i>
+                        Theo dõi
+                    </button>
+                    {{/if}}
+                </form>
+
                 <button class="btn-action-project btn btn-outline-danger">
-                    <i class="fa-regular fa-heart"></i>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Báo xấu
                 </button>
                 {{#if (ifEquals user.id projectInfo.user.id)}}
                 <a title="Điều chỉnh" href="/user/project/{{projectInfo.id}}/edit" class="btn btn-outline-info">
@@ -165,7 +179,7 @@
 
                 <li class="list-group-item">Giá:
 
-                    <span class="text-success">{{price}}</span>
+                    <span class="text-success">{{vndFormat price}}</span>
                 </li>
                 {{#if versions}}
                 <li class="list-group-item">Trạng thái phát hành:

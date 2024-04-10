@@ -566,7 +566,7 @@ const getMyProjectPage = async (req, res) => {
                 }
             }
         })
-        
+
         projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
         discount_intime = JSON.parse(JSON.stringify(discount_intime))
         if (discount_intime) {
@@ -670,6 +670,7 @@ const getProjectViewPage = async (req, res) => {
         , order: [[db.image, 'createdAt', 'DESC']]
     })
     let payment_info
+    let isFollowing = false
     if (req.user?.id || req.session?.user?.id) {
         payment_info = await db.payment.findOne({
             where: {
@@ -679,6 +680,15 @@ const getProjectViewPage = async (req, res) => {
             include: [db.payment_method],
         })
         payment_info = JSON.parse(JSON.stringify(payment_info))
+        //Kiểm tra xem người dùng có đang follow project này k
+        let userFollow = await db.user_follow.findOne({
+            where: {
+                projectId: projectDB.id,
+                userId: req.user?.id || req.session?.user?.id
+            }
+        })
+        userFollow = JSON.parse(JSON.stringify(userFollow))
+        if (userFollow) isFollowing = true
     }
 
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
@@ -690,6 +700,7 @@ const getProjectViewPage = async (req, res) => {
         footer: false,
         projectInfo,
         payment_info,
+        isFollowing,
         user: req.user || req.session.user,
     })
 }

@@ -56,21 +56,7 @@ const uploadProject = async (req, res) => {
                 }
             })
             if (project_db) {
-                //Cập nhật số phiên bản
-                // let version = projectInfo.version
-                // db.version.update({
-                //     version_number: version
-                // }, {
-                //     where: {
-                //         projectId: project_db.id
-                //     }
-                // })
-                //     .then(row => {
-                //     })
-                //     .catch(err => {
-                //         console.log(err)
 
-                //     })
                 //Lưu thông tin vào db//
                 //Kiểm tra tags nếu tìm thấy thì lưu id vào project_tag, còn không tìm thấy thì lưu mới vào db và lưu vào project_tag
                 let project_tags = []
@@ -867,6 +853,43 @@ const setDiscount = async (req, res) => {
         console.log(error);
     }
 }
+const followProject = async (req, res) => {
+    let user = req.session?.user ?? req.user;
+    let project_id = req.params.id;
+
+    try {
+        let projectDb = await db.project.findOne({
+            where: {
+                id: project_id
+            }
+        })
+        projectDb = JSON.parse(JSON.stringify(projectDb))
+        // Kiểm tra xem user và project tồn tại
+        await db.user_follow.findOrCreate({
+            where: {
+                userId: user.id,
+                projectId: project_id
+            },
+            defaults: {
+                userId: user.id,
+                projectId: project_id
+            }
+        })
+        // const projectdb = await db.project.findByPk(project_id);
+
+        // if (!userdb || !projectdb) {
+        //     return res.status(404).json({ error: "User or project not found" });
+        // }
+        // console.log(userdb, projectdb);
+        // Thêm project vào danh sách theo dõi của user
+        // await userdb.addProject(projectdb.id);
+
+        return res.redirect(`/project/${projectDb.slug}/view`);
+    } catch (error) {
+        console.error("Error adding project to follow list:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -879,5 +902,6 @@ module.exports = {
     payWithFree,
     getVerifyEmailPage,
     verifyCode,
-    setDiscount
+    setDiscount,
+    followProject
 }
