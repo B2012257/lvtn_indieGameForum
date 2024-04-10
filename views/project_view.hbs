@@ -113,8 +113,8 @@
                 {{#unless this.isCoverImage}}
                 {{#unless this.isCoverImageLarge}}
 
-                <a href="{{url}}" data-pswp-width="600" data-pswp-height="238">
-                    <img src="{{this.url}}" alt=""></label>
+                <a href="{{url}}" data-pswp-width="300" data-pswp-height="180">
+                    <img src="{{this.url}}" alt="" style="max-height: 180px"></label>
                 </a>
                 {{/unless}}
 
@@ -223,6 +223,7 @@
         children: 'a',
         // dynamic import is not supported in UMD versionmouseMovePan: true,
 
+        secondaryZoomLevel: 2,
         maxZoomLevel: 1,
         pswpModule: PhotoSwipe
     });

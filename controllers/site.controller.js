@@ -72,7 +72,7 @@ let newProjectStatisticWeek = async ({ userId }) => {
                 let index = dataJson.findIndex(item => item.date === date);
                 if (index !== -1) {
                     // Nếu đã tồn tại trong dataJson, cập nhật giá trị count
-                    dataJson[index].count += count;
+                    dataJson[index].count = count;
                 } else {
                     // Nếu không tồn tại, thêm mới vào dataJson với giá trị count
                     dataJson.push({
@@ -123,7 +123,7 @@ let paidStatisticWeek = async ({ userId }) => {
     startDate = startDate.toLocaleDateString()
     endDate = endDate.toLocaleDateString()
     //Tìm các prpject của user trong tuần
-    console.log(startDate, endDate);
+    // console.log(startDate, endDate);
     let projectResults = await db.project.findAndCountAll({
         where: {
             userId,
@@ -141,7 +141,7 @@ let paidStatisticWeek = async ({ userId }) => {
         }
     })
     results = JSON.parse(JSON.stringify(results))
-    console.log(results, "results");
+    // console.log(results, "results");
     // Tạo data cho biểu đồ 7 ngày
     let data = []
 
@@ -175,7 +175,7 @@ let paidStatisticWeek = async ({ userId }) => {
             count: data[i]
         })
     }
-    console.log(dataJson, "dataJson");
+    // console.log(dataJson, "dataJson");
     return dataJson
 
 }
@@ -420,7 +420,12 @@ const editInfoProject = async (req, res) => {
         //Kiểm tra tags nếu tìm thấy thì lưu id vào project_tag, còn không tìm thấy thì lưu mới vào db và lưu vào project_tag
         let project_tags = []
         project_tags = tags.split(",") // array of tags
-        project_tags.forEach(async projectTagName => {
+        //Xoá hết tags hiện tại và thêm tags mới
+        await projectDb.setTags([])
+
+        for (const projectTagName of project_tags) {
+
+            //project_tags.forEach(async projectTagName => {
             if (projectTagName.trim() === "") { return console.log("Tag rỗng") }
             else
                 await db.tag.findOrCreate({
@@ -447,7 +452,9 @@ const editInfoProject = async (req, res) => {
 
                         // }
                     });
-        });
+        }
+
+        //});
 
         res.redirect("/user/project/" + projectId + "/edit")
         //Xóa tất cả tag cũ
@@ -535,8 +542,7 @@ const getMyProjectPage = async (req, res) => {
     let user = req?.user ?? req?.session?.user
     let projectDB = await db.project.findAll({
         include: [
-            db.classification, db.tag, db.genre, db.image, db.user
-        ],
+            db.classification, db.tag, db.genre, db.image, db.user],
         order: orderQuery,
         where: {
             userId: user.id
@@ -551,7 +557,25 @@ const getMyProjectPage = async (req, res) => {
                 projectId: project.id
             }
         })
+        //Lấy những chương trình giảm giá còn hạn
+        let discount_intime = await db.discount.findOne({
+            where: {
+                projectId: project.id,
+                endDate: {
+                    [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                }
+            }
+        })
+        
         projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
+        discount_intime = JSON.parse(JSON.stringify(discount_intime))
+        if (discount_intime) {
+            project.discount = {
+                discountValuePercent: discount_intime.discountValuePercent,
+                startDate: discount_intime.startDate,
+                endDate: discount_intime.endDate
+            }
+        }
         project.saledCount = projectSaledCount.count
         // projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
     }
@@ -570,7 +594,9 @@ const getMyProjectPage = async (req, res) => {
 
 
     let paidWeekStatistic = await paidStatisticWeek({ userId: user.id })
+
     let newProjectWeekStatistic = await newProjectStatisticWeek({ userId: user.id })
+    console.log(projects, "projects")
     // Tính tổng doanh thu
     let totalRevenue = 0
     //Lấy project do người này tạo ra
@@ -926,6 +952,59 @@ const getProjectBillPage = async (req, res) => {
         user
     })
 }
+const getProfilePage = async (req, res) => {
+    let user = req.user || req.session.user
+    let userDB = await db.user.findOne({
+        where: {
+            id: user.id
+        }
+        , include: [db.role]
+    })
+    let userProject = await db.project.findOne({
+        where: {
+            userId: user.id
+        }
+    })
+    userProject = JSON.parse(JSON.stringify(userProject))
+    let isDevAccount = false
+    let isPlayerAccount = false
+    let isAdmin = false
+    if (userDB.role.name.toLowerCase() === "admin") {
+        isAdmin = true
+    }
+    else if (userProject) {
+        isDevAccount = true
+    }
+    else {
+        isPlayerAccount = true
+    }
+    //Nếu có 1 project thì người dùng là dev
+    //Ngược lại là người chơi
+
+    userDB = JSON.parse(JSON.stringify(userDB))
+    let loginByGoogle = false
+    console.log(userDB, "userDB");
+    if (userDB.googleId) {
+        loginByGoogle = true
+    }
+    // console.log(loginByGoogle, "loginByGoogle");
+    let isVerified = false
+    if (userDB.isActive) isVerified = true
+
+    console.log(isVerified, "isVerified");
+    res.render("user_info", {
+        title: "Trang cá nhân",
+        header: true,
+        footer: false,
+        loginByGoogle,
+        isDevAccount,
+        isPlayerAccount,
+        isAdmin,
+        isVerified,
+        user: userDB
+    })
+
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
@@ -943,5 +1022,7 @@ module.exports = {
     getForumPage,
     getProjectBillPage,
     getEditInfoProjectPage,
-    editInfoProject
+    editInfoProject,
+    getProfilePage,
+
 }

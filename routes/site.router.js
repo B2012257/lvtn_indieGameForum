@@ -37,6 +37,9 @@ router.get('/genres', siteController.getGenresPage)
 router.get('/project/:classification', siteController.getProjectViewByClassificationPage)
 router.get('/forum', siteController.getForumPage)
 
+
+router.get('/user/my-profile', authMiddleware.isLogin, siteController.getProfilePage);
+
 router.get('/', siteController.getIndexPage)
 
 module.exports = router;

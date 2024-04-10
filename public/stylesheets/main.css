@@ -40,8 +40,8 @@ a {
 }
 
 .btn {
-    padding: 2px 14px;
-    border-radius: 20px;
+    padding: 2px 14px !important;
+    border-radius: 20px !important;
 }
 
 .card {

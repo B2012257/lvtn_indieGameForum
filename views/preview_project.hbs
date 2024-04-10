@@ -122,7 +122,7 @@
                                                 {{#each projectInfo.images}}
                                                 {{#unless this.isCoverImage}}
                                                 {{#unless this.isCoverImageLarge}}
-                                                <a href="{{url}}" data-pswp-width="600" data-pswp-height="340"
+                                                <a href="{{url}}" data-pswp-width="300" data-pswp-height="180"
                                                     class="col-4">
                                                     <img src="{{url}}" alt="" width="100%" class="screenshotInServer">
                                                 </a>
@@ -136,7 +136,12 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary update-images-btn">Cập nhật</button>
+                                <button type="button" class="btn btn-primary update-images-btn">
+                                    <div style="width: 1rem; height: 1rem" class="spinner-grow d-none" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    Cập nhật
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -151,8 +156,8 @@
                 {{#unless this.isCoverImage}}
                 {{#unless this.isCoverImageLarge}}
 
-                <a href="{{url}}" data-pswp-src="{{url}}" data-pswp-width="600" data-pswp-height="240">
-                    <img src="{{this.url}}" alt="">
+                <a href="{{url}}" data-pswp-src="{{url}}" data-pswp-width="300" data-pswp-height="180">
+                    <img src="{{this.url}}" alt="" style="max-height: 180px">
                 </a>
                 {{/unless}}
                 {{/unless}}
@@ -271,10 +276,8 @@
     let lightbox = new PhotoSwipeLightbox({
         gallery: '.gallery',
         children: 'a',
-        // dynamic import is not supported in UMD versionmouseMovePan: true,
-
-        secondaryZoomLevel: 1.5,
-        maxZoomLevel: 1,
+        secondaryZoomLevel: 2,
+        maxZoomLevel: 2,
         pswpModule: PhotoSwipe
     });
     lightbox.init();

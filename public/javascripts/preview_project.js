@@ -226,6 +226,8 @@ function displaySelectedCoverImage(event, imgElementSelector, hrefSelector) {
 let updateBtn = document.querySelector('.update-images-btn')
 updateBtn.addEventListener('click', async (e) => {
 
+    //Hiệu ứng loading
+    document.querySelector(".spinner-grow").classList.toggle("d-none");
     e.preventDefault();
     //Lấy id project
     let projectId = document.querySelector('.projectId').textContent

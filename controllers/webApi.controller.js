@@ -5,7 +5,7 @@ const { platform } = require('../configs/constraint')
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
 const { where } = require("sequelize")
-
+require('dotenv').config()
 let folderIdPublic;
 let project_name_and_random
 const uploadImage = async (req, res) => {
@@ -416,6 +416,32 @@ const updateImage = async (req, res) => {
     }
     res.json({ status: 200, msg: "Success!" })
 }
+const updateAvatar = async (req, res) => {
+    let avatarFile = req.file
+    console.log(avatarFile);
+    try {
+        //Upload lên gg drive
+        let fileResponse = await ggdrive.uploadImageFile({
+            image: avatarFile,
+            parent: process.env.AVATAR_FOLDER_ID_DRIVE
+        })
+        //Lưu vào db
+        await db.user.update({
+            avatarUrl: fileResponse.data.webViewLink
+        }, {
+            where: {
+                id: req.session?.user?.id ?? req.user?.id
+            }
+        })
+        res.json({ status: 200, msg: "Cập nhật ảnh thành công!" })
+
+    } catch (error) {
+        console.log(error);
+        res.json({ status: 400, msg: "Lỗi! Cập nhật ảnh thất bại" })
+
+    }
+
+}
 module.exports = {
     uploadImage,
     uploadImages,
@@ -423,5 +449,6 @@ module.exports = {
     saveDescription,
     uploadImageFromCkEditor,
     search,
-    updateImage
+    updateImage,
+    updateAvatar
 }

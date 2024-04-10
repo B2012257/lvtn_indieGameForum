@@ -58,5 +58,6 @@ router.post('/project/update/image', upload.fields([
     { name: 'images', maxCount: 30 }, //files
     { name: 'href', maxCount: 30 } // url
 ]), apiController.updateImage);
+router.post('/user/update/avatar', upload.single('avatar'), apiController.updateAvatar);
 router.get('/search', apiController.search)
 module.exports = router;

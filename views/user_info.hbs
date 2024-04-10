@@ -1,0 +1,204 @@
+<link rel="stylesheet" href="/stylesheets/user_info.css">
+<main style="margin-top: 71px;" class="container-fluid">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <div class=" emp-profile">
+        <form method="post">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-img">
+                        <img src="{{user.avatarUrl}}" alt="" />
+                        <div class="file btn btn-lg btn-primary">
+                            <div class="spinner-grow text-white d-none loading-update-avatar" role="status" style="width: 1rem;
+    height: 1rem;">
+                                <span class="visually-hidden">Vui lòng chờ</span>
+                            </div>
+                            Change Photo
+                            <input type="file" name="file" class="fileInput" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="profile-head">
+                        <h5>
+                            {{user.name}}
+                        </h5>
+                        <i>
+                            {{#if isAdmin}}
+                            Quản trị viên
+                            {{/if}}
+                            {{#if isDevAccount}}
+                            Lập trình viên
+                            {{/if}}
+                            {{#if isPlayerAccount}}
+                            Người chơi
+                            {{/if}}
+                        </i>
+                        <p class="proile-rating">RANKINGS : <span>8/10</span></p>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="" role="tab"
+                                    aria-controls="home" aria-selected="true">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="" role="tab"
+                                    aria-controls="profile" aria-selected="false">Timeline</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-work">
+                        <p>WORK LINK</p>
+                        <a href="">Website Link</a><br />
+                        <a href="">Bootsnipp Profile</a><br />
+                        <a href="">Bootply Profile</a>
+                        <p>SKILLS</p>
+                        <a href="">Web Designer</a><br />
+                        <a href="">Web Developer</a><br />
+                        <a href="">WordPress</a><br />
+                        <a href="">WooCommerce</a><br />
+                        <a href="">PHP, .Net</a><br />
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="tab-content profile-tab" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            {{#with user}}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Phương thức đăng nhập</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{#if @root.loginByGoogle}}
+                                    <p>Google</p>
+
+                                    {{else}}
+                                    <p>Mật khẩu</p>
+
+                                    {{/if}}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Tên</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>{{name}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Email</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>{{email}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Trạng thái tài khoản</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{#if @root.isVerified}}
+                                    <span class="text-success">Đã xác thực</span>
+                                    {{else}}
+                                    <span class="text-warning">Chưa xác thực</span>
+                                    <a href="/user/{{id}}/verify/email" class="btn border bg-warning fw-normal"
+                                        style="font-size: 14px;">Xác
+                                        thực
+                                        ngay</a>
+                                    {{/if}}
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Quyền</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>{{role.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/with}}
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Experience</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Expert</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Hourly Rate</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>10$/hr</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Total Projects</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>230</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>English Level</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Expert</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Availability</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>6 months</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Your Bio</label><br />
+                                    <p>Your detail description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<script>
+    //Cập nhật avatar
+    document.querySelector(".fileInput").addEventListener('change', (e) => {
+        const file = e.target.files[0];
+
+        document.querySelector('.loading-update-avatar').classList.remove('d-none');
+        const formData = new FormData();
+        formData.append('avatar', file);
+        fetch('/api/v1/user/update/avatar', {
+            method: 'POST',
+            body: formData
+        }).then(res => res.json())
+            .then(data => {
+                if (data.status == "200") {
+                    location.reload()
+                }
+            })
+    })
+</script>

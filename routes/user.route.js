@@ -19,4 +19,9 @@ router.post('/payment/free/:id', userController.payWithFree)
 
 router.get('/payment/paypal/cancel', userController.paypalCancel)
 router.post('/project/:slug/rating', userController.ratingProject)
+router.get('/:id/verify/email', userController.getVerifyEmailPage)
+router.post('/:id/verify/email', userController.verifyCode)
+router.post('/project/discount', userController.setDiscount)
+
+
 module.exports = router

@@ -13,6 +13,9 @@ module.exports = (app) => {
             momentTime: function (date) {
                 return moment(date).format("LLL");
             },
+            momentDateTimeInput: function (date) {
+                return moment(date).format("YYYY-MM-DDTHH:mm");
+            },
             ifEquals: function (arg1, arg2) {
                 //convert to string to compare
                 arg1 = arg1.toString();

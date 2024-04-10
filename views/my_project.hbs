@@ -137,12 +137,83 @@
 
 
                     </div>
-                    <p class="p-0 m-0 "><i class="fa-solid fa-coins"></i> {{this.saledCount}} lượt mua</p>
+                    <p class="m-0 ps-2 pe-2 " style="font-size: 14px;"><i class="fa-solid fa-coins"></i>
+                        {{this.saledCount}} lượt mua
+                    </p>
 
 
-                    <div class="">
-                        {{!-- <a href="/project/{{this.slug}}/view">Xem</a> | --}}
-                        <a href="/user/project/{{this.id}}/edit">Điều chỉnh trang</a> |
+                    <div class="card-footer">
+                        <div class="form-set-discount">
+
+                            <form class="" action="/user/project/discount" method="POST">
+                                <!-- Modal -->
+                                <div class="modal fade" id="staticBackdrop{{this.id}}" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{#if
+                                                    discount}} Cập nhật {{else}} Thiết lập {{/if}} chương
+                                                    trình giảm giá cho {{this.name}}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input hidden name="projectId" value="{{this.id}}">
+                                                <div class="mb-2 row justify-content-between">
+                                                    <label class="col-4" for="startDate">
+                                                        Ngày bắt đầu:
+                                                    </label>
+                                                    <input {{#if discount}}
+                                                        value="{{ momentDateTimeInput discount.startDate}}" {{/if}}
+                                                        value="10" required class="form-control w-50 col-8"
+                                                        type="datetime-local" name="start" id="startDate">
+                                                </div>
+                                                <div class="mb-2 row justify-content-between">
+                                                    <label class="col-4" for="endDate">
+                                                        Ngày kết thúc:
+                                                    </label>
+                                                    <input {{#if discount}}
+                                                        value="{{momentDateTimeInput discount.endDate}}" {{/if}}
+                                                        required class="form-control w-50 col-8" type="datetime-local"
+                                                        name="end" id="endDate">
+
+                                                </div>
+                                                <div class="mb-2 row justify-content-between">
+                                                    <label class="col-4" for="discount-percent">
+                                                        Phần trăm giảm:
+                                                    </label>
+                                                    <input required class="form-control w-50 col-4" type="number"
+                                                        name="percent" id="discount-percent" min="1" max="100" {{#if
+                                                        discount}} value="{{discount.discountValuePercent}}" {{else}}
+                                                        value="10" {{/if}}>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <div class="float-start">Thời gian khuyến mãi là:
+                                                    <strong class="text-success">
+                                                        3 tiếng
+                                                    </strong>
+
+                                                </div>
+                                                <button type="submit" class="btn btn-primary float-end">Thiết
+                                                    lập</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{this.id}}"
+                            class="border-0 text-primary bg-transparent discount-btn">
+                            {{#if discount}} Cập nhật {{else}}
+                            Đặt {{/if}} giảm giá
+
+                        </button>
+                        |
+                        <a href="/user/project/{{this.id}}/edit">Điều chỉnh</a> |
                         <a href="/user/project/{{this.id}}/delete">Xoá</a>
                     </div>
                 </div>

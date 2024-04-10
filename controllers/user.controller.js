@@ -10,12 +10,15 @@ const crypto = require("crypto");
 const vnpay = require('vnpay');
 const { log } = require('console');
 const moment = require('moment');
+const { where } = require('sequelize');
 const VNPay = vnpay.VNPay
 const VND_TO_USD_EXCHANGE_RATE = process.env.VND_TO_USD_EXCHANGE_RATE
 // Cấu hình VNPay
 const vnp_TmnCode = '65Z5FVGZ'; // Mã website của bạn
 const vnp_HashSecret = 'UQYGOWVNTZAWLCNRSNRTPLSURADBATEI'; // Khóa bảo mật của bạn
 const returnUrl = 'http://localhost:3000/user/order/vnpay_return/';
+
+let verifyEmailCode
 
 const vnpayClient = new VNPay({
     api_Host: 'https://sandbox.vnpayment.vn',
@@ -724,6 +727,146 @@ const payWithFree = async (req, res) => {
         }
     });
 }
+
+const getVerifyEmailPage = async (req, res) => {
+    //Khởi tạo verifyCode ngẫu nhiên 6 ký tự số
+    verifyEmailCode = Math.floor(100000 + Math.random() * 900000)
+    console.log("code", verifyCode);
+    let userId = req.params.id
+    let user_db = await db.user.findOne({
+        where: {
+            id: userId
+        }
+    })
+    user_db = JSON.parse(JSON.stringify(user_db))
+    console.log(user_db);
+    //Gữi email xác thực
+    const mailOptions = {
+        from: 'Admin Indie Game VN (-.-)',
+        to: user_db.email,
+        subject: 'Mã xác thực tài khoản',
+        text: 'Mã xác thực của bạn là: ' + verifyEmailCode,
+    }
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+
+        }
+    })
+    res.render('verify_email', {
+        title: 'Xác thực email',
+        verifyCode,
+        message: "Mã xác thực gồm 6 chữ số đã được gửi đến email của bạn, vui lòng kiểm tra email để xác thực tài khoản",
+        user: user_db,
+        redirect: false,
+
+        header: true,
+        footer: false
+    })
+}
+const verifyCode = async (req, res) => {
+    let userId = req.params.id
+    let code = req.body.code
+    let user_db = await db.user.findOne({
+        where: {
+            id: userId
+        }
+    })
+    user_db = JSON.parse(JSON.stringify(user_db))
+    //Kiểm tra code
+    if (code == verifyEmailCode) {
+        await db.user.update({
+            isActive: true
+        }, {
+            where: {
+                id: userId
+            }
+        })
+        res.render('verify_email', {
+            title: 'Xác thực email thành công',
+            message: "Xác thực thành công! Tài khoản của bạn đã được kích hoạt",
+            user: user_db,
+            header: true,
+            footer: false,
+            redirect: true,
+            redirectUrl: `/user/my-profile`
+        })
+    } else {
+        res.render('verify_email', {
+            title: 'Xác thực email thành công',
+            message: "Xác thực thành công! Tài khoản của bạn đã được kích hoạt",
+            user: user_db,
+            header: true,
+            footer: false,
+            redirect: true,
+            redirectUrl: `/user/my-profile`
+
+        })
+    }
+}
+const setDiscount = async (req, res) => {
+    moment.locale('vi')
+    let projectId = req.body.projectId;
+    let discount = req.body.percent;
+    let start = req.body.start;
+    let end = req.body.end;
+
+
+    try {
+        //Thêm mới hoặc ghi đè nếu tồn tại
+        //Nếu có giảm giá còn hạn thì ghi đè
+        let discount_db_intime = await db.discount.findOne({
+            where: {
+                projectId: projectId,
+                endDate: {
+                    [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                }
+            }
+        })
+        discount_db_intime = JSON.parse(JSON.stringify(discount_db_intime))
+        console.log(discount_db_intime);
+
+        //Nếu ngày kết thúc nhỏ hơn ngày hôm nay thì không hợp lệ
+        if (
+            moment(end).isBefore(moment(new Date()))
+        ) {
+            console.log("Ngày hết hạn không hợp lệ");
+            res.json({
+                status: 400,
+                message: "Ngày kết thúc không hợp lệ"
+            })
+            return;
+        }
+
+
+        //Nếu có giảm giá còn hạn thì ghi đè
+        if (discount_db_intime) {
+            await db.discount.update({
+                discountValuePercent: discount,
+                startDate: moment(start).format('YYYY-MM-DD HH:mm:ss'),
+                endDate: moment(end).format('YYYY-MM-DD HH:mm:ss')
+            }, {
+                where: {
+                    id: discount_db_intime.id
+                }
+            })
+        } else {
+            await db.discount.create({
+                projectId: projectId,
+                discountValuePercent: discount,
+                startDate: moment(start).format('YYYY-MM-DD HH:mm:ss'),
+                endDate: moment(end).format('YYYY-MM-DD HH:mm:ss')
+            })
+        }
+        //Còn nếu không thì tạo mới
+        res.json({ body: req.body })
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -733,5 +876,8 @@ module.exports = {
     ratingProject,
     payWithVnpayReturn,
     editProject,
-    payWithFree
+    payWithFree,
+    getVerifyEmailPage,
+    verifyCode,
+    setDiscount
 }

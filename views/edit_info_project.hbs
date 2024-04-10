@@ -70,7 +70,8 @@
                                 </span> --}}
                                 {{#each tags}}
                                 <span class="badge tagNameChoosing text-bg-secondary mb-1 me-1">{{name}}<i
-                                        class="fa-solid fa-xmark delete_tag"></i></span>
+                                        class="fa-solid fa-xmark delete_tag"
+                                        onclick="deleteTagChosing(event)"></i></span>
                                 {{/each}}
 
                                 <input class="form-control inputTags" name="tags" id="inputTag"
@@ -519,6 +520,7 @@
 
         toggleVisibility({ isToggle: true, elementClassName: "success_icon" })
 
+        console.log("Trước khi gữi dữ liệu:", tagsChoosing)
         document.querySelector('.inputTags').value = tagsChoosing
 
         setTimeout(() => {
@@ -694,5 +696,23 @@
         } else {
             document.getElementById('payAmountError').style.display = 'none';
         }
+    }
+    function deleteTagChosing(e) {
+        console.log("Trước khi xoá")
+        console.log(tagsChoosing)
+
+        console.log(e.target.parentElement.textContent)
+        alert()
+        // Tìm vị trí của giá trị cần xoá trong mảng
+        let index = tagsChoosing.indexOf(e.target.parentElement.textContent);
+        // Nếu giá trị được tìm thấy trong mảng, xoá nó bằng phương thức splice()
+        if (index !== -1) {
+            tagsChoosing.splice(index, 1); // Xoá 1 phần tử từ vị trí index
+        }
+        //Xoá tag đó trên giao diện và xoá trong  list 
+        console.log("Sau khi xoá")
+        console.log(tagsChoosing)
+        e.target.parentElement.remove()
+
     }
 </script>

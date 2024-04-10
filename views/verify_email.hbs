@@ -1,0 +1,14 @@
+<main style="margin-top: 72px">
+    <div class="container text-center">
+        <p class="text-success">{{message}}</p>
+        {{#if redirect}}
+        <a href="{{redirectUrl}}">Tiếp tục</a>
+        {{/if}}
+        <form action="/user/{{user.id}}/verify/email" method="POST">
+            <input class="form-control" type="text" name="code" id="verifyCode">
+            <button type="submit">
+                Gữi mã xác nhận
+            </button>
+        </form>
+    </div>
+</main>
