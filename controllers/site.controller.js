@@ -7,6 +7,7 @@ const { order } = require("paypal-rest-sdk")
 require('dotenv').config();
 var moment = require('moment'); // require
 const { set } = require("../app")
+const { calculateUserFollowProject } = require("../utils/userFollowProject")
 //Số dự án mới trong tuần
 let newProjectStatisticWeek = async ({ userId }) => {
     let dataJson = []
@@ -189,6 +190,17 @@ const getIndexPage = async (req, res) => {
 
     let projectDB = await db.project.findAll({
         include: [
+            db.classification,
+            db.genre,
+            {
+                model: db.discount,
+                where: {
+                    endDate: {
+                        [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                },
+                required: false
+            },
             db.tag, {
                 model: db.image,
                 where: {
@@ -199,6 +211,8 @@ const getIndexPage = async (req, res) => {
         where: {
             isPublic: true
         },
+        order: [['updatedAt', 'DESC']],
+        limit: 12
     })
 
     let hotProject = await db.project.findAll({
@@ -218,9 +232,25 @@ const getIndexPage = async (req, res) => {
         limit: 4,
         order: [['createdAt', 'DESC']]
     })
+    let projectInDiscount = await db.discount.findAll({
+        include: [{
+            model: db.project,
+            include: [db.image, db.classification, db.genre, db.tag],
+        }],
+        where: {
+            endDate: {
+                [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            }
+        },
+        limit: 12,
+        //sắp xếp theo số ngày còn lại từ ít đến nhiều
+        order: [['endDate', 'ASC']]
+
+    })
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     hotProject = JSON.parse(JSON.stringify(hotProject))
-    console.log(hotProject);
+    projectInDiscount = JSON.parse(JSON.stringify(projectInDiscount))
+    console.log(projectInfo);
     return res.render("index", {
         user: req.user || req.session.user,
         title: "Trang chủ",
@@ -228,6 +258,7 @@ const getIndexPage = async (req, res) => {
         footer: false,
         projectInfo,
         hotProject,
+        projectInDiscount,
         isHomeActive: true
     })
 }
@@ -537,12 +568,21 @@ const getMyProjectPage = async (req, res) => {
         orderQuery = [['name', 'DESC']]
 
     }
-
     console.log(orderQuery);
     let user = req?.user ?? req?.session?.user
+
     let projectDB = await db.project.findAll({
         include: [
-            db.classification, db.tag, db.genre, db.image, db.user],
+            db.classification, db.tag, db.genre, db.image, db.user,
+            {
+                model: db.discount,
+                where: {
+                    endDate: {
+                        [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                },
+                required: false
+            }],
         order: orderQuery,
         where: {
             userId: user.id
@@ -551,7 +591,10 @@ const getMyProjectPage = async (req, res) => {
     let projects = JSON.parse(JSON.stringify(projectDB))
     //Nếu orderBy bằng saled thì sắp xếp projects theo số lượt bán
     //Sắp xếp theo số lượng bán của từng project
+    //Tính tổng theo dõi
+    let totalFollow = 0
     for (const project of projects) {
+        let userFollowCount = await calculateUserFollowProject(project.id)
         let projectSaledCount = await db.payment.findAndCountAll({
             where: {
                 projectId: project.id
@@ -569,14 +612,18 @@ const getMyProjectPage = async (req, res) => {
 
         projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
         discount_intime = JSON.parse(JSON.stringify(discount_intime))
+
         if (discount_intime) {
             project.discount = {
+                id: discount_intime.id,
                 discountValuePercent: discount_intime.discountValuePercent,
                 startDate: discount_intime.startDate,
                 endDate: discount_intime.endDate
             }
         }
         project.saledCount = projectSaledCount.count
+        project.userFollowCount = userFollowCount
+        totalFollow += userFollowCount
         // projectSaledCount = JSON.parse(JSON.stringify(projectSaledCount))
     }
 
@@ -596,7 +643,8 @@ const getMyProjectPage = async (req, res) => {
     let paidWeekStatistic = await paidStatisticWeek({ userId: user.id })
 
     let newProjectWeekStatistic = await newProjectStatisticWeek({ userId: user.id })
-    console.log(projects, "projects")
+    // console.log(projects, "projects")
+
     // Tính tổng doanh thu
     let totalRevenue = 0
     //Lấy project do người này tạo ra
@@ -630,11 +678,12 @@ const getMyProjectPage = async (req, res) => {
             userId: user.id
         }
     })
+    console.log(projects);
     if (req.user || req.session.user) {
         res.render("my_project", {
             title: "Dự án của tôi",
             header: true,
-            projects,
+            projects, totalFollow,
             footer: false,
             paidWeekStatistic,
             newProjectWeekStatistic,
@@ -706,6 +755,13 @@ const getProjectViewPage = async (req, res) => {
 }
 const getPayViewPage = async (req, res) => {
     let id = req.params.id
+    let userId = req.user?.id || req.session?.user?.id
+    let userDb = await db.user.findOne({
+        where: {
+            id: userId
+        }
+    })
+    userDb = JSON.parse(JSON.stringify(userDb))
     let projectDB = await db.project.findOne({
 
         include: [
@@ -729,13 +785,14 @@ const getPayViewPage = async (req, res) => {
         isFreeGame = true
     }
     console.log(isFreeGame);
+    console.log(userDb);
     res.render("pay_view", {
         title: 'Thanh toán ' + projectInfo?.name,
         header: true,
         footer: false,
         projectInfo,
         isFreeGame,
-        user: req.user || req.session.user,
+        user: userDb,
     })
 }
 

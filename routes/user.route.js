@@ -21,6 +21,7 @@ router.get('/payment/paypal/cancel', userController.paypalCancel)
 router.post('/project/:slug/rating', userController.ratingProject)
 router.get('/:id/verify/email', userController.getVerifyEmailPage)
 router.post('/:id/verify/email', userController.verifyCode)
+router.get('/project/discount/:id/delete', userController.deleteDiscount)
 router.post('/project/discount', userController.setDiscount)
 
 router.post('/project/:id/follow', userController.followProject)

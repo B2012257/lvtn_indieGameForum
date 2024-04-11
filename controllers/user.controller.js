@@ -890,6 +890,19 @@ const followProject = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+const deleteDiscount = async (req, res) => {
+    let discountId = req.params.id;
+    try {
+        await db.discount.destroy({
+            where: {
+                id: discountId
+            }
+        })
+        res.redirect('/user/projects')
+    } catch (error) {
+        console.log(error);
+    }
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -903,5 +916,6 @@ module.exports = {
     getVerifyEmailPage,
     verifyCode,
     setDiscount,
+    deleteDiscount,
     followProject
 }

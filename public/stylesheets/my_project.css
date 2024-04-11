@@ -6,7 +6,8 @@
 
 .viewCount,
 .likeCount,
-.visibility {
+.visibility,
+.sale {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -21,6 +22,19 @@
 
 .visibility {
     left: 10px;
+}
+
+.sale {
+    text-shadow: none;
+    font-size: 12px;
+    top: 32px;
+    left: 10px;
+    right: auto;
+}
+
+.sale.sale-duration {
+    top: 54px;
+    right: auto;
 }
 
 .card-footer {

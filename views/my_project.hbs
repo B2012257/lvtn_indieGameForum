@@ -13,8 +13,8 @@
         <div class="col-4">
             <div class="w-100 card bg-info" style=" padding: 10px 30px; line-height:30px">
                 <div class="card-body">
-                    <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-heart"></i> Lượt thích:
-                    0
+                    <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-bookmark"></i> Lượt theo dõi:
+                    {{totalFollow}}
                 </div>
             </div>
         </div>
@@ -106,8 +106,8 @@
                     {{/each}}
                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
                     <div class="card-body pb-0 p-2">
-                        <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0 </p>
-                        <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-heart text-danger"></i> 20 </p>
+                        {{!-- <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0 </p> --}}
+                        <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-bookmark "></i> {{userFollowCount}} </p>
                         {{#if isPublic}}
                         <p class="p-0 m-0 visibility " title="Công khai"><i class="me-1 fa-solid fa-lock-open"></i> Công
                             khai </p>
@@ -116,6 +116,13 @@
                                 class="me-1 fa-solid fa-lock text-danger"></i> Riêng tư </p>
 
                         {{/if}}
+                        {{#with discounts.[0]}}
+                        <p class="badge bg-warning sale  text-dark">Đang giảm
+                            {{discountValuePercent}}%</p>
+                        <p class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                            {{CheckPromotionPeriod
+                            endDate}}</p>
+                        {{/with}}
                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
                         <br />
 
@@ -197,7 +204,13 @@
                                                     </strong>
 
                                                 </div>
-                                                <button type="submit" class="btn btn-primary float-end">Thiết
+                                                {{#if discount}}
+
+                                                <a href="/user/project/discount/{{discount.id}}/delete" type="submit"
+                                                    class="btn btn-danger">Xoá
+                                                    khuyến mãi</a>
+                                                {{/if}}
+                                                <button type="submit" class="btn btn-primary">Thiết
                                                     lập</button>
                                             </div>
                                         </div>

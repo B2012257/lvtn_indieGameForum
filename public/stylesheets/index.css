@@ -60,10 +60,11 @@
     position: relative;
 }
 
-.sale {
+.sale,
+.new {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 4px;
+    left: 2px;
     padding: 4px;
     background-color: #F16262;
     color: white;
@@ -76,6 +77,10 @@
 
 .sale:hover {
     background-color: #C13E3E;
+}
+
+.sale-duration {
+    top: 30px;
 }
 
 .carousel-control-prev,

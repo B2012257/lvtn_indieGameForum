@@ -38,6 +38,15 @@
         </div>
         <div class="box-2 w-100">
             <div class="box-inner-2">
+                {{#unless user.isActive}}
+                <p class="text-danger">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> Tài khoản của bạn chưa xác thực email. Vui
+                    lòng xác
+                    thực
+                    email để tiếp tục thanh toán.
+                    <a style="font-size: 14px;" href="/user/my-profile">Đi xác thực</a>
+                </p>
+                {{/unless}}
                 <div>
                     <p class="fw-bold">Thanh toán</p>
                 </div>
@@ -68,7 +77,8 @@
                     {{#if isFreeGame}}
                     <div class="col">
                         <form class="" action="/user/payment/free/{{projectInfo.id}}" method="POST">
-                            <button type="submit" class="w-100 btn btn-primary mt-2">Tải xuống
+                            <button {{#unless user.isActive}} disabled {{/unless}} type="submit"
+                                class="w-100 btn btn-primary mt-2">Tải xuống
                             </button>
                         </form>
 
@@ -78,14 +88,16 @@
                     <div class="row">
                         <div class="col">
                             <form class="" action="/user/payment/vnpay/pay/{{projectInfo.id}}" method="POST">
-                                <button type="submit" class="w-100 btn btn-primary mt-2">VNPay VND
+                                <button {{#unless user.isActive}} disabled {{/unless}} type="submit"
+                                    class="w-100 btn btn-primary mt-2">VNPay VND
                                 </button>
                             </form>
 
                         </div>
                         <div class="col">
                             <form class="flex-1" action="/user/payment/paypal/pay/{{projectInfo.id}}" method="POST">
-                                <button type="submit" class="w-100 btn btn-primary mt-2">Paypal USD
+                                <button {{#unless user.isActive}} disabled {{/unless}} type="submit"
+                                    class="w-100 btn btn-primary mt-2">Paypal USD
                                 </button>
                             </form>
                         </div>

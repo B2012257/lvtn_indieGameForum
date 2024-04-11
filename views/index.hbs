@@ -144,7 +144,7 @@
                                                     <i>By {{this.user.name}}</i>
                                                 </small>
                                                 <small style="font-size: 12px;" class="p">
-                                                    <i class="text-danger">{{this.price}} Vnđ </i>
+                                                    <i class="text-danger">{{vndFormat this.price}} </i>
                                                 </small>
                                             </div>
                                             <div class="row">
@@ -190,8 +190,8 @@
                     <div class="p-4 col-12">
                         <div class="top__rate__game w-100">
                             <div class="">
-                                <h4 class="d-inline-block">Game mới</h4>
-                                <a href="/project/all" class="view_all__btn ms-2">Xem tất cả</a>
+                                <h4 class="d-inline-block"> Mới cập nhật</h4>
+                                {{!-- <a href="/project/all" class="view_all__btn ms-2">Xem tất cả</a> --}}
 
                             </div>
                             <div class="mt-2 w-100 d-flex gap-4 flex-wrap justify-content-start">
@@ -205,11 +205,28 @@
                                     {{/if}}
                                     {{/each}}
                                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
-                                    <span class="badge badge-primary sale">Mới</span>
+                                    <span class="badge bg-primary new">Mới</span>
+                                    {{#with discounts.[0]}}
+                                    <span class="badge bg-warning sale">Giảm
+                                        {{discountValuePercent}}%</span>
+                                    <span class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                                        {{CheckPromotionPeriod
+                                        endDate}}</span>
+                                    {{/with}}
                                     <div class="card-body">
 
                                         <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
+                                        <div class="classification fw-normal" style="min-height: 20px;">
+                                            <a style=" font-size: 13px" href="/project/{{this.classification.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.classification.name}}</a>
+                                        </div>
+                                        <div class="genres fw-normal" style="min-height: 20px;">
+                                            <a style="--bs-bg-opacity: .65; font-size: 13px"
+                                                href="/genre/{{this.genre.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.genre.name}}</a>
+                                        </div>
                                         <div class="tags" style="min-height: 20px;">
+
                                             {{#each this.tags}}
 
                                             <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
@@ -220,7 +237,20 @@
                                         {{#if (ifEquals this.price '0')}}
                                         <p>Miễn phí</p>
                                         {{else}}
-                                        <p>Giá: {{vndFormat this.price}}</p>
+                                        Giá:
+                                        <span
+                                            class=" p-0 m-0{{#if discounts.[0]}} text-decoration-line-through {{/if}}">
+                                            {{vndFormat this.price}}
+
+                                        </span>
+                                        {{#with discounts.[0]}}
+                                        <br />
+                                        Giảm còn:
+                                        <span class="text-danger">
+                                            {{ priceOnSale ../price discountValuePercent}}
+                                        </span>
+                                        <!-- Áp dụng định dạng VND cho giá sau giảm giá -->
+                                        {{/with}}
                                         {{/if}}
                                     </div>
                                 </div>
@@ -229,7 +259,69 @@
 
                             </div>
                         </div>
+                        <div class="top__rate__game w-100 mt-4">
+                            <div class="">
+                                <h4 class="d-inline-block"> Đang giảm giá</h4>
+                                {{!-- <a href="/project/all" class="view_all__btn ms-2">Xem tất cả</a> --}}
 
+                            </div>
+                            <div class="mt-2 w-100 d-flex gap-4 flex-wrap justify-content-start">
+
+                                {{#each projectInDiscount}}
+                                <div class="card project-item"
+                                    style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                                    {{#each this.project.images}}
+                                    {{#if isCoverImage}}
+                                    <img src="{{this.url}}" class="game__thumbnail" width="100%" height="100%">
+                                    {{/if}}
+                                    {{/each}}
+                                    {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
+                                    <span class="badge bg-warning sale">Giảm {{discountValuePercent}}%</span>
+                                    <span class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                                        {{CheckPromotionPeriod
+                                        endDate}}</span>
+                                    <div class="card-body">
+
+                                        <a href="/project/{{this.project.slug}}/view"
+                                            class="card-title fs-5">{{this.project.name}}</a>
+                                        <div class="classification fw-normal" style="min-height: 20px;">
+                                            <a style=" font-size: 13px"
+                                                href="/project/{{this.project.classification.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.project.classification.name}}</a>
+                                        </div>
+                                        <div class="genres fw-normal" style="min-height: 20px;">
+                                            <a style="--bs-bg-opacity: .65; font-size: 13px"
+                                                href="/genre/{{this.project.genre.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.project.genre.name}}</a>
+                                        </div>
+                                        <div class="tags" style="min-height: 20px;">
+
+                                            {{#each this.project.tags}}
+
+                                            <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                                class="badge bg-danger fw-normal">{{this.name}}</a>
+                                            {{/each}}
+                                        </div>
+                                        <p class="mt-2 card-text clamped-text-3">{{this.project.short_description}}</p>
+                                        {{#if (ifEquals this.project.price '0')}}
+                                        <p>Miễn phí</p>
+                                        {{else}}
+                                        <span class="p-0 text-decoration-line-through m-0">Giá: {{vndFormat
+                                            this.project.price}}</span>
+                                        <br />
+                                        Giảm còn:
+                                        <span class="text-danger">
+                                            {{ priceOnSale this.project.price discountValuePercent}}
+                                        </span>
+                                        <!-- Áp dụng định dạng VND cho giá sau giảm giá -->
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                {{/each}}
+
+
+                            </div>
+                        </div>
 
                         <div class="all_game w-100 text-center mt-4">
                             <a href="/project/tro-choi" class="view_all_game">Tất cả trò chơi</a>
