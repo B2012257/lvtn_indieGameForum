@@ -160,9 +160,19 @@ const payWithPaypal = async (req, res) => {
         },
     })
     project_db = JSON.parse(JSON.stringify(project_db))
-    project_name = project_db.name
 
-    let amount = parseFloat(project_db.price) * parseFloat(VND_TO_USD_EXCHANGE_RATE); // Lấy số tiền từ yêu cầu
+    let discount = await db.discount.findOne({
+        where: {
+            projectId: project_db.id,
+            endDate: {
+                [db.Sequelize.Op.gte]: moment().format("YYYY-MM-DD HH:mm:ss")
+            },
+        }
+    })
+    discount = JSON.parse(JSON.stringify(discount))
+    project_name = project_db.name
+    //Lấy ra giá của project và giảm giá sau đó đổi ra tiền đô
+    let amount = (project_db.price - ((project_db.price * discount.discountValuePercent) / 100)) * parseFloat(VND_TO_USD_EXCHANGE_RATE); // Lấy số tiền từ yêu cầu
     console.log(amount);
     amount = Math.round(amount * 100) / 100
     total = amount
@@ -359,8 +369,19 @@ const payWithVnpay = async (req, res) => {
         },
     })
     project_db = JSON.parse(JSON.stringify(project_db))
+    //Lấy giảm giá của project này:
+    let discount = await db.discount.findOne({
+        where: {
+            projectId: project_db.id,
+            endDate: {
+                [db.Sequelize.Op.gte]: moment().format("YYYY-MM-DD HH:mm:ss")
+            },
+        }
+    })
+    discount = JSON.parse(JSON.stringify(discount))
+
     project_name = project_db.name
-    let amount = project_db.price; // Lấy số tiền từ yêu cầu //Tính toán từ giảm giá
+    let amount = project_db.price - ((project_db.price * discount.discountValuePercent) / 100);  // Lấy số tiền từ yêu cầu //Tính toán từ giảm giá
     console.log(amount);
     const urlString = vnpayClient.buildPaymentUrl({
         vnp_Amount: amount,
