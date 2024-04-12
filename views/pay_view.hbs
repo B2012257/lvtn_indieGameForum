@@ -12,7 +12,13 @@
             <div class="box-inner-1 pb-3 mb-3 ">
                 <div class="d-flex justify-content-between mb-3 userdetails">
                     <p class="fw-bold">{{projectInfo.name}}</p>
-                    <p class="fw-lighter">{{vndFormat projectInfo.price}}</p>
+
+                    <p class="fw-lighter  m-0 p-0">
+                        {{vndFormat projectInfo.price}}
+
+                    </p>
+
+
                 </div>
                 <div id="my" class="carousel slide carousel-fade img-details" data-bs-ride="carousel"
                     data-bs-interval="1000">
@@ -27,7 +33,7 @@
 
                 </div>
                 <p class="dis my-3 info">{{projectInfo.short_description}}</p>
-                <p class="dis mb-3 updates">Free updates forever</p>
+                <p class="dis mb-3 updates">Cập nhật miễn phí vĩnh viễn</p>
                 <div class="dis">
                     {{!-- <p class="black"><span class="fas fa-arrow-right mb-3 pe-2"></span>Black</p>
                     <p class="white"><span class="fas fa-arrow-right mb-3 pe-2"></span>White</p>
@@ -57,7 +63,7 @@
                 <div class="d-flex flex-column dis">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p>Giá</p>
-                        <p>{{projectInfo.price}}</p>
+                        <p>{{vndFormat projectInfo.price}}</p>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="d-flex align-items-center">
@@ -66,12 +72,17 @@
                                     <span id="code" class="pe-2"></span>
                             </p>
                         </div>
-                        <p></span>0% (0 VND)</p>
+                        {{#if projectInfo.discounts}}
+                        <p class="text-danger">-{{projectInfo.discounts.[0].discountValuePercent}}%</p>
+                        {{else}}
+                        <p class="text-danger">0%</p>
+                        {{/if}}
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p class="fw-bold">Tổng thanh toán</p>
-                        <p class="fw-bold"></span>{{vndFormat projectInfo.price}}</p>
+                        <p class="fw-bold"></span>{{priceOnSale projectInfo.price
+                            projectInfo.discounts.[0].discountValuePercent}}</p>
                     </div>
                     <p>Trò chơi sẽ được chuyển tiếp vào email của bạn</p>
                     {{#if isFreeGame}}

@@ -85,7 +85,46 @@
 
 }
 
+.modal-content {
+    width: 100%;
+}
 
+.platform {
+    margin: 6px 0;
+    width: 100%;
+    position: relative;
+    font-size: 14px;
+}
+
+.platform_icon {
+    font-size: 18px;
+}
+
+.inputUploadFile {
+    position: absolute;
+    right: 0;
+}
+
+.delete_icon,
+.inputUploadFile {
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #e3e3e3;
+    padding: 0px 6px;
+    cursor: pointer;
+    /* float: right; */
+}
+
+.delete_icon {
+    float: none;
+}
+
+.delete_tag {
+    margin: 0 3px;
+    font-size: 12px;
+    color: #fbfbfb;
+    cursor: pointer;
+}
 
 .carousel__thumbnails li img {
     border-radius: 4px;

@@ -4,7 +4,12 @@
 <div class="heading" style="margin-top: 72px; padding-bottom: 10px">
 
     <div class="banner" title="Click to upload banner">
-        <img src="https://m.gjcdn.net/game-header/1400/435648-cp4ec7zu-v4.webp" alt="">
+        {{#each projectInfo.images}}
+        {{#if this.isCoverImageLarge}}
+        <img src="{{url}}" alt="">
+
+        {{/if}}
+        {{/each}}
     </div>
     <div class="heading_content">
         <div class="heading_content__title container d-flex justify-content-between">
@@ -221,7 +226,151 @@
                     {{releaseStatus}}.</li>
                 {{#each versions}}
 
-                <li class="list-group-item">Phiên bản hiện tại: {{this.version_number}}.</li>
+                <li class="list-group-item">Phiên bản hiện tại:
+                    <i class="fa-solid fa-folder-closed"></i>
+                    <a target="_blank" href="https://drive.google.com/drive/u/0/folders/{{versionFolderId}}">
+
+                        {{this.version_number}}.
+                    </a>
+                    <form class="float-end form-update-version" action="/user/my-project/{{id}}/version/update"
+                        method="POST">
+                        <a data-bs-toggle="modal" data-bs-target="#updateModal" class="btn border-0 bg-info">Cập nhật
+                            phiên bản</a>
+
+                        <div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3 row mt-1">
+                                            <label for="inputVersion"
+                                                class="col-4 col-form-label right__content__label">Mã số phiên
+                                                bản:
+                                                (Hiện tại: {{this.version_number}}.)</label>
+                                            <div class="col-4 mt-1">
+                                                <input value="{{this.version_number}}" type="text"
+                                                    class="form-control rounded-1" id="inputVersion" name="version">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label for="inputUploadFile"
+                                                class="col-sm-2 col-form-label right__content__label">Tải
+                                                lên:</label>
+
+                                            <div class="col-sm-10">
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                                    <i class="fa-brands fa-windows platform_icon"></i>
+                                                    <span class="platform_name">Windows: </span>
+                                                    <label class="inputUploadFile" for="inputWindowsUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputWindowsUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                                    <span class="platform_name">Linux (RPM-based): </span>
+                                                    <label class="inputUploadFile" for="inputLinuxRPMUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputLinuxRPMUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                                    <i class="fa-brands fa-linux platform_icon"></i>
+                                                    <span class="platform_name">Linux (Debian-based): </span>
+                                                    <label class="inputUploadFile" for="inputLinuxDBUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputLinuxDBUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                                    <i class="fa-brands fa-apple platform_icon"></i>
+
+                                                    <span class="platform_name">Mac OS: </span>
+                                                    <label class="inputUploadFile" for="inputMacOsUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputMacOsUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon" title="Xóa nền tảng này"
+                                                        onclick="handleClickDeleteFlatform(event)"></i>
+                                                    <i class="fa-brands fa-android platform_icon"></i>
+
+
+                                                    <span class="platform_name">Android: </span>
+                                                    <label class="inputUploadFile" for="inputAndroidUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputAndroidUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+                                                <div class="platform">
+                                                    <i class="fa-solid fa-minus delete_icon"
+                                                        onclick="handleClickDeleteFlatform(event)"
+                                                        title="Xóa nền tảng này"></i>
+                                                    <i class="fa-brands fa-app-store-ios platform_icon"></i>
+                                                    <span class="platform_name">IOS: </span>
+                                                    <label class="inputUploadFile" for="inputIOSUploadFile"><i
+                                                            class="fa-solid fa-plus"></i></label>
+                                                    <input class="form-control rounded-1 fs-14px" type="file"
+                                                        accept=".zip,.rar,.gz" id="inputIOSUploadFile"
+                                                        onchange="handleChooseProjectFile(event)" hidden>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="mb-3 row mt-1">
+                                                <div class="col-12">
+                                                    <input class="" type="checkbox" name="createDevlog"
+                                                        id="createDevlog">
+                                                    <label for="createDevlog"
+                                                        class="col-form-label right__content__label">Tạo
+                                                        development-log</label>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="button" class="submit-update-version btn btn-primary">Cập
+                                            nhật</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    {{#each downloads}}
+                    <div class="mt-1 mb-2">
+                        <a href="{{link}}" class="btn btn-outline-primary">{{platform}}</a>
+                    </div>
+                    {{/each}}
+                    <a style="font-size: 14px;" href="#">Xem lịch sử cập nhật</a>
+                </li>
                 <li class="list-group-item">Ngày phát hành phiên bản: {{momentDay this.release_Date}}.
                 </li>
                 <li class="list-group-item">Nền tảng hổ trợ: {{#each this.downloads}}

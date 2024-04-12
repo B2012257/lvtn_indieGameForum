@@ -39,7 +39,9 @@ let newProjectStatisticWeek = async ({ userId }) => {
                 [db.Sequelize.Op.between]: [startDate, endDate]
             },
             isPublic: true
-        }
+        },
+        paranoid: false,
+
 
     })
     results = JSON.parse(JSON.stringify(results))
@@ -128,7 +130,9 @@ let paidStatisticWeek = async ({ userId }) => {
     let projectResults = await db.project.findAndCountAll({
         where: {
             userId,
-        }
+        },
+        paranoid: false, //Lấy các dự án đã bị xoá mềm
+
     })
     projectResults = JSON.parse(JSON.stringify(projectResults)) //Mảng các dự án của user
 
@@ -236,6 +240,7 @@ const getIndexPage = async (req, res) => {
         include: [{
             model: db.project,
             include: [db.image, db.classification, db.genre, db.tag],
+            where: { deletedAt: null }
         }],
         where: {
             endDate: {
@@ -250,7 +255,9 @@ const getIndexPage = async (req, res) => {
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     hotProject = JSON.parse(JSON.stringify(hotProject))
     projectInDiscount = JSON.parse(JSON.stringify(projectInDiscount))
-    console.log(projectInfo);
+    console.log(projectInfo, "projectInfo");
+    console.log(hotProject, "hotProject");
+    console.log(projectInDiscount, "projectInDiscount");
     return res.render("index", {
         user: req.user || req.session.user,
         title: "Trang chủ",
@@ -332,7 +339,15 @@ const getProjectViewByClassificationPage = async (req, res) => {
         }, db.tag, {
             model: db.classification,
             where: whereCondition
-        }, db.genre
+        }, db.genre, {
+            model: db.discount,
+            where: {
+                endDate: {
+                    [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                }
+            },
+            required: false
+        }
         ]
     })
 
@@ -536,9 +551,10 @@ const getEditInterfaceProjectPage = async (req, res) => {
             },
             {
                 model: db.version,
-                include: [db.download],
                 order: [['createdAt', 'DESC']],
-                // limit: 1 //Giới hạn 1 phiên bản mới nhất
+                limit: 1, //Giới hạn 1 phiên bản mới nhất
+                required: false,
+                include: [db.download]
             }
         ],
         where: {
@@ -546,6 +562,17 @@ const getEditInterfaceProjectPage = async (req, res) => {
         },
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDb))
+    console.log(projectInfo);
+
+
+    //Lấy thêm tất cả tệp download
+    let downloads = await db.download.findAll({
+        where: {
+            versionId: projectInfo.versions[0].id
+        }
+    })
+    downloads = JSON.parse(JSON.stringify(downloads))
+    projectInfo.versions[0].downloads = downloads
     if (req.user || req.session.user) {
         res.render("preview_project", {
             title: "Trang trí " + projectInfo.name,
@@ -586,7 +613,7 @@ const getMyProjectPage = async (req, res) => {
         order: orderQuery,
         where: {
             userId: user.id
-        }
+        },
     })
     let projects = JSON.parse(JSON.stringify(projectDB))
     //Nếu orderBy bằng saled thì sắp xếp projects theo số lượt bán
@@ -700,11 +727,12 @@ const getMyProjectPage = async (req, res) => {
 const getProjectViewPage = async (req, res) => {
     let slug = req.params.slug
     let projectDB = await db.project.findOne({
+        paranoid: false,
         where: {
             slug
         },
         include: [
-            db.classification, db.tag, db.genre, {
+            db.classification, db.tag, db.genre, db.post, {
                 model: db.image
 
             }, {
@@ -713,7 +741,16 @@ const getProjectViewPage = async (req, res) => {
                 model: db.version,
                 include: [db.download],
                 order: [['createdAt', 'DESC']],
-                // limit: 1 //Giới hạn 1 phiên bản mới nhất
+                limit: 1 //Giới hạn 1 phiên bản mới nhất
+            },
+            {
+                model: db.discount,
+                where: {
+                    endDate: {
+                        [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    },
+                },
+                required: false
             }
         ]
         , order: [[db.image, 'createdAt', 'DESC']]
@@ -742,6 +779,15 @@ const getProjectViewPage = async (req, res) => {
 
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
 
+    //Lấy thêm tất cả tệp download
+    let downloads = await db.download.findAll({
+        where: {
+            versionId: projectInfo.versions[0].id
+        }
+    })
+    downloads = JSON.parse(JSON.stringify(downloads))
+    projectInfo.versions[0].downloads = downloads
+    console.log(projectInfo);
     // Kiểm tra nếu có payment_info thì đã mua
     res.render("project_view", {
         title: 'Xem ' + projectDB.name,
@@ -770,6 +816,15 @@ const getPayViewPage = async (req, res) => {
                 include: [db.download],
                 order: [['createdAt', 'DESC']],
                 // limit: 1 //Giới hạn 1 phiên bản mới nhất
+            }, {
+                model: db.discount,
+                where: {
+                    endDate: {
+                        [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    },
+                },
+                required: false
+
             },
             db.image,
         ],
@@ -785,7 +840,7 @@ const getPayViewPage = async (req, res) => {
         isFreeGame = true
     }
     console.log(isFreeGame);
-    console.log(userDb);
+    console.log(projectInfo);
     res.render("pay_view", {
         title: 'Thanh toán ' + projectInfo?.name,
         header: true,
@@ -815,9 +870,11 @@ const getLibaryPage = async (req, res) => {
         .forEach(async (item) => {
             let project = await db.project.findOne({
                 where: {
-                    id: item.projectId
+                    id: item.projectId,
+
                 },
-                include: [db.user]
+                include: [db.user],
+                paranoid: false //Lấy các dự án đã bị xoá
             })
             // console.log(project);
             project = JSON.parse(JSON.stringify(project))
@@ -826,12 +883,27 @@ const getLibaryPage = async (req, res) => {
             paymentReturn.push(item)
         })
 
-    // console.log(paymentReturn);
+    //Lấy ra tất cả dự án mà mình đang theo dõi
+    let userFollow = await db.user_follow.findAll({
+        where: {
+            userId
+        }
+    })
+    userFollow = JSON.parse(JSON.stringify(userFollow))
+
+    let projectFollow = await db.project.findAll({
+        where: {
+            id: userFollow.map(item => item.projectId)
+        },
+        include: [db.image, db.genre, db.classification, db.tag, db.discount]
+    })
+    projectFollow = JSON.parse(JSON.stringify(projectFollow))
     res.render("libary", {
         title: "Thư viện dự án đã mua",
         header: true,
         footer: false,
         paymentReturn,
+        projectFollow,
         user: req.user || req.session.user,
     })
 }

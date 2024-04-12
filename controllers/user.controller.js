@@ -813,6 +813,7 @@ const verifyCode = async (req, res) => {
         })
     }
 }
+
 const setDiscount = async (req, res) => {
     moment.locale('vi')
     let projectId = req.body.projectId;
@@ -866,12 +867,142 @@ const setDiscount = async (req, res) => {
                 startDate: moment(start).format('YYYY-MM-DD HH:mm:ss'),
                 endDate: moment(end).format('YYYY-MM-DD HH:mm:ss')
             })
+            //
+
+            //Gữi mail thông báo đến người theo dõi
+            let project_db = await db.project.findOne({
+                where: {
+                    id: projectId
+                }
+            })
+            let followers = await db.user_follow.findAll({
+                attributes: ['userId'],
+                where: {
+                    projectId: projectId
+                },
+            })
+
+            project_db = JSON.parse(JSON.stringify(project_db))
+            let followerIds = JSON.parse(JSON.stringify(followers))
+            console.log(followerIds);
+            let mailRedirectUrl = `http://localhost:3000/project/${project_db.slug}/view`
+            for (const followerId of followerIds) {
+                let userFollow = await db.user.findOne({
+                    where: {
+                        id: followerId.userId
+                    }
+                })
+                let mailOptions = {
+                    from: 'Admin Indie Game VN (-.-)',
+                    to: userFollow.email,
+                    subject: 'Dự án mà bạn theo dõi đang được giảm giá',
+                    text: `Dự án ${project_db.name} mà bạn theo dõi đã được giảm giá ${discount}%, vui lòng truy cập vào link để xem chi tiết`,
+                    html: `
+                    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo giảm giá</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
-        //Còn nếu không thì tạo mới
-        res.json({ body: req.body })
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        a {
+            color: #fff;
+        }
+        .button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thông báo giảm giá</h1>
+        <p>Xin chào,</p>
+        <p>Dự án <strong>${project_db.name}</strong> mà bạn theo dõi đã được giảm giá <strong>${discount}%</strong>. Đừng bỏ lỡ cơ hội này!</p>
+        <a class="button" href="${mailRedirectUrl}">Xem chi tiết</a>
+        <p>Trân trọng,</p>
+        <p>Admin Indie Game VN (-.-)</p>
+    </div>
+</body>
+</html>
+
+                    `
+                }
+                //nếu id theo dõi khác người đăng thì gửi mail thông báo
+                if (userFollow.id != project_db.userId) {
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    })
+                }
+
+            }
+
+
+            // console.log(followers, project_db);
+        }
+
+        res.redirect('/user/projects')
 
     } catch (error) {
+        res.redirect('/user/projects')
+
         console.log(error);
+    }
+}
+const unFollowProject = async (req, res) => {
+    let user = req.session?.user ?? req.user;
+    let project_id = req.params.id;
+
+    try {
+        let projectDb = await db.project.findOne({
+            where: {
+                id: project_id
+            }
+        })
+        projectDb = JSON.parse(JSON.stringify(projectDb))
+        // Kiểm tra xem user và project tồn tại
+        await db.user_follow.destroy({
+            where: {
+                userId: user.id,
+                projectId: project_id
+            }
+        })
+
+
+        return res.redirect(`/project/${projectDb.slug}/view`);
+    } catch (error) {
+        console.error("Error adding project to follow list:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 const followProject = async (req, res) => {
@@ -899,7 +1030,7 @@ const followProject = async (req, res) => {
         // const projectdb = await db.project.findByPk(project_id);
 
         // if (!userdb || !projectdb) {
-        //     return res.status(404).json({ error: "User or project not found" });
+        //     return res.status(404).json({error: "User or project not found" });
         // }
         // console.log(userdb, projectdb);
         // Thêm project vào danh sách theo dõi của user
@@ -924,6 +1055,30 @@ const deleteDiscount = async (req, res) => {
         console.log(error);
     }
 }
+const deleteProject = async (req, res) => {
+    let projectId = req.params.id;
+    let userId = req.session?.user?.id ?? req.user?.id;
+    let project_db = await db.project.findOne({
+        where: {
+            id: projectId
+        }
+    })
+    project_db = JSON.parse(JSON.stringify(project_db))
+    try {
+        if (project_db.userId === userId) {
+            await db.project.destroy({
+                where: {
+                    id: projectId
+                }
+            })
+        }
+        res.redirect('/user/projects')
+
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -938,5 +1093,7 @@ module.exports = {
     verifyCode,
     setDiscount,
     deleteDiscount,
-    followProject
+    followProject,
+    unFollowProject,
+    deleteProject
 }

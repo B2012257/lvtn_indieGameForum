@@ -46,6 +46,13 @@
                         <a href="/project/{{this.classification.slug}}"
                             class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
                         <br />
+                        {{#with discounts.[0]}}
+                        <span class="badge bg-warning sale">Giảm
+                            {{discountValuePercent}}%</span>
+                        <span class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                            {{CheckPromotionPeriod
+                            endDate}}</span>
+                        {{/with}}
                         <div class="tags" style="min-height: 50px;">
                             {{#each this.tags}}
 
@@ -53,9 +60,9 @@
                                 class="badge bg-danger fw-normal">{{this.name}}</a>
                             {{/each}}
                         </div>
-
                         <p class="card-text mt-1 mb-1 clamped-text-3" style="min-height: 72px">
                             {{this.short_description}} </p>
+
                         <p class="mt-1 mb-1">Giá: {{vndFormat this.price}}</p>
                     </div>
 

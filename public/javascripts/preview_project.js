@@ -336,3 +336,94 @@ async function uploadImage({ image, images, href, projectId, type }) {
         console.log(result);
     }
 }
+const platform = {
+    windows: "Windows",
+    mac: "Mac OS",
+    linux: "Linux",
+    android: "Android",
+    ios: "Ios"
+}
+
+function handleClickDeleteFlatform(event) {
+    let platformElement = event.target.parentElement
+    let platformToDelete = platformElement.querySelector('.platform_name').textContent.trim().split(":")[1]
+    platformElement.remove()
+    //Xóa khỏi mảng projectFiles
+    projectFiles = projectFiles.filter(projectFile => {
+        console.log(projectFile.file.name, platformToDelete)
+        return projectFile.file.name.toLocaleLowerCase().trim() !== platformToDelete.toLocaleLowerCase().trim()
+    });
+    // Sử dụng filter để loại bỏ phần tử có 'file.name' giống với 'clickedUsername'
+
+    //data = data.filter(item => item.file.platform !== clickedUsername);
+}
+
+
+window.addEventListener('beforeunload', function (event) {
+    // Xóa bộ nhớ đệm
+    projectFiles = []
+});
+
+let projectFiles = []
+function handleChooseProjectFile(event) {
+    let file = event.target.files[0]
+    projectFiles.push(
+        {
+            file,
+            platform: event.target.parentElement.querySelector('.platform_name').textContent.trim().split(":")[0]
+        }
+    )
+    let fileName = file.name
+    displaySelectedProjectFileName(fileName, event) // Hiển thị tên file đã chọn
+
+}
+function displaySelectedProjectFileName(fileName, event) {
+    console.log(event.target.parentElement)
+    let platformElement = event.target.parentElement
+    let platformName = platformElement.querySelector('span')
+    platformName.innerHTML += fileName
+}
+
+//Huỷ sự kiện submit form mặc định
+document.querySelector('.submit-update-version').addEventListener('click', async (e) => {
+    e.preventDefault()
+
+
+
+    await uploadProjectFile()
+
+})
+
+async function uploadProjectFile() {
+    //Lấy tât cả các file đã chọn và số phiên bản
+    //Có tạo devlog hay không
+
+    let isGenerateDevlog = document.querySelector('#createDevlog').checked
+    let formDatas = new FormData()
+    
+    formDatas.append('isGenerateDevlog', isGenerateDevlog)
+    formDatas.append('version', document.getElementById('inputVersion').value);
+    formDatas.append('projectId', document.querySelector('.projectId').textContent);
+    for (let i = 0; i < projectFiles.length; i++) {
+        console.log(projectFiles[i].file.name, projectFiles[i].platform);
+        projectFiles[i].file.platform = projectFiles[i].platform
+        formDatas.append(projectFiles[i].file.platform, projectFiles[i].file);
+    }
+    fetch('/api/v1/upload-project', {
+        method: 'POST',
+        body: formDatas,
+    })
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === 200) {
+                alert("Cập nhật thành công")
+                location.reload();
+            }
+            else {
+                console.log(res);
+                alert("Cập nhật thât bại")
+                location.reload();
+            }
+        })
+
+}

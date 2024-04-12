@@ -34,7 +34,8 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: false
         },
         postType: {
-            type: Sequelize.STRING,
+            type: Sequelize.ENUM,
+            allowNull: false,
             values: ['article', 'question', 'devlog'],
         }
 

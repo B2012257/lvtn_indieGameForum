@@ -27,6 +27,7 @@ router.post('/upload-screenshot-image', upload.array('photos', 16), apiControlle
 // router.post('/upload-project', upload.array('projectFiles', 6), apiController.uploadProject);
 router.post('/upload-project', upload.fields([
     { name: 'version', maxCount: 1 },
+    { name: 'projectId', maxCount: 1 },
     {
         name: platform.windows, maxCount: 1
     },

@@ -360,7 +360,7 @@
         let screenshotImageInput = document.getElementById('chooseScreenshotImages')
         let temp = [...screenshotUpload || []]
         screenshotUpload = [...temp, ...screenshotImageInput.files]
-        const fileInput = event.target;  
+        const fileInput = event.target;
         console.log(fileInput.files)
         const arrayFile = Array.from(fileInput.files);
         const urlArray = [];

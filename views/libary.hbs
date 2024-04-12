@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/stylesheets/libary.css">
 <main class="container" style="margin-top: 71px">
 
     <div class="row">
@@ -86,7 +87,79 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title m-b-0">Danh sách theo dõi</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="w-100 d-flex gap-4 justify-content-start flex-wrap">
+                                {{#each projectFollow}}
+                                <div class="card project-item"
+                                    style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                                    {{#each images}}
+                                    {{#if this.isCoverImage}}
+                                    <img src="{{this.url}}" class="game__thumbnail" width="100%">
+                                    {{/if}}
+                                    {{/each}}
+                                    {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
+                                    {{#with discounts.[0]}}
+                                    <span class="badge bg-warning sale">Giảm
+                                        {{discountValuePercent}}%</span>
+                                    <span class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                                        {{CheckPromotionPeriod
+                                        endDate}}</span>
+                                    {{/with}}
+                                    <div class="card-body">
 
+                                        <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
+                                        <div class="classification fw-normal" style="min-height: 20px;">
+                                            <a style=" font-size: 13px" href="/project/{{this.classification.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.classification.name}}</a>
+                                        </div>
+                                        <div class="genres fw-normal" style="min-height: 20px;">
+                                            <a style="--bs-bg-opacity: .65; font-size: 13px"
+                                                href="/genre/{{this.genre.slug}}"
+                                                class="badge bg-primary fw-normal">{{this.genre.name}}</a>
+                                        </div>
+                                        <div class="tags" style="min-height: 49px;">
+
+                                            {{#each this.tags}}
+
+                                            <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                                class="badge bg-danger fw-normal">{{this.name}}</a>
+                                            {{/each}}
+                                        </div>
+                                        <p style="min-height: 72px;" class="mt-2 card-text clamped-text-3">
+                                            {{this.short_description}}</p>
+                                        {{#if (ifEquals this.price '0')}}
+                                        <p>Miễn phí</p>
+                                        {{else}}
+                                        Giá:
+                                        <span
+                                            class=" p-0 m-0{{#if discounts.[0]}} text-decoration-line-through {{/if}}">
+                                            {{vndFormat this.price}}
+
+                                        </span>
+                                        {{#with discounts.[0]}}
+                                        <br />
+                                        Giảm còn:
+                                        <span class="text-danger">
+                                            {{ priceOnSale ../price discountValuePercent}}
+                                        </span>
+                                        <!-- Áp dụng định dạng VND cho giá sau giảm giá -->
+                                        {{/with}}
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                {{/each}}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>

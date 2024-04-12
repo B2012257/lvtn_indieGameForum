@@ -5,8 +5,9 @@ const { platform } = require('../configs/constraint')
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
 const { where } = require("sequelize")
+const { isPassportNumber } = require("validator")
 require('dotenv').config()
-let folderIdPublic;
+let folderIdPublic = "";
 let project_name_and_random
 const uploadImage = async (req, res) => {
     // Tạo thư mục trên google drive với tên dự án
@@ -142,12 +143,12 @@ const saveDescription = async (req, res) => {
 
 //Api tải lên file dự án vào drive
 const uploadProject = async (req, res) => {
-    console.log("concack");
     //Lưu 1 version vào db,  sau đó lưu vào bảng Dowload link trò chơi
     let version = req.body.version
-
+    let projectId = req.body.projectId ?? "" //Nếu là cập nhật thì sẽ có id
+    let isGenerateDevlog = req.body.isGenerateDevlog ?? false
+    console.log('isGenerateDevlog', isGenerateDevlog);
     const files = { ...req.files }
-    console.log(files);
     let urlResponse = []
     const newArrayFiles = [];
     //Biến đổi để dễ code hơn
@@ -157,13 +158,32 @@ const uploadProject = async (req, res) => {
         }
     }
 
+    //Tạo 1 bài viết có type devlog với nội dung trống và userId là người đang đăng
+    if (isGenerateDevlog) {
+        await db.post.create({
+            postType: "devlog",
+            content: "",
+            title: `Devlog ${version}`,
+            isPublic: false,
+            projectId: projectId,
+            userId: req.session?.user?.id ?? req.user?.id
+        })
+    }
     //Nếu có file
     if (files) {
         //Kiểm tra version, Lưu version mới sau đó lưu dơnload link vào db
         //Lấy ra id project
         let project = await db.project.findOne({
+            //Điều kiện hoặc theo projectId hoặc theo folderId
             where: {
-                project_folder_id: folderIdPublic
+                [db.Sequelize.Op.or]: [
+                    {
+                        id: projectId
+                    },
+                    {
+                        project_folder_id: folderIdPublic
+                    }
+                ]
             }
         })
         //Tạo 1 thử mục version
