@@ -1,12 +1,17 @@
 <main style="margin-top: 72px">
     <div class="container text-center">
+        {{#unless isFailed}}
         <p class="text-success">{{message}}</p>
+        {{else}}
+        <p class="text-danger">{{message}}</p>
+
+        {{/unless}}
         {{#if redirect}}
         <a href="{{redirectUrl}}">Tiếp tục</a>
         {{/if}}
         <form action="/user/{{user.id}}/verify/email" method="POST">
-            <input class="form-control" type="text" name="code" id="verifyCode">
-            <button type="submit">
+            <input class="btn border" width="200px" type="text" name="code" id="verifyCode">
+            <button class="btn border" type="submit">
                 Gữi mã xác nhận
             </button>
         </form>

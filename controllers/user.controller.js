@@ -169,10 +169,16 @@ const payWithPaypal = async (req, res) => {
             },
         }
     })
+
     discount = JSON.parse(JSON.stringify(discount))
+    let amount = 0
+    if (!discount) {
+        amount = project_db.price * parseFloat(VND_TO_USD_EXCHANGE_RATE)
+    } else
+        amount = (project_db.price - ((project_db.price * discount.discountValuePercent) / 100)) * parseFloat(VND_TO_USD_EXCHANGE_RATE); // Lấy số tiền từ yêu cầu
+
     project_name = project_db.name
     //Lấy ra giá của project và giảm giá sau đó đổi ra tiền đô
-    let amount = (project_db.price - ((project_db.price * discount.discountValuePercent) / 100)) * parseFloat(VND_TO_USD_EXCHANGE_RATE); // Lấy số tiền từ yêu cầu
     console.log(amount);
     amount = Math.round(amount * 100) / 100
     total = amount
@@ -379,9 +385,12 @@ const payWithVnpay = async (req, res) => {
         }
     })
     discount = JSON.parse(JSON.stringify(discount))
-
+    let amount = 0
     project_name = project_db.name
-    let amount = project_db.price - ((project_db.price * discount.discountValuePercent) / 100);  // Lấy số tiền từ yêu cầu //Tính toán từ giảm giá
+    if (!discount) {
+        amount = project_db.price
+    } else
+        amount = project_db.price - ((project_db.price * discount.discountValuePercent) / 100);  // Lấy số tiền từ yêu cầu //Tính toán từ giảm giá
     console.log(amount);
     const urlString = vnpayClient.buildPaymentUrl({
         vnp_Amount: amount,
@@ -802,8 +811,9 @@ const verifyCode = async (req, res) => {
         })
     } else {
         res.render('verify_email', {
-            title: 'Xác thực email thành công',
-            message: "Xác thực thành công! Tài khoản của bạn đã được kích hoạt",
+            title: 'Xác thực email thất bại',
+            isFailed: true,
+            message: "Xác thực thất bại! Vui lòng thử lại",
             user: user_db,
             header: true,
             footer: false,

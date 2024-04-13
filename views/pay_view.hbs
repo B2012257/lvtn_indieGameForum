@@ -81,8 +81,15 @@
 
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <p class="fw-bold">Tổng thanh toán</p>
+                        {{#if
+                        projectInfo.discounts}}
                         <p class="fw-bold"></span>{{priceOnSale projectInfo.price
                             projectInfo.discounts.[0].discountValuePercent}}</p>
+                        {{else}}
+                        <p class="fw-bold">{{vndFormat projectInfo.price}}</p>
+                        {{/if}}
+                        {{!-- <p class="fw-bold"></span>{{priceOnSale projectInfo.price
+                            projectInfo.discounts.[0].discountValuePercent}}</p> --}}
                     </div>
                     <p>Trò chơi sẽ được chuyển tiếp vào email của bạn</p>
                     {{#if isFreeGame}}

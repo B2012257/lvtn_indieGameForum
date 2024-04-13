@@ -1068,7 +1068,16 @@ const getProjectBillPage = async (req, res) => {
         where: {
             id: projectId
         },
-        include: [db.user, db.image]
+        include: [db.user, db.image, {
+            model: db.discount,
+            where: {
+                endDate: {
+                    [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                }
+            },
+            required: false
+
+        }]
     })
     let payment = await db.payment.findOne({
         where: {

@@ -220,8 +220,15 @@
                 </li>
                 {{#each versions}}
 
-                <li class="list-group-item">Phiên bản hiện tại: <i class="fa-solid fa-folder-closed"></i>
+                <li class="list-group-item">Phiên bản hiện tại:
+                    <i class="fa-solid fa-folder-closed"></i>
                     {{this.version_number}}.
+
+                    {{!-- <i class="fa-solid fa-folder-closed"></i>
+                    <a target="_blank" href="https://drive.google.com/drive/u/0/folders/{{versionFolderId}}">
+
+                        {{this.version_number}}.
+                    </a> --}}
                 </li>
                 <li class="list-group-item">Ngày phát hành phiên bản: {{momentDay this.release_Date}}.</li>
                 <li class="list-group-item">Nền tảng hổ trợ: {{#each this.downloads}}
