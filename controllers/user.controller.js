@@ -179,7 +179,6 @@ const payWithPaypal = async (req, res) => {
 
     project_name = project_db.name
     //Lấy ra giá của project và giảm giá sau đó đổi ra tiền đô
-    console.log(amount);
     amount = Math.round(amount * 100) / 100
     total = amount
     console.log(amount);
@@ -1089,6 +1088,17 @@ const deleteProject = async (req, res) => {
     }
 
 }
+
+/// Forum
+const getWritePostPage = async (req, res) => {
+    res.render('write_post', {
+        header: true,
+        footer: false,
+        title: "Viết bài",
+        user: req.session?.user ?? req.user
+
+    })
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -1105,5 +1115,6 @@ module.exports = {
     deleteDiscount,
     followProject,
     unFollowProject,
-    deleteProject
+    deleteProject,
+    getWritePostPage
 }

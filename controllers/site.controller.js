@@ -8,6 +8,7 @@ require('dotenv').config();
 var moment = require('moment'); // require
 const { set } = require("../app")
 const { calculateUserFollowProject } = require("../utils/userFollowProject")
+const { isPassportNumber } = require("validator")
 //Số dự án mới trong tuần
 let newProjectStatisticWeek = async ({ userId }) => {
     let dataJson = []
@@ -732,7 +733,13 @@ const getProjectViewPage = async (req, res) => {
             slug
         },
         include: [
-            db.classification, db.tag, db.genre, db.post, {
+            db.classification, db.tag, db.genre, {
+                model: db.post,
+                where: {
+                    is_public: true
+                },
+                required: false
+            }, {
                 model: db.image
 
             }, {
@@ -782,7 +789,7 @@ const getProjectViewPage = async (req, res) => {
     //Lấy thêm tất cả tệp download
     let downloads = await db.download.findAll({
         where: {
-            versionId: projectInfo.versions[0].id
+            versionId: projectInfo.versions[0]?.id
         }
     })
     downloads = JSON.parse(JSON.stringify(downloads))

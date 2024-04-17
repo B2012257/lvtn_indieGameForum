@@ -1,4 +1,55 @@
+<div class="modal fade" id="writeQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="0"
+    aria-labelledby="writeQuestionModal">
+    <div class=" modal-lg  modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="writeQuestionModal">Đặt câu hỏi</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 row mt-1">
+                    <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
+                    <div class="col-8 mt-1">
+                        <input type="text" class="form-control rounded-1" id="inputVersion" name="version">
+                    </div>
+
+                    <label for="inputTags" class="col-4 col-form-label right__content__label">Gắn nhãn:
+                        (<i>Gắn nhãn giúp bài viết dễ dàng được tìm kiếm</i>)
+                    </label>
+                    <div class="col-8 mt-1">
+
+                        <div class=" tags_wrapper">
+
+                            <input class="form-control inputTags" name="post_tags" id="inputTag"
+                                placeholder="Ví dụ: C#, AI, " oninput="onSearchTag()">
+                            <ul id="tag_suggests">
+                                <li class="tag_suggests__item">
+                                    <label class="float-end clickToAddLabel">Chọn </label>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <label for="">Nội dung</label>
+                    <div class="col-12 mt-1">
+                        <div id="editor" class="">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="submit-update-version btn btn-primary">Cập
+                    nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
 <header id="header" class="p-1 border-bottom fixed-top">
+
     <div class="container-fluid">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
@@ -27,6 +78,19 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </span>
             </form>
+            <div class="write" title="Viết bài">
+                <i class="fa-regular fa-pen-to-square"></i>
+                <ul class="write-menu">
+                    <li class="write-menu-item">
+                        <a href="/user/post/write">
+                            Viết bài
+                        </a>
+                    </li>
+                    <li class="write-menu-item">
+                        <a data-bs-toggle="modal" data-bs-target="#writeQuestionModal">Đặt câu hỏi</a>
+                    </li>
+                </ul>
+            </div>
 
             <div class="dropdown text-end">
                 {{#if user}}
@@ -41,6 +105,7 @@
 
                     {{/if}}
                 </a>
+
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
                     <li><a class="dropdown-item" href="/user/projects">Dự án của tôi</a></li>
                     <li><a class="dropdown-item" href="/user/project/create">Đăng tải dự án mới</a></li>
@@ -84,3 +149,11 @@
         </ul>
     </nav>
 </header>
+<script>
+    document.querySelector('.write').addEventListener('click', () => {
+        document.querySelector('.write-menu').classList.toggle('show');
+    })
+</script>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/41.2.0/super-build/ckeditor.js"></script>
+<script src="/javascripts/header.js"></script>

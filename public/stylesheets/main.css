@@ -138,3 +138,36 @@ a {
 .show {
     display: block
 }
+
+.write {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    position: relative;
+}
+
+.write i {
+    font-size: 20px;
+}
+
+.write-menu {
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    width: 100px;
+    top: 56px;
+    display: none;
+    left: 0;
+    text-decoration: none;
+}
+
+.write-menu-item:hover {
+    background-color: #f9f9f9;
+    color: #000;
+}
+
+.write-menu.show {
+    display: block;
+}
