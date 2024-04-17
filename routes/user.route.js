@@ -28,5 +28,7 @@ router.post('/project/:id/follow', userController.followProject)
 router.post('/project/:id/unfollow', userController.unFollowProject)
 router.get('/project/:id/delete', userController.deleteProject)
 
+router.get('/post/write', userController.getWritePostPage)
+
 
 module.exports = router
