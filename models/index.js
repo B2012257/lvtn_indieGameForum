@@ -14,7 +14,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
         idle: dbConfig.pool.idle
     },
     logging: false,
-    
+
 });
 
 const db = {};
@@ -38,6 +38,7 @@ db.post = require("./post.model.js")(sequelize, Sequelize)
 db.user_rating = require("./user_rating.model.js")(sequelize, Sequelize)
 db.image = require("./image.model.js")(sequelize, Sequelize)
 db.user_follow = require("./user_follow.model.js")(sequelize, Sequelize)
+db.post_tag = require("./post_tag.model.js")(sequelize, Sequelize)
 // Define relationships role and user
 db.role.hasMany(db.user) // 1 -> N
 db.user.belongsTo(db.role); // 1 -> 1
@@ -119,7 +120,7 @@ db.tag.belongsToMany(db.project, { through: 'project_tag' });
 db.project.belongsToMany(db.tag, { through: 'project_tag' });
 
 //Define relationships post and tag
-db.tag.belongsToMany(db.post, { through: 'post_tag' });
-db.post.belongsToMany(db.tag, { through: 'post_tag' });
+db.tag.belongsToMany(db.post, { through: db.post_tag });
+db.post.belongsToMany(db.tag, { through: db.post_tag });
 
 module.exports = db;

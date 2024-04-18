@@ -10896,10 +10896,7 @@ button.swiper-pagination-bullet {
     padding: 23px 15px;
 }
 
-.community-post.forum-item .post-content p {
-    font-size: 14px;
-    line-height: 1.3;
-}
+
 
 @media (max-width: 667px) {
     .community-post {
@@ -10966,10 +10963,12 @@ button.swiper-pagination-bullet {
     font-weight: 500;
     margin-bottom: 0;
     line-height: 1.7;
+    color: #007cba;
+
 }
 
 .community-post .post-content .entry-content .post-title:hover {
-    color: var(--brand_color);
+    color: #000000;
 }
 
 .community-post .post-content .entry-content p {
@@ -11052,6 +11051,7 @@ button.swiper-pagination-bullet {
     display: inline-block;
     margin-right: 10px;
     margin-bottom: 10px;
+
 }
 
 .community-post.style-two .post-content .com-featured {
@@ -23555,4 +23555,21 @@ body.body_dark img.logo-light {
     .video_slider_area .video-js {
         min-height: 178px;
     }
+}
+
+.post_content {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.post_tags_name {
+    color: #155ca2;
+    font-weight: 400;
+    font-size: 12px;
+    background-color: rgb(237, 245, 253);
+}
+
+.post_tags_name:hover {
+    color: #155ca2;
+    background-color: #D6E8FA;
 }

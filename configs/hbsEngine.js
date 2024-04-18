@@ -103,7 +103,11 @@ module.exports = (app) => {
                 // Trả về chuỗi đã chuẩn hoá
                 return formattedInteger + ' VND';
 
+            },
+            stripHtml: function (content) {
+                return content.replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, '');
             }
+
         }
     }));
     app.set('view engine', '.hbs');

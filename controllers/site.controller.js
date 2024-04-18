@@ -2,7 +2,7 @@ const db = require("../models/index")
 const drive = require("../services/google.clound/index")
 const { experience } = require("../configs/constraint")
 const e = require("express")
-const { where } = require("sequelize")
+const { where, or } = require("sequelize")
 const { order } = require("paypal-rest-sdk")
 require('dotenv').config();
 var moment = require('moment'); // require
@@ -1059,10 +1059,45 @@ const getGenresPage = async (req, res) => {
 
 }
 const getForumPage = async (req, res) => {
+    //Lấy thông tin các bài viết, người đăng, số lượt bình chọn, số bình luận
+    let posts = await db.post.findAll({
+        include: [db.user],
+        where: {
+            // với postType là article hoặc question
+            postType: {
+                [db.Sequelize.Op.or]: ['article', 'question']
+            },
+            is_public: true,
+        },
+        order: [['createdAt', 'DESC']]
+
+    })
+    posts = JSON.parse(JSON.stringify(posts))
+    //Lấy thêm 4 tags của nó để hiển thị
+    for (const post of posts) {
+        let tags_id = await db.post_tag.findAll({
+            where: {
+                postId: post.id
+            },
+            order: [['createdAt', 'DESC']],
+            limit: 4,
+            required: false
+        })
+        tags_id = JSON.parse(JSON.stringify(tags_id))
+        let tags = await db.tag.findAll({
+            where: {
+                id: tags_id.map(item => item.tagId)
+            }
+        })
+        tags = JSON.parse(JSON.stringify(tags))
+        post.tags = tags
+    }
+    console.log(posts[0].tags);
     res.render("forum", {
         title: "Diễn đàn",
         header: true,
         footer: false,
+        posts,
         user: req.user || req.session.user,
     })
 }

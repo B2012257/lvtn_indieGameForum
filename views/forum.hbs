@@ -21,7 +21,8 @@
                         </div>
                         <!-- /.action-content -->
                         <div class="action-button-container">
-                            <a href="#" class="action_btn btn-ans">Đặt câu hỏi</a>
+                            <a data-bs-toggle="modal" data-bs-target="#writeQuestionModal" href="#"
+                                class="action_btn btn-ans">Đặt câu hỏi</a>
                         </div>
                         <!-- /.action-button-container -->
                     </div>
@@ -34,8 +35,8 @@
                         <!-- /.support-info -->
                         <div class="col-md-6 col-sm-6 support-category-menus">
                             <ul class="forum-titles">
-                                <li class="forum-topic-count">Lượt xem</li>
-                                <li class="forum-reply-count">Câu trả lời</li>
+                                <li class="forum-reply-count">Số bình chọn</li>
+                                <li class="forum-topic-count">Số bình luận</li>
                                 <li class="forum-freshness">Thông tin bài đăng</li>
                             </ul>
                         </div>
@@ -44,7 +45,7 @@
                     <!-- /.post-header -->
 
                     <div class="community-posts-wrapper bb-radius">
-
+                        {{#each posts}}
                         <!-- Forum Item -->
                         <div class="community-post style-two forum-item bug">
                             <div class="col-md-6 post-content">
@@ -52,10 +53,19 @@
                                     <img src="img/home_support/rc1.png" alt="community post">
                                 </div> --}}
                                 <div class="entry-content">
-                                    <a href="forum-topics.html">
-                                        <h3 class="post-title"> Cách đăng trò chơi lên Website </h3>
+                                    <a href="">
+                                        <h3 class="post-title"> {{title}} </h3>
                                     </a>
-                                    <p>Hướng dẫn đăng tải trò chơi lên Website</p>
+                                    <p class="clamped-text-2 post_content">
+                                        {{{stripHtml content}}}
+                                    </p>
+                                    <div class="">
+
+                                        {{#each tags}}
+                                        <span class="badge border-0 post_tags_name">
+                                            {{name}}</span>
+                                        {{/each}}
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6 post-meta-wrapper">
@@ -77,13 +87,11 @@
                                                         class="bbp-author-link">
                                                     </a><a href="#" title="View Eh Jewel's profile"
                                                         class="bbp-author-link">
-                                                        <span class="bbp-author-name">Admin</span>
+                                                        <span class="bbp-author-name">{{user.name}}</span>
                                                     </a>
                                                 </div>
                                                 <span class="bbp-author-avatar">
-                                                    <img alt="Eh Jewel"
-                                                        src="https://html-template.spider-themes.net/docy/img/home_support/cp5.jpg"
-                                                        class="avatar photo">
+                                                    <img alt="Eh Jewel" src="{{user.avatarUrl}}" class="avatar photo">
                                                 </span>
 
                                             </div>
@@ -95,7 +103,7 @@
                         <!-- /.forum-item  -->
 
 
-
+                        {{/each}}
                     </div>
                     <!-- /.community-posts-wrapper -->
                 </div>

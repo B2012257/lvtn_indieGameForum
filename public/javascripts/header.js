@@ -1,21 +1,29 @@
-let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
-    ckfinder: {
-        uploadUrl: '/api/upload-image',
-    },
+import MyUploadAdapter from './upload_image.adapter.js';
+function MyUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        console.log(loader, 'loader');
+        return new MyUploadAdapter(loader);
+    };
+}
+let editor_header = CKEDITOR.ClassicEditor.create(document.getElementById("editor_header"), {
+    extraPlugins: [MyUploadAdapterPlugin],
 
     // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
     toolbar: {
         items: [
+            'exportPDF', 'exportWord', '|',
+            'findAndReplace', 'selectAll', '|',
             'heading', '|',
             'bold', 'italic', 'underline', 'code', 'subscript', 'superscript', '|',
-            '|',
+            'bulletedList', 'numberedList', 'todoList', '|',
             'outdent', 'indent', '|',
             'undo', 'redo',
             '-',
             'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
             'alignment', '|',
-            'uploadImage', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
-            // 'sourceEditing'
+            'link', 'uploadImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+            'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+            'sourceEditing'
         ],
         shouldNotGroupWhenFull: true
     },
@@ -148,14 +156,13 @@ let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
 });
 
 // Xử lí khi trình soạn thảo đã sẵn sàng
-editor.then(async editor => {
+editor_header.then(async editor => {
     window.editor = editor;
 
-    editor.setData('Nhập nội dung câu hỏi và chỉnh sửa tại đây...');
+
+    const content = "Hello World"
     // Đặt nội dung vào trình soạn thảo
-    // document.querySelector('.save_btn').addEventListener('click', (e) => {
-    //     e.preventDefault();
-    //     saveDescription(editor)
-    // })
+    await editor.setData(content);
+
 
 })

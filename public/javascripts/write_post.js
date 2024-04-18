@@ -1,21 +1,30 @@
-let editor1 = CKEDITOR.ClassicEditor.create(document.getElementById("editor_1"), {
-    ckfinder: {
-        uploadUrl: '/api/upload-image',
-    },
+
+import MyUploadAdapter from './upload_image.adapter.js';
+function MyUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        console.log(loader, 'loader');
+        return new MyUploadAdapter(loader);
+    };
+}
+let editor_1 = CKEDITOR.ClassicEditor.create(document.getElementById("editor_1"), {
+    extraPlugins: [MyUploadAdapterPlugin],
 
     // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
     toolbar: {
         items: [
+            'exportPDF', 'exportWord', '|',
+            'findAndReplace', 'selectAll', '|',
             'heading', '|',
             'bold', 'italic', 'underline', 'code', 'subscript', 'superscript', '|',
-            '|',
+            'bulletedList', 'numberedList', 'todoList', '|',
             'outdent', 'indent', '|',
             'undo', 'redo',
             '-',
             'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
             'alignment', '|',
-            'uploadImage', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
-            // 'sourceEditing'
+            'link', 'uploadImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+            'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+            'sourceEditing'
         ],
         shouldNotGroupWhenFull: true
     },
@@ -148,14 +157,15 @@ let editor1 = CKEDITOR.ClassicEditor.create(document.getElementById("editor_1"),
 });
 
 // Xử lí khi trình soạn thảo đã sẵn sàng
-editor1.then(async editor => {
+editor_1.then(async editor => {
     window.editor = editor;
-    editor.hei
-    editor.setData('Nhập nội dung bài viết và chỉnh sửa tại đây...');
-    // Đặt nội dung vào trình soạn thảo
-    // document.querySelector('.save_btn').addEventListener('click', (e) => {
-    //     e.preventDefault();
-    //     saveDescription(editor)
-    // })
+    writePostForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let content = await editor.getData();
+        console.log(content);
+
+        document.querySelector('#inputTagPost').value = JSON.stringify(tagsChoosing);
+        writePostForm.submit();
+    });
 
 })

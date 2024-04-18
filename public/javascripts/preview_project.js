@@ -1,8 +1,15 @@
 
+
+
+import MyUploadAdapter from './upload_image.adapter.js';
+function MyUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        console.log(loader, 'loader');
+        return new MyUploadAdapter(loader);
+    };
+}
 let editor = CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
-    ckfinder: {
-        uploadUrl: '/api/upload-image',
-    },
+    extraPlugins: [MyUploadAdapterPlugin],
 
     // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
     toolbar: {
@@ -400,7 +407,7 @@ async function uploadProjectFile() {
 
     let isGenerateDevlog = document.querySelector('#createDevlog').checked
     let formDatas = new FormData()
-    
+
     formDatas.append('isGenerateDevlog', isGenerateDevlog)
     formDatas.append('version', document.getElementById('inputVersion').value);
     formDatas.append('projectId', document.querySelector('.projectId').textContent);

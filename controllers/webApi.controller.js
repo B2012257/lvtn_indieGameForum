@@ -4,11 +4,31 @@ const { platform } = require('../configs/constraint')
 
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
-const { where } = require("sequelize")
-const { isPassportNumber } = require("validator")
+// const { where } = require("sequelize")
+// const { isPassportNumber } = require("validator")
 require('dotenv').config()
 let folderIdPublic = "";
 let project_name_and_random
+
+
+const uploadImageEditor = async (req, res) => {
+    console.log(req.files, 'file');
+    if (req.file) {
+        res.json({
+            uploaded: true,
+            url: `/uploads/${req.file.filename}`
+        });
+    } else {
+        res.json({
+            uploaded: false,
+            error: {
+                message: 'Failed to upload image'
+            }
+        });
+    }
+}
+
+//Upload ảnh để tạo dự án
 const uploadImage = async (req, res) => {
     // Tạo thư mục trên google drive với tên dự án
     // Upload ảnh cover vào thư mục vừa tạo
@@ -223,9 +243,7 @@ const uploadProject = async (req, res) => {
             status: 400, msg: 'Bad request! At least 1 file project'
         })
 }
-const uploadImageFromCkEditor = async (req, res) => {
 
-}
 const search = async (req, res) => {
     //Tìm kiếm dựa theo kết quả tìm kiếm, theo tên, thể loại và tags
 
@@ -467,8 +485,8 @@ module.exports = {
     uploadImages,
     uploadProject,
     saveDescription,
-    uploadImageFromCkEditor,
     search,
     updateImage,
-    updateAvatar
+    updateAvatar,
+    uploadImageEditor
 }

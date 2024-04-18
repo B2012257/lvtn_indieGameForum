@@ -102,8 +102,9 @@ app.use(cors(
 ))
 
 // parse application/json
-app.use(bodyParser.json())
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '40mb' }));
+app.use(bodyParser.urlencoded({ limit: '40mb', extended: false }));
+
 app.use(express.json());
 app.use(cookieParser());
 

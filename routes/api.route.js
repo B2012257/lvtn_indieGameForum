@@ -61,4 +61,5 @@ router.post('/project/update/image', upload.fields([
 ]), apiController.updateImage);
 router.post('/user/update/avatar', upload.single('avatar'), apiController.updateAvatar);
 router.get('/search', apiController.search)
+router.post('/editor/upload-image', upload.single('image'), apiController.uploadImageEditor);
 module.exports = router;

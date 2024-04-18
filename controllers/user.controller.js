@@ -1091,13 +1091,61 @@ const deleteProject = async (req, res) => {
 
 /// Forum
 const getWritePostPage = async (req, res) => {
+    let tags = await db.tag.findAll()
+    tags = JSON.parse(JSON.stringify(tags))
     res.render('write_post', {
         header: true,
         footer: false,
         title: "Viết bài",
+        tags,
+        type: "article",
         user: req.session?.user ?? req.user
 
     })
+}
+const createPost = async (req, res) => {
+    let user = req.session?.user ?? req.user;
+    let type = req.query.type
+    let title = req.body.title;
+    let content = req.body.content;
+    let tags = JSON.parse(req.body.tags);
+    let visibility = req.body.visibility ?? false
+    // res.json({ body: req.body })
+    if (type == "article" || type == "devlog" || type == "question") {
+        try {
+            let post = await db.post.create({
+                title: title,
+                content: content,
+                userId: user.id,
+                postType: type,
+                is_public: visibility
+            })
+            let post_db = JSON.parse(JSON.stringify(post))
+            let tagArray = Array.from(tags)
+
+            console.log(tagArray, "tags");
+            for (const tag of tagArray) {
+                let tag_db = await db.tag.findOrCreate({
+                    where: {
+                        name: tag
+                    },
+                    defaults: {
+                        name: tag
+                    }
+                })
+                tag_db = JSON.parse(JSON.stringify(tag_db))
+                await db.post_tag.create({
+                    postId: post_db.id,
+                    tagId: tag_db[0].id
+                })
+            }
+
+            res.redirect('/forum')
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 }
 module.exports = {
     uploadProject,
@@ -1116,5 +1164,6 @@ module.exports = {
     followProject,
     unFollowProject,
     deleteProject,
-    getWritePostPage
+    getWritePostPage,
+    createPost,
 }

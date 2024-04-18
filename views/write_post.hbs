@@ -1,45 +1,184 @@
+<link rel="stylesheet" href="/stylesheets/write_post.css">
 <main class="container" style="margin-top: 71px;">
     <div class="row">
         <div class="card" style="margin: auto; width: 900px">
             <div class="card-body">
                 <h5 class="card-title">Viết bài</h5>
-                <form id="writePostForm">
+                <form id="writePostForm" action="/user/post/write?type={{type}}" method="POST">
                     <div class="mb-3 row mt-1">
                         <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
                         <div class="col-8 mt-1">
-                            <input type="text" class="form-control rounded-1" id="inputPostTitle" name="post_title">
+                            <input type="text" required class="form-control rounded-1" id="inputPostTitle" name="title">
                         </div>
                     </div>
-
-                    <div class="mb-3 row mt-1">
-                        <label for="inputTags" class="col-4 col-form-label right__content__label">Gắn nhãn:
-                            (<i>Gắn nhãn giúp bài viết dễ dàng được tìm kiếm</i>)
+                    <div class="mb-3 row">
+                        <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
+                            <i>(Có thể chọn nhiều nhãn)</i>
                         </label>
-                        <div class="col-8 mt-1">
-                            <div class=" tags_wrapper">
-                                <input class="form-control inputTags" name="post_tags" id="inputTag"
-                                    placeholder="Ví dụ: C#, AI, " oninput="onSearchTag()">
-                                <ul id="tag_suggests">
-                                    <li class="tag_suggests__item">
-                                        <label class="float-end clickToAddLabel">Chọn </label>
-                                    </li>
-                                </ul>
+                        <div class="col-sm-10 tags_wrapper_post">
+                            {{!-- <span class="badge text-bg-secondary mb-1">
+                                Kinh di
+                                <i class="fa-solid fa-xmark delete_tag" title="Xóa nhãn này"></i>
+                            </span> --}}
+
+
+                            <input class="form-control inputTags" name="tags" id="inputTagPost"
+                                placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
+                            <ul id="tag_suggests_post">
+                                {{#each tags}}
+                                <li class="tag_suggests__item">
+                                    {{this.name}}
+                                    <label class="float-end clickToAddLabel">Chọn </label>
+                                </li>
+                                {{/each}}
+
+                            </ul>
+                        </div>
+                    </div>
+                    {{!-- Hiển thị --}}
+                    <div class="mb-5 row">
+                        <label class="col-sm-2 col-form-label right__content__label">Hiển thị:</label>
+
+                        <div class="col-12 ps-4 pe-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft"
+                                    checked value="false">
+                                <label class="form-check-label right__content__label" for="flexRadioDraft">
+                                    Riêng tư - Chỉ có bạn mới có thể xem
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic"
+                                    value="true">
+                                <label class="form-check-label right__content__label" for="flexRadioPublic">
+                                    Công khai - Mọi người đều có thể xem
+                                </label>
                             </div>
                         </div>
                     </div>
-
                     <div class="mb-3 row mt-1">
                         <label for="">Nội dung</label>
                         <div class="col-12 mt-1">
-                            <div id="editor_1" class="" style="height: 100vh;">
-
-                            </div>
+                            <textarea name="content" id="editor_1" rows="10" cols="80"></textarea>
                         </div>
                     </div>
-
+                    <button class="btn border bg-success text-white">Đăng</button>
+                </form>
 
             </div>
 
         </div>
 </main>
-<script src="/javascripts/write_post.js"></script>
+<script>
+    //Lấy ra các tag bỏ vào list
+    let tags = document.querySelectorAll('.tag_suggests__item')
+    let taglist = []
+
+    tags.forEach(tag => {
+        let tagName = tag.firstChild.nodeValue.trim()
+        taglist.push(tagName)
+    });
+
+    const tagSuggests = document.getElementById('tag_suggests_post')
+
+    document.querySelectorAll(".tag_suggests__item").forEach(element => {
+        element.addEventListener('click', () => {
+            let tagClickName = element.firstChild.nodeValue.trim()
+            const inputTag = document.getElementById('inputTagPost')
+                .value = ""
+            chooseTag(tagClickName)
+            tagSuggests.innerHTML = '';
+        })
+    })
+
+    function onSearchTag() {
+        const inputTag = document.querySelector('#inputTagPost');
+        const filter = inputTag.value;
+
+        console.log(inputTag.value, filter)
+        tagSuggests.innerHTML = '';
+        // Kiểm tra có trong list k
+        const isInList = taglist.map(element => {
+            console.log(element)
+            if (element.toLowerCase().includes(filter.toLowerCase())) {
+                const tagSuggestsItem = document.createElement('li');
+                tagSuggestsItem.classList.add('tag_suggests__item');
+                tagSuggestsItem.innerHTML = `
+                    ${element}
+                    <label class="float-end clickToAddLabel">Chọn </label>
+                `;
+                tagSuggestsItem.addEventListener('click', () => {
+                    inputTag.value = "";
+                    tagSuggests.textContent = '';
+                    chooseTag(element)
+
+                })
+                tagSuggests.appendChild(tagSuggestsItem);
+                return true;
+            }
+            return false;
+        })
+
+        if (!isInList.includes(true)) {
+            const tagSuggestsItem = document.createElement('li');
+            tagSuggestsItem.classList.add('tag_suggests__item');
+            tagSuggestsItem.innerHTML = `
+                    ${filter}
+                    <label class="float-end clickToAddLabel">Chọn </label>
+                `;
+
+
+            console.log(tagSuggestsItem)
+            tagSuggestsItem.addEventListener('click', () => {
+                inputTag.value = "";
+                tagSuggests.textContent = "";
+                chooseTag(filter)
+            })
+            tagSuggests.appendChild(tagSuggestsItem);
+        }
+    }
+    function isChoosedTag(tagName) {
+        let tags = document.querySelectorAll('.tagNameChoosing.badge')
+        return Array.from(tags).some(tag => tag.textContent.trim().toLocaleLowerCase() === tagName.trim().toLocaleLowerCase());
+    }
+    let tagsChoosing = [] //Biển lưu danh sách tag để gữi lên server
+    function chooseTag(tagName) {
+        //<span class="badge text-bg-secondary mb-1">
+        //                            Kinh di
+        //  < i class="fa-solid fa-xmark delete_tag" title = "Xóa nhãn này" ></ >
+        //     </span >
+        if (isChoosedTag(tagName)) {
+            return alert("Nhãn này đã được chọn")
+        }
+        //thêm tag vào list để gữi lên server
+        tagsChoosing.push(tagName)
+
+        const tagBadge = document.createElement('span');
+        const closeTagIcon = document.createElement('i');
+
+        closeTagIcon.addEventListener("click", (event) => {
+            event.target.parentElement.remove()
+        })
+
+        tagBadge.classList.add('badge');
+        tagBadge.classList.add('tagNameChoosing');
+        tagBadge.classList.add('text-bg-secondary');
+        tagBadge.classList.add('mb-1');
+        tagBadge.classList.add('me-1');
+        tagBadge.textContent = tagName;
+
+        closeTagIcon.classList.add('fa-solid');
+        closeTagIcon.classList.add('fa-xmark');
+        closeTagIcon.classList.add('delete_tag');
+
+        tagBadge.appendChild(closeTagIcon);
+
+        document.querySelector(".tags_wrapper_post").insertBefore(tagBadge, document.querySelector(".tags_wrapper_post").firstChild);
+    }
+
+
+
+</script>
+{{!--
+<script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script> --}}
+<script type="module" src="/javascripts/write_post.js"></script>
