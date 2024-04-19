@@ -1,0 +1,97 @@
+<link rel="stylesheet" href="/stylesheets/my_posts.css">
+<main style="margin-top: 72px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title m-b-0">Bài đăng đã đăng</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>
+                                        STT
+                                    </th>
+                                    <th scope="col">Tiêu đề</th>
+                                    <th scope="col">Nội dung</th>
+                                    <th scope="col">Loại</th>
+                                    <th scope="col">Gắn nhãn</th>
+                                    <th scope="col">Ngày đăng</th>
+                                    <th scope="col"> Lượt xem</th>
+                                    <th scope="col"> Hiển thị</th>
+
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="customtable">
+                                {{#each posts}}
+                                <tr>
+                                    <td>{{indexing @index}}</td>
+                                    <td style="max-width: 120px;">
+                                        <a href="/post/{{id}}/view">{{title}}</a>
+                                    </td>
+                                    <td style="min-width:150px; max-width: 300px">
+                                        <p class="clamped-text-3 post_content">
+
+                                            {{{stripHtml content}}}
+
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="badge bg-primary">
+                                            {{#if (ifEquals postType "article")}}
+                                            Bài viết
+                                            {{else}}
+
+                                            Câu hỏi
+                                            {{/if}}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        {{#each tags}}
+                                        <span class="badge post_tags_name ">{{name}}</span>
+                                        {{/each}}
+
+                                    </td>
+                                    <td>{{momentDay createdAt}}</td>
+                                    <td>
+                                        {{viewCount}}
+                                    </td>
+
+                                    <td>
+                                        {{#if is_public}}
+                                        <span class="badge bg-success">Công khai</span>
+                                        {{else}}
+                                        <span class="badge bg-danger">Riêng tư</span>
+                                        {{/if}}
+                                        <br />
+                                        {{#if is_closed}}
+                                        <span class="badge bg-danger" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
+                                            đóng bài</span>
+                                        {{/if}}
+                                    </td>
+
+                                    <td>
+                                        <a class="btn border" type="submit" href="/post/{{id}}/edit">Chỉnh
+                                            sửa</a>
+
+                                        <form class="mt-2" action="/post/{{id}}/close" method="POST">
+                                            <button class="btn btn-outline-danger border" type="submit"
+                                                href="/project/{{this.project.slug}}/rating">Đóng
+                                                bài</button>
+
+                                        </form>
+
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

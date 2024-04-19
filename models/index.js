@@ -71,9 +71,14 @@ db.project.belongsTo(db.genre); // 1 -> 1
 db.project.hasMany(db.image) // 1 -> N   
 db.image.belongsTo(db.project); // 1 -> 1
 
-//Define relationships project and post for devlog
-db.project.hasMany(db.post) // 1 -> N   
-db.post.belongsTo(db.project); // 1 -> 1
+// db.project.hasMany(db.post) // 1 -> N
+// db.post.belongsTo(db.project); // 1 -> 1
+
+
+//Define relationships version and post for devlog
+// 1 ver có 1 post devlog
+db.version.hasOne(db.post) // 1 -> 1
+db.post.belongsTo(db.version); // 1 -> 1
 
 //Define relationships project and discount
 db.project.hasMany(db.discount) // 1 -> N   

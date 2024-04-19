@@ -39,6 +39,7 @@ router.get('/forum', siteController.getForumPage)
 
 
 router.get('/user/my-profile', authMiddleware.isLogin, siteController.getProfilePage);
+router.get('/post/:id/view', siteController.getViewPostPage)
 
 router.get('/', siteController.getIndexPage)
 

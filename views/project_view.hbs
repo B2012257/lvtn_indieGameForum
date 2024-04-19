@@ -164,20 +164,25 @@
         </div>
         <div class="col-4 pt-4">
             <h5>Nội dung cập nhật</h5>
-            <ul class="list-group list-group-numbered">
-                {{#with projectInfo}}
-                {{#each posts}}
+            <ul class="list-group list-group-numbered mb-4">
+                {{#each allDevlog}}
                 <li class="">
+                    {{!-- {{#if is_public}}
+                    <span class="badge bg-success"><i class="fa-solid fa-lock-open me-1"></i>Công khai</span>
+                    {{else}}
+                    <span class="badge bg-danger"><i class="fa-solid fa-lock me-1"></i>Riêng tư</span>
+
+                    {{/if}} --}}
                     {{indexing @index}}.
-                    <a class="text-decoration-none" href="#" class="text-decoration-none text-dark">
-                        (VER {{../versions.[0].version_number}})
+                    <a href="#" class="text-black version_log_text">
+                        (VER {{version.version_number}})
                         {{title}} -
                         {{momentDay
-                        this.release_Date}}
+                        release_Date}}
                     </a>
+
                 </li>
                 {{/each}}
-                {{/with}}
             </ul>
             <h5 class="mt-2 d-inline-block">Thông tin dự án
             </h5>
@@ -224,8 +229,7 @@
                     <i class="fa-solid fa-folder-closed"></i>
                     {{this.version_number}}.
 
-                    {{!-- <i class="fa-solid fa-folder-closed"></i>
-                    <a target="_blank" href="https://drive.google.com/drive/u/0/folders/{{versionFolderId}}">
+                    {{!-- <a target="_blank" href="https://drive.google.com/drive/u/0/folders/{{versionFolderId}}">
 
                         {{this.version_number}}.
                     </a> --}}

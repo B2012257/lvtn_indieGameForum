@@ -19,7 +19,7 @@ const classifications = require('./configs/classifications.json')
 const genres = require('./configs/genres.json')
 const tags = require('./configs/tags.json')
 
-
+const authMiddleware = require('./middlewares/auth.middleware')
 
 db.sequelize.sync()
   .then(() => {
@@ -108,6 +108,8 @@ app.use(bodyParser.urlencoded({ limit: '40mb', extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+
 // Sử dụng middleware session
 app.use(session({
   secret: '!xtera!123!',
@@ -135,6 +137,7 @@ app.use(logger('tiny'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(authMiddleware.getUserInfoHeader)
 
 route(app)
 

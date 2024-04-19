@@ -1,0 +1,23 @@
+.post_content {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.post_tags_name {
+    color: #155ca2;
+    font-weight: 400;
+    font-size: 12px;
+    background-color: rgb(237, 245, 253);
+}
+
+.post_tags_name:hover {
+    color: #155ca2;
+    background-color: #D6E8FA;
+}
+
+.clamped-text-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

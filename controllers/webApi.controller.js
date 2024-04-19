@@ -4,6 +4,7 @@ const { platform } = require('../configs/constraint')
 
 const ggdrive = require('../services/google.clound/index')
 const random4NumberUntil = require('../utils/random4Number')
+const transporter = require("../services/nodemailer/index")
 // const { where } = require("sequelize")
 // const { isPassportNumber } = require("validator")
 require('dotenv').config()
@@ -178,17 +179,7 @@ const uploadProject = async (req, res) => {
         }
     }
 
-    //Tạo 1 bài viết có type devlog với nội dung trống và userId là người đang đăng
-    if (isGenerateDevlog) {
-        await db.post.create({
-            postType: "devlog",
-            content: "",
-            title: `Devlog ${version}`,
-            isPublic: false,
-            projectId: projectId,
-            userId: req.session?.user?.id ?? req.user?.id
-        })
-    }
+
     //Nếu có file
     if (files) {
         //Kiểm tra version, Lưu version mới sau đó lưu dơnload link vào db
@@ -206,7 +197,7 @@ const uploadProject = async (req, res) => {
                 ]
             }
         })
-        //Tạo 1 thử mục version
+        //Tạo 1 thư mục version
         let versionFolderId = await ggdrive.createFolder({
             name: version,
             parents: project.project_folder_id,
@@ -218,7 +209,19 @@ const uploadProject = async (req, res) => {
             versionFolderId,
             version_number: version
         })
-
+        newVersion = JSON.parse(JSON.stringify(newVersion))
+        //Tạo 1 bài viết có type devlog với nội dung trống và userId là người đang đăng
+        if (isGenerateDevlog) {
+            await db.post.create({
+                postType: "devlog",
+                content: "",
+                title: `Devlog ${version}`,
+                isPublic: false,
+                projectId: projectId,
+                userId: req.session?.user?.id ?? req.user?.id,
+                versionId: newVersion.id
+            })
+        }
         for (const file of newArrayFiles) {
             let fileResponse = await ggdrive.uploadCompressedFile({
                 file: file,
@@ -235,6 +238,41 @@ const uploadProject = async (req, res) => {
             urlResponse.push(fileResponse)
 
         }
+        //Gữi mail thông báo cập nhật cho những người đã mua dự án
+        //Lấy ra danh sách người đã mua dự án
+        let buyers = await db.payment.findAll({
+            where: {
+                projectId: project.id,
+                status: "Success"
+            }
+        })
+        //Lấy ra danh sách người dùng
+        let users = await db.user.findAll({
+            where: {
+                id: buyers.map(buyer => buyer.userId)
+            }
+        })
+        //Gửi mail thông báo cập nhật cho từng người dùng
+        for (const user of users) {
+            //Gửi mail thông báo cập nhật
+            //Gửi mail thông báo cập nhật
+            let mailOptions = {
+                from: 'Admin Indie Game VN (-.-)',
+                to: user.email,
+                subject: `Cập nhật dự án ${project.name}`,
+                html: `
+                <h1>Chào ${user.name}!</h1>
+                <p>Dự án ${project.name} đã cập nhật phiên bản mới ${newVersion.version_number}</p>
+                <a href="http://localhost:3000/project/${project.slug}/view">Click vào đây để xem chi tiết</a>
+                `
+            }
+            //Gửi mail
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) return console.log(err);
+                return console.log("Email sent: ", info);
+            })
+        }
+
         res.json({
             status: 200, msg: 'Success!', urlResponse
         })

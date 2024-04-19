@@ -4264,7 +4264,7 @@ p kbd {
 }
 
 .question_list .fade {
-    transition: opacity 0.5s linear;
+    transition: opacity 0.2s linear;
 }
 
 .question_list .ques_item {
@@ -15666,9 +15666,7 @@ ul.forum-titles .forum-freshness .freshness-box .freshness-btm .bbp-author-avata
     border-color: #e6edf0;
 }
 
-.fade {
-    transition: opacity 0.5s ease-in-out;
-}
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

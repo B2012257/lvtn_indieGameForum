@@ -37,8 +37,12 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.ENUM,
             allowNull: false,
             values: ['article', 'question', 'devlog'],
+        },
+        is_closed: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
-
     }, {
         paranoid: true
     });

@@ -1147,6 +1147,48 @@ const createPost = async (req, res) => {
     }
 
 }
+const deleteVersion = async (req, res) => {
+    let versionId = req.params.id;
+    let projectId = req.query.p
+    try {
+        await db.version.destroy({
+            where: {
+                id: versionId
+            }
+        })
+        console.log(projectId);
+        res.redirect(`/user/project/${projectId}/edit`)
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+const getMyPostsPage = async (req, res) => {
+    //Lấy các bài đăng của người dùng đẫ đăng
+    let user = req.session?.user ?? req.user;
+    let posts = await db.post.findAll({
+        where: {
+            userId: user.id,
+            //Với postType là article hoặc question
+            postType: {
+                [db.Sequelize.Op.or]: ['article', 'question']
+            }
+        },
+        include: [db.tag]
+    })
+    posts = JSON.parse(JSON.stringify(posts))
+
+
+    res.render('my_posts', {
+        header: true,
+        footer: false,
+        title: "Bài viết của tôi",
+        posts,
+
+        user: req.session?.user ?? req.user
+    })
+}
+
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -1166,4 +1208,6 @@ module.exports = {
     deleteProject,
     getWritePostPage,
     createPost,
+    deleteVersion,
+    getMyPostsPage,
 }

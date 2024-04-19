@@ -11,6 +11,10 @@ a {
     text-decoration: none;
 }
 
+.table>tbody {
+    vertical-align: middle !important;
+}
+
 .clamped-text-1 {
     display: -webkit-box;
     -webkit-box-orient: vertical;

@@ -256,9 +256,7 @@ const getIndexPage = async (req, res) => {
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
     hotProject = JSON.parse(JSON.stringify(hotProject))
     projectInDiscount = JSON.parse(JSON.stringify(projectInDiscount))
-    console.log(projectInfo, "projectInfo");
-    console.log(hotProject, "hotProject");
-    console.log(projectInDiscount, "projectInDiscount");
+    console.log(req.user || req.session.user);
     return res.render("index", {
         user: req.user || req.session.user,
         title: "Trang chủ",
@@ -543,9 +541,29 @@ const getEditInfoProjectPage = async (req, res) => {
     })
 }
 const getEditInterfaceProjectPage = async (req, res) => {
+    //get all devlogOf this Project
+    let projectId = req.params.id
+    //Lấy tât cả version của project và lấy hêt post type devlog vaf versionId đó
+    let projectDbToGetAllVersion = await db.project.findOne({
+        where: {
+            id: projectId
+        }
+        , include: [db.version]
+    })
+    projectDbToGetAllVersion = JSON.parse(JSON.stringify(projectDbToGetAllVersion))
+    let allVersion = await db.post.findAll({
+        where: {
+            versionId: projectDbToGetAllVersion.versions.map(item => item.id),
+            postType: "devlog"
+        },
+        include: [db.version],
+        order: [['createdAt', 'DESC']]
+    })
+    allVersion = JSON.parse(JSON.stringify(allVersion))
     const projectDb = await db.project.findOne({
         include: [
             db.classification, db.tag, db.genre, db.user,
+
             {
                 model: db.image,
                 order: [['createdAt', 'DESC']]
@@ -556,6 +574,14 @@ const getEditInterfaceProjectPage = async (req, res) => {
                 limit: 1, //Giới hạn 1 phiên bản mới nhất
                 required: false,
                 include: [db.download]
+            }, {
+                model: db.discount,
+                where: {
+                    endDate: {
+                        [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                    },
+                },
+                required: false
             }
         ],
         where: {
@@ -563,24 +589,38 @@ const getEditInterfaceProjectPage = async (req, res) => {
         },
     })
     let projectInfo = JSON.parse(JSON.stringify(projectDb))
-    console.log(projectInfo);
 
-
-    //Lấy thêm tất cả tệp download
-    let downloads = await db.download.findAll({
+    let historyVersion = await db.version.findAll({
         where: {
-            versionId: projectInfo.versions[0].id
-        }
+            projectId: projectInfo.id
+        },
+        order: [['createdAt', 'DESC']],
+        include: [{
+            model: db.download,
+            required: false
+        }]
     })
-    downloads = JSON.parse(JSON.stringify(downloads))
-    projectInfo.versions[0].downloads = downloads
+    historyVersion = JSON.parse(JSON.stringify(historyVersion))
+    //Lấy thêm tất cả tệp download
+    if (projectInfo.versions[0]) {
+        let downloads = await db.download.findAll({
+            where: {
+                versionId: projectInfo.versions[0].id
+            }
+        })
+        downloads = JSON.parse(JSON.stringify(downloads))
+        projectInfo.versions[0].downloads = downloads
+    }
+
     if (req.user || req.session.user) {
         res.render("preview_project", {
-            title: "Trang trí " + projectInfo.name,
+            title: "Điều chỉnh " + projectInfo.name,
             header: true,
             footer: false,
             projectInfo,
+            historyVersion,
             user: req.user || req.session.user,
+            allDevlog: allVersion
         })
     } else {
         res.redirect("/login")
@@ -727,6 +767,27 @@ const getMyProjectPage = async (req, res) => {
 }
 const getProjectViewPage = async (req, res) => {
     let slug = req.params.slug
+
+    //Lấy tât cả version của project và lấy hêt post type devlog vaf versionId đó
+    let projectDbToGetAllVersion = await db.project.findOne({
+        where: {
+            slug: slug
+        }
+        , include: [db.version]
+    })
+    projectDbToGetAllVersion = JSON.parse(JSON.stringify(projectDbToGetAllVersion))
+    let allDevlog = await db.post.findAll({
+        where: {
+            versionId: projectDbToGetAllVersion.versions.map(item => item.id),
+            is_public: true,
+            postType: "devlog"
+        },
+        include: [db.version],
+        order: [['createdAt', 'DESC']]
+    })
+    allDevlog = JSON.parse(JSON.stringify(allDevlog))
+
+
     let projectDB = await db.project.findOne({
         paranoid: false,
         where: {
@@ -734,12 +795,6 @@ const getProjectViewPage = async (req, res) => {
         },
         include: [
             db.classification, db.tag, db.genre, {
-                model: db.post,
-                where: {
-                    is_public: true
-                },
-                required: false
-            }, {
                 model: db.image
 
             }, {
@@ -787,14 +842,17 @@ const getProjectViewPage = async (req, res) => {
     let projectInfo = JSON.parse(JSON.stringify(projectDB))
 
     //Lấy thêm tất cả tệp download
-    let downloads = await db.download.findAll({
-        where: {
-            versionId: projectInfo.versions[0]?.id
-        }
-    })
-    downloads = JSON.parse(JSON.stringify(downloads))
-    projectInfo.versions[0].downloads = downloads
-    console.log(projectInfo);
+    if (projectInfo.versions[0]) {
+        let downloads = await db.download.findAll({
+            where: {
+                versionId: projectInfo.versions[0]?.id
+            }
+        })
+        downloads = JSON.parse(JSON.stringify(downloads))
+        projectInfo.versions[0].downloads = downloads
+    }
+
+    console.log(allDevlog);
     // Kiểm tra nếu có payment_info thì đã mua
     res.render("project_view", {
         title: 'Xem ' + projectDB.name,
@@ -803,6 +861,7 @@ const getProjectViewPage = async (req, res) => {
         projectInfo,
         payment_info,
         isFollowing,
+        allDevlog,
         user: req.user || req.session.user,
     })
 }
@@ -1092,7 +1151,7 @@ const getForumPage = async (req, res) => {
         tags = JSON.parse(JSON.stringify(tags))
         post.tags = tags
     }
-    console.log(posts[0].tags);
+
     res.render("forum", {
         title: "Diễn đàn",
         header: true,
@@ -1196,6 +1255,23 @@ const getProfilePage = async (req, res) => {
     })
 
 }
+const getViewPostPage = async (req, res) => {
+    let post_id = req.params.id;
+    let post = await db.post.findOne({
+        where: {
+            id: post_id
+        },
+        include: [db.tag, db.comment, db.user]
+    })
+    res.render('view_post', {
+        header: true,
+        footer: false,
+        title: "Xem bài viết " + post.name,
+        post: JSON.parse(JSON.stringify(post)),
+        user: req.session?.user ?? req.user
+
+    })
+}
 module.exports = {
     getIndexPage,
     getLoginPage,
@@ -1215,5 +1291,6 @@ module.exports = {
     getEditInfoProjectPage,
     editInfoProject,
     getProfilePage,
+    getViewPostPage
 
 }

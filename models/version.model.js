@@ -15,10 +15,10 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue: new Date()
         },
-        install_guide: {
-            type: Sequelize.STRING,
-            defaultValue: ""
-        },
+        // install_guide: {
+        //     type: Sequelize.STRING,
+        //     defaultValue: ""
+        // },
         versionFolderId: {
             type: Sequelize.STRING,
             allowNull: false,

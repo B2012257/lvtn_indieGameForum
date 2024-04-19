@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/stylesheets/view_post.css">
+<main style="margin-top: 72px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-9 mt-4">
+                {{#with post}}
+                <div class="post_header">
+                    <h3>{{title}}</h3>
+                    <span>{{momentDay createdAt}}</span> |
+                    <span>Đăng bởi @{{user.name}}</span> |
+                    <span>{{viewCount}} xem</span>
+                    <div class="mt-1">
+                        <p class="badge bg-primary">
+                            {{#if (ifEquals postType "article")}}
+                            Bài viết
+                            {{else}}
+
+                            Câu hỏi
+                            {{/if}}
+                        </p>
+                        {{#each tags}}
+                        <span class="badge post_tags_name">
+                            {{name}}
+                        </span>
+                        {{/each}}
+                    </div>
+
+                </div>
+                <div id="post_editor">
+                    {{{content}}}
+                </div>
+                {{/with}}
+            </div>
+
+        </div>
+    </div>
+</main>
+<script src="/javascripts/view_post.js"></script>

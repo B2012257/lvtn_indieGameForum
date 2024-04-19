@@ -106,3 +106,6 @@
     padding: 2px 14px;
     border-radius: 20px;
 } */
+.version_log_text:hover {
+    color: blue !important;
+}
