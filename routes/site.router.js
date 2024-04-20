@@ -40,6 +40,8 @@ router.get('/forum', siteController.getForumPage)
 
 router.get('/user/my-profile', authMiddleware.isLogin, siteController.getProfilePage);
 router.get('/post/:id/view', siteController.getViewPostPage)
+router.get('/post/:id/edit', siteController.getEditPostPage)
+
 
 router.get('/', siteController.getIndexPage)
 

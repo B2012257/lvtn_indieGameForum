@@ -1,4 +1,5 @@
 
+import { tag } from '../../models/index.js';
 import MyUploadAdapter from './upload_image.adapter.js';
 function MyUploadAdapterPlugin(editor) {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
@@ -159,13 +160,21 @@ let editor_1 = CKEDITOR.ClassicEditor.create(document.getElementById("editor_1")
 // Xử lí khi trình soạn thảo đã sẵn sàng
 editor_1.then(async editor => {
     window.editor = editor;
+    let writePostForm = document.getElementById('writePostForm');
     writePostForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         let content = await editor.getData();
         console.log(content);
-
-        document.querySelector('#inputTagPost').value = JSON.stringify(tagsChoosing);
-        writePostForm.submit();
+        // let tags = document.querySelectorAll('.tagNameChoosing.badge');
+        // tagsChoosingCheck = tagsChoosing;
+        // tagsChoosing = []
+        // Array.from(tags).map(tag => {
+        //     console.log(tag.textContent);
+        //     tagsChoosing.push(tag.textContent);
+        // })
+        console.log(tagsChoosing);
+        document.querySelector('#inputTagsPost').value = JSON.stringify(tagsChoosing);
+        // writePostForm.submit();
     });
 
 })

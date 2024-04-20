@@ -1110,9 +1110,54 @@ const createPost = async (req, res) => {
     let content = req.body.content;
     let tags = JSON.parse(req.body.tags);
     let visibility = req.body.visibility ?? false
+    let action = req.query.a ?? "create"
     // res.json({ body: req.body })
     if (type == "article" || type == "devlog" || type == "question") {
         try {
+            if (action === "edit") {
+                let postId = req.query.id
+                let post_db = await db.post.findOne({
+                    where: {
+                        id: postId
+                    }
+                })
+                post_db = JSON.parse(JSON.stringify(post_db))
+                await db.post.update({
+                    title: title,
+                    content: content,
+                    postType: type,
+                    is_public: visibility
+                }, {
+                    where: {
+                        id: postId
+                    }
+                })
+                // await db.post_tag.destroy({
+                //     where: {
+                //         postId: postId
+                //     }
+                // })
+                let tagArray = Array.from(tags)
+                for (const tag of tagArray) {
+                    let tag_db = await db.tag.findOrCreate({
+                        where: {
+                            name: tag
+                        },
+                        defaults: {
+                            name: tag
+                        }
+                    })
+                    tag_db = JSON.parse(JSON.stringify(tag_db))
+                    await db.post_tag.create({
+                        postId: post_db.id,
+                        tagId: tag_db[0].id
+                    })
+                }
+                res.redirect('/forum')
+                return
+            }
+
+            //Taoj bài viết mới
             let post = await db.post.create({
                 title: title,
                 content: content,

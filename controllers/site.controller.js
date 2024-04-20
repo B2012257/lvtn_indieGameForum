@@ -6,7 +6,7 @@ const { where, or } = require("sequelize")
 const { order } = require("paypal-rest-sdk")
 require('dotenv').config();
 var moment = require('moment'); // require
-const { set } = require("../app")
+const { set, all } = require("../app")
 const { calculateUserFollowProject } = require("../utils/userFollowProject")
 const { isPassportNumber } = require("validator")
 //Số dự án mới trong tuần
@@ -1266,7 +1266,27 @@ const getViewPostPage = async (req, res) => {
     res.render('view_post', {
         header: true,
         footer: false,
-        title: "Xem bài viết " + post.name,
+        title: "Xem bài viết " + post.title,
+        post: JSON.parse(JSON.stringify(post)),
+        user: req.session?.user ?? req.user
+
+    })
+}
+const getEditPostPage = async (req, res) => {
+    let post_id = req.params.id;
+    let allTag = await db.tag.findAll({})
+    let post = await db.post.findOne({
+        where: {
+            id: post_id
+        },
+        include: [db.tag, db.comment, db.user]
+    })
+    allTag = JSON.parse(JSON.stringify(allTag))
+    res.render('write_post', {
+        header: true,
+        footer: false,
+        allTag: allTag,
+        title: "Chỉnh sửa bài viết " + post.title,
         post: JSON.parse(JSON.stringify(post)),
         user: req.session?.user ?? req.user
 
@@ -1291,6 +1311,7 @@ module.exports = {
     getEditInfoProjectPage,
     editInfoProject,
     getProfilePage,
-    getViewPostPage
+    getViewPostPage,
+    getEditPostPage
 
 }

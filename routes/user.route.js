@@ -35,5 +35,4 @@ router.post('/version/:id/delete', userController.deleteVersion)
 
 router.get('/posts', userController.getMyPostsPage)
 
-
 module.exports = router

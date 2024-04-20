@@ -4,6 +4,71 @@
         <div class="card" style="margin: auto; width: 900px">
             <div class="card-body">
                 <h5 class="card-title">Viết bài</h5>
+                {{#if post}}
+                <form id="writePostForm" action="/user/post/write?type={{post.postType}}&a=edit&id={{post.id}}"
+                    method="POST">
+                    <div class="mb-3 row mt-1">
+                        <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
+                        <div class="col-8 mt-1">
+                            <input value="{{post.title}}" type="text" required class="form-control rounded-1"
+                                id="inputPostTitle" name="title">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputTag" class="col-sm-2 col-form-label right__content__label">Các nhãn:
+                            <i>(Có thể chọn nhiều nhãn)</i>
+                        </label>
+                        <div class="col-sm-10 tags_wrapper_post">
+                            {{#each post.tags}}
+                            <span class="badge tagNameChoosing text-bg-secondary mb-1 me-1">{{this.name}}<i
+                                    class="fa-solid fa-xmark delete_tag"></i></span>
+                            {{/each}}
+
+                            <input class="form-control inputTags" name="tags" id="inputTagsPost"
+                                placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
+                            <ul id="tag_suggests_post">
+                                {{#each @root.allTag}}
+                                <li class="tag_suggests__item">
+                                    {{this.name}}
+                                    <label class="float-end clickToAddLabel">Chọn </label>
+                                </li>
+                                {{/each}}
+
+                            </ul>
+                        </div>
+                    </div>
+                    {{!-- Hiển thị --}}
+                    <div class="mb-5 row">
+                        <label class="col-sm-2 col-form-label right__content__label">Hiển thị:</label>
+
+                        <div class="col-12 ps-4 pe-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioDraft"
+                                    {{#unless post.is_public}} checked {{/unless}} value="false">
+                                <label class="form-check-label right__content__label" for="flexRadioDraft">
+                                    Riêng tư - Chỉ có bạn mới có thể xem
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visibility" id="flexRadioPublic"
+                                    {{#if post.is_public}} checked {{/if}} value="true">
+                                <label class="form-check-label right__content__label" for="flexRadioPublic">
+                                    Công khai - Mọi người đều có thể xem
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row mt-1">
+                        <label for="">Nội dung</label>
+                        <div class="col-12 mt-1">
+                            <textarea name="content" id="editor_1" rows="10" cols="80">
+                                {{post.content}}
+                            </textarea>
+                        </div>
+                    </div>
+                    <button class="btn border bg-success text-white">Đăng</button>
+                </form>
+                {{else}}
                 <form id="writePostForm" action="/user/post/write?type={{type}}" method="POST">
                     <div class="mb-3 row mt-1">
                         <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
@@ -22,7 +87,7 @@
                             </span> --}}
 
 
-                            <input class="form-control inputTags" name="tags" id="inputTagPost"
+                            <input class="form-control inputTags" name="tags" id="inputTagsPost"
                                 placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                             <ul id="tag_suggests_post">
                                 {{#each tags}}
@@ -64,6 +129,7 @@
                     </div>
                     <button class="btn border bg-success text-white">Đăng</button>
                 </form>
+                {{/if}}
 
             </div>
 
