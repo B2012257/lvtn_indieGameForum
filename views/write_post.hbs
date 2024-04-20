@@ -5,7 +5,7 @@
             <div class="card-body">
                 <h5 class="card-title">Viết bài</h5>
                 {{#if post}}
-                <form id="writePostForm" action="/user/post/write?type={{post.postType}}&a=edit&id={{post.id}}"
+                {{!-- <form id="writePostForm" action="/user/post/write?type={{post.postType}}&a=edit&id={{post.id}}"
                     method="POST">
                     <div class="mb-3 row mt-1">
                         <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
@@ -24,7 +24,7 @@
                                     class="fa-solid fa-xmark delete_tag"></i></span>
                             {{/each}}
 
-                            <input class="form-control inputTags" name="tags" id="inputTagsPost"
+                            <input class="form-control inputTags" name="tags" id="inputTagPost"
                                 placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                             <ul id="tag_suggests_post">
                                 {{#each @root.allTag}}
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <button class="btn border bg-success text-white">Đăng</button>
-                </form>
+                </form> --}}
                 {{else}}
                 <form id="writePostForm" action="/user/post/write?type={{type}}" method="POST">
                     <div class="mb-3 row mt-1">
@@ -87,7 +87,7 @@
                             </span> --}}
 
 
-                            <input class="form-control inputTags" name="tags" id="inputTagsPost"
+                            <input class="form-control inputTags" name="tags" id="inputTagPost"
                                 placeholder="Ví dụ: kinh dị, phiêu lưu" oninput="onSearchTag()">
                             <ul id="tag_suggests_post">
                                 {{#each tags}}

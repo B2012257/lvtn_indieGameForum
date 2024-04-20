@@ -1,4 +1,5 @@
 
+// Toogle hiệu ứng loading
 
 
 import MyUploadAdapter from './upload_image.adapter.js';
@@ -271,7 +272,7 @@ updateBtn.addEventListener('click', async (e) => {
         await uploadImage({ image: newCoverImage, projectId: projectId, type: "coverImage" })
     }
     let hrefScreenShotInServer = []
-    screenshotImages = document.querySelectorAll('.screenshotInServer');
+    let screenshotImages = document.querySelectorAll('.screenshotInServer');
     screenshotImages.forEach(element => {
         hrefScreenShotInServer.push(element.src);
     });

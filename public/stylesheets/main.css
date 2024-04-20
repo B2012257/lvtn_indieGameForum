@@ -165,13 +165,16 @@ a {
     display: none;
     left: 0;
     text-decoration: none;
+    background-color: #f9f9f9;
 }
 
 .write-menu-item:hover {
     background-color: #f9f9f9;
     color: #000;
+    border-radius: 4px;
 }
 
 .write-menu.show {
     display: block;
+    border-radius: 4px;
 }

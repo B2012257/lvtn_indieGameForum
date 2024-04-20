@@ -113,8 +113,13 @@
                 </div>
                 <div class="modal-footer">
 
-                    <button type="button" class="submit-update-version-btn btn btn-primary">Cập
-                        nhật</button>
+                    <button type="button" class="submit-update-version-btn btn btn-primary">
+                        <div class="loading-spinner-update-version spinner-border text-light d-none" role="status"
+                            style="width: 1rem; height: 1rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Cập nhật
+                    </button>
                 </div>
             </div>
         </div>
@@ -581,7 +586,7 @@
     console.log(document.querySelector('.submit-update-version-btn'))
     document.querySelector('.submit-update-version-btn')?.addEventListener('click', async (e) => {
         e.preventDefault()
-
+        document.querySelector(".loading-spinner-update-version").classList.toggle("d-none");
         console.log("Submit 1")
 
         await uploadProjectFile()

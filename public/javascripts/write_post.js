@@ -1,5 +1,4 @@
 
-import { tag } from '../../models/index.js';
 import MyUploadAdapter from './upload_image.adapter.js';
 function MyUploadAdapterPlugin(editor) {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
@@ -165,16 +164,16 @@ editor_1.then(async editor => {
         e.preventDefault();
         let content = await editor.getData();
         console.log(content);
-        // let tags = document.querySelectorAll('.tagNameChoosing.badge');
-        // tagsChoosingCheck = tagsChoosing;
-        // tagsChoosing = []
-        // Array.from(tags).map(tag => {
-        //     console.log(tag.textContent);
-        //     tagsChoosing.push(tag.textContent);
-        // })
+        let tags = document.querySelectorAll('.tagNameChoosing.badge');
+        let tagsChoosingCheck = tagsChoosing;
+        tagsChoosing = []
+        Array.from(tags).map(tag => {
+            console.log(tag.textContent);
+            tagsChoosing.push(tag.textContent);
+        })
         console.log(tagsChoosing);
-        document.querySelector('#inputTagsPost').value = JSON.stringify(tagsChoosing);
-        // writePostForm.submit();
+        document.querySelector('#inputTagPost').value = JSON.stringify(tagsChoosing);
+        writePostForm.submit();
     });
 
 })
