@@ -1076,31 +1076,39 @@ const getTagsPage = async (req, res) => {
     })
     tagDB = JSON.parse(JSON.stringify(tagDB))
     //Đếm xem mỗi tag có bao nhiêu dự án đang sử dụng
-    Array.from(tagDB).forEach(async (tagItem) => {
-        let projectOfTag = await db.project.findAll({
-            include: [{
-                model: db.tag,
-                where: {
-                    id: tagItem.id
-                },
-            },
-            {
-                model: db.image,
-                where: {
-                    isCoverImage: true
-                }
-            },
-            db.genre, db.classification
-            ],
+    for (const tagItem of Array.from(tagDB)) {
+        try {
+            let projectOfTag = await db.project.findAll({
+                include: [
+                    {
+                        model: db.tag,
+                        where: {
+                            id: tagItem.id
+                        },
+                    },
+                    {
+                        model: db.image,
+                        where: {
+                            isCoverImage: true
+                        }
+                    },
+                    db.genre,
+                    db.classification
+                ],
+            });
 
-        })
-        projectOfTag = JSON.parse(JSON.stringify(projectOfTag))
-        tagItem.projects = { ...projectOfTag }
-        tagItem.projectCount = projectOfTag.length
-        tagItem.percent = (projectOfTag.length / totalProject) * 100
-        tagItem.percent = Number.parseFloat(tagItem.percent).toFixed(2)
-        tags.push(tagItem)
-    })
+            projectOfTag = JSON.parse(JSON.stringify(projectOfTag));
+            tagItem.projects = { ...projectOfTag };
+            tagItem.projectCount = projectOfTag.length;
+            tagItem.percent = (projectOfTag.length / totalProject) * 100;
+            tagItem.percent = Number.parseFloat(tagItem.percent).toFixed(2);
+            tags.push(tagItem);
+        } catch (error) {
+            console.error(error);
+            // Xử lý lỗi nếu cần
+        }
+    }
+
     //Mỗi tag đếm xem có bao nhiêu dự án đang sử dụng trên tổng dự án
     //Tính ra bao nhiêu phần trăm
     //Trả về tất cả tags
