@@ -92,12 +92,12 @@
                                 tả
                                 ngắn <i>(Tối đa 200 từ)</i></label>
                             <div class="col-sm-10">
-                                <textarea maxlength="200" class="form-control rounded-1" name="short_description"
+                                <textarea maxlength="355" class="form-control rounded-1" name="short_description"
                                     id="inputShortDescription" rows="4" placeholder="Mô tả ngắn về dự án">
                                     {{trimString short_description}}</textarea>
                             </div>
                         </div>
-                        <div class="mb-3 row">
+                        {{!-- <div class="mb-3 row">
                             <label for="inputLongDescription" class="col-sm-2 col-form-label right__content__label">Mô
                                 tả
                                 chi tiết</label>
@@ -106,7 +106,7 @@
                                     id="inputLongDescription" rows="6" placeholder="Mô tả chi tiết">
                                     {{trimString long_description}}</textarea>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="mb-3 row">
                             <label for="selectRelease" class="col-sm-2 col-form-label right__content__label">Trạng thái
                                 phát
