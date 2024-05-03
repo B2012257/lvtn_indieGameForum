@@ -759,7 +759,7 @@ const getMyProjectPage = async (req, res) => {
             orderBy,
             order,
             totalRevenue: totalRevenue,
-            user: req.user || req.session.user ,
+            user: req.user || req.session.user,
         })
     } else {
         res.redirect("/login")
@@ -913,7 +913,7 @@ const getPayViewPage = async (req, res) => {
         footer: false,
         projectInfo,
         isFreeGame,
-        user: userDb,
+        user: req.user || req.session.user,
     })
 }
 
@@ -1267,15 +1267,32 @@ const getViewPostPage = async (req, res) => {
     let post_id = req.params.id;
     let post = await db.post.findOne({
         where: {
-            id: post_id
+            id: post_id,
         },
-        include: [db.tag, db.comment, db.user]
+        include: [db.tag,
+        {
+            model: db.comment,
+            where: {
+                replyParentCommentId: null
+            },
+            include: [db.user, {
+                model: db.comment,
+                include: [db.user]
+            }],
+            required: false
+        },
+        db.user],
+        //sắp xếp comment theo createdAt giảm dần
+        order: [[db.comment, 'createdAt', 'ASC']]
+
     })
+    post = JSON.parse(JSON.stringify(post))
+    console.log(post, "post");
     res.render('view_post', {
         header: true,
         footer: false,
         title: "Xem bài viết " + post.title,
-        post: JSON.parse(JSON.stringify(post)),
+        post,
         user: req.session?.user ?? req.user
 
     })

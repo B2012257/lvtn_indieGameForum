@@ -10,12 +10,25 @@
                     <span>Đăng bởi @{{user.name}}</span> |
                     <span>{{viewCount}} xem</span>
                     <div class="mt-1">
+                        {{#if is_public}}
+                        <p class="badge bg-success">
+                            Công khai
+                        </p>
+                        {{else}}
+                        <p class="badge bg-danger">
+                            Riêng tư
+                        </p>
+                        {{/if}}
                         <p class="badge bg-primary">
                             {{#if (ifEquals postType "article")}}
                             Bài viết
-                            {{else}}
-
+                            {{/if}}
+                            {{#if (ifEquals postType "question")}}
                             Câu hỏi
+                            {{/if}}
+                            {{#if (ifEquals postType "devlog")}}
+
+                            Devlog
                             {{/if}}
                         </p>
                         {{#each tags}}
@@ -29,10 +42,108 @@
                 <div id="post_editor">
                     {{{content}}}
                 </div>
-                {{/with}}
+                <form action="/user/comment/post/{{id}}" method="POST">
+                    <div class="row m-0 mt-2" id="add_comment_form">
+                        <a href="#" class="col-2 link-dark text-decoration-none">
+                            {{#if user.avatarUrl}}
+                            <img src="{{user.avatarUrl}}" alt="mdo" width="32" height="32" class="rounded-circle">
+                            {{user.name}}
+                            {{else}}
+                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                                class="rounded-circle">
+                            {{user.name}}
+
+                            {{/if}}
+                        </a>
+                        <textarea class="col-10 p-1 border" name="comment_content" id="comment_content"></textarea>
+                    </div>
+                    {{#if user}}
+                    <div class="add_comment_btn btn border mt-2 btn-outline-primary">Thêm bình luận</div>
+                    {{/if}}
+                    <div class="row mt-2">
+                        <div class="col-2"></div>
+                        <div class="col-10">
+                            <div class="btn border mt-2 d-none btn-outline-danger" id="close_add_comment_btn">Đóng</div>
+                            <button type="submit" class="btn border mt-2 d-none btn-outline-success "
+                                id="save_comment_btn">Đăng bình luận
+                        </div>
+                    </div>
+                </form>
+                <div class="list_comment row mb-4">
+                    {{#each comments}}
+                    <div class="comment_item row mt-4 mb-4">
+                        <div class="col-2">
+                            <a href="#" class="left_comment col-2 link-dark text-decoration-none">
+                                {{#if this.user.avatarUrl}}
+                                <img src="{{user.avatarUrl}}" alt="mdo" width="32" height="32" class="rounded-circle">
+                                <div class="username_comment">
+                                    {{this.user.name}}
+                                </div>
+                                {{else}}
+                                <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                                    class="rounded-circle">
+                                {{user.name}}
+
+                                {{/if}}
+                            </a>
+                        </div>
+                        <div class="col comment_content_wrapper ms-2 border-top border-start">
+                            <div class="comment_content">
+                                <small>{{momentDay createdAt}}</small>
+                                <div class="comment_content_text">
+                                    {{content}}
+
+                                </div>
+                                <div class="comment_content_footer text-end">
+                                    {{#if (ifEquals @root.user.id this.user.id)}}
+                                    <span style="font-size: 14px;"
+                                        class="ml-2 delete_comment_btn btn btn-outline-danger border"><i
+                                            class="fa-solid fa-trash"></i> Xoá</span>
+                                    {{/if}}
+                                    <span style="font-size: 14px;" class="ml-2 reply_btn btn border"><i
+                                            class="fa-solid fa-reply"></i> Trả lời</span>
+
+                                </div>
+
+                            </div>
+                            <form action="/user/comment/post/{{../id}}?replyComment={{id}}" method="POST"
+                                class="mt-2 form-reply d-none">
+                                <input type="text" hidden name="replyId" value="{{id}}">
+                                <textarea class="reply_comment border" placeholder="Nội dung trả lời"
+                                    name="comment_content" id=""></textarea>
+                                <div class="btn border btn-outline-danger ms-2 cancel_save_reply_comment">Huỷ</div>
+                                <button class="btn border btn-outline-success save_reply_comment"
+                                    type="submit">Đăng</button>
+                            </form>
+                            {{!-- Bình luận con --}}
+                            <ul class="mt-4">
+                                {{#each comments}}
+                                <li>
+                                    <div class="reply_comment_content_text">
+                                        <strong class="">
+                                            {{user.name}}:
+                                        </strong>
+                                        {{content}} - {{momentDateShort createdAt}}
+                                        <small class="text-secondary">lúc {{momentTimeShort
+                                            createdAt}}</small>
+
+
+                                    </div>
+                                </li>
+
+                                {{/each}}
+                            </ul>
+                        </div>
+
+                    </div>
+                    {{/each}}
+                </div>
+
             </div>
+            {{/with}}
 
         </div>
+
     </div>
 </main>
 <script src="/javascripts/view_post.js"></script>

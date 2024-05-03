@@ -61,3 +61,51 @@ CKEDITOR.ClassicEditor.create(document.getElementById("post_editor"), {
         console.log(error);
     });
 
+
+
+let add_comment_btn = document.querySelector(".add_comment_btn");
+let close_add_comment_btn = document.getElementById("close_add_comment_btn")
+let save_comment_btn = document.getElementById("save_comment_btn")
+
+//Đăng bình luận
+save_comment_btn.addEventListener("click", async () => {
+
+})
+close_add_comment_btn.addEventListener("click", async () => {
+    document.getElementById("add_comment_form").style.display = "none";
+    close_add_comment_btn.classList.toggle("d-none");
+    add_comment_btn.classList.toggle("d-none");
+    save_comment_btn.classList.toggle("d-none");
+
+})
+
+add_comment_btn.addEventListener("click", async () => {
+    document.getElementById("add_comment_form").style.display = "flex";
+    close_add_comment_btn.classList.toggle("d-none");
+    add_comment_btn.classList.toggle("d-none");
+    save_comment_btn.classList.toggle("d-none");
+})
+
+let reply_btn = document.querySelectorAll(".reply_btn");
+let close_reply_btn = document.querySelectorAll(".cancel_save_reply_comment");
+reply_btn.forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+        let target = e.target;
+        console.log(target.parentNode)
+        let formReply = target.parentNode.parentNode.parentNode.querySelector(".form-reply");
+        if (formReply.classList.contains("d-none") === true) {
+            formReply.classList.toggle("d-none");
+        }
+        //Hiển thị form nhập
+    })
+})
+close_reply_btn.forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+        let target = e.target;
+        let formReply = target.parentNode;
+        if (formReply.classList.contains("d-none") === false) {
+            formReply.classList.toggle("d-none");
+        }
+        //Hiển thị form nhập
+    })
+})

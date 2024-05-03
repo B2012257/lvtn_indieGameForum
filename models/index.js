@@ -90,7 +90,7 @@ db.comment.belongsTo(db.user); // 1 -> 1
 
 //Define relationships comment and comment for reply comment
 db.comment.hasMany(db.comment, { foreignKey: 'replyParentCommentId' }) // 1 -> N   
-db.comment.belongsTo(db.comment, { foreignKey: 'replyParentCommentId', as: 'parent' }); // 1 -> 1
+db.comment.belongsTo(db.comment, { foreignKey: 'replyParentCommentId' }); // 1 -> 1
 
 //Define relationships comment and post for save comment
 db.post.hasMany(db.comment) // 1 -> N   

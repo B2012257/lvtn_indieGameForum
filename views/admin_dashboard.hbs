@@ -1,0 +1,65 @@
+<main style="margin-top: 72px;">
+    <div class="container">
+        <h4>Tổng quan</h4>
+        <div class="row mt-2">
+            <div class="col-4">
+                <div class="w-100 card bg-danger-subtle" style=" padding: 10px 30px; line-height:30px">
+                    <div class="card-body">
+                        <i style="font-size: 30px; margin-right: 10px" class="fa-solid fa-briefcase"></i>
+                        Tổng dự án trong hệ thống: 10
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="w-100 card bg-info" style=" padding: 10px 30px; line-height:30px">
+                    <div class="card-body">
+                        <i style="font-size: 30px; margin-right: 10px" class="fa-solid fa-user"> </i>
+                        Số nhà phát
+                        triển 4.
+                        {{totalFollow}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="w-100 card bg-primary-subtle" style=" padding: 10px 30px; line-height:30px">
+                    <div class="card-body">
+                        <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-dollar-sign"></i> Doanh
+                        thu: 0
+                    </div>
+                </div>
+            </div>
+            <ul class="row" style="list-style: none;">
+                <div class="mt-3">
+                    <h4>Thống kê dự án trong hệ thống</h4>
+                </div>
+
+                <div class="row mt-2">
+
+                    <div class="col-6">
+                        <div style="width: 100%;display: inline-block">
+                            <canvas id="view-acquisitions"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <script id="chartDataNewProject" type="application/json">
+                                        {{{json newProjectWeekStatistic}}}
+                                                                        </script>
+                        <div style="width: 100%;display: inline-block">
+                            <canvas id="sold-acquisitions"></canvas>
+                        </div>
+
+                    </div>
+                    <div class="col-6">
+                        <div style="width: 100%;display: inline-block">
+                            <canvas id="newdev-acquisitions"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </ul>
+        </div>
+
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"> </script>
+
+<script src="/javascripts/admin_dashboard.js"></script>

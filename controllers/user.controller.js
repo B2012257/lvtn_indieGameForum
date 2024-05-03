@@ -1233,7 +1233,38 @@ const getMyPostsPage = async (req, res) => {
         user: req.session?.user ?? req.user
     })
 }
+const commentPost = async (req, res) => {
+    let user = req.session?.user ?? req.user;
+    let postId = req.params.id;
+    let content = req.body.comment_content;
+    let replyTo = req.query.replyComment || null
 
+    try {
+        if (replyTo) {
+            replyTo = parseInt(replyTo)
+            console.log("replyTo", replyTo);
+            await db.comment.create({
+                userId: user.id,
+                postId: postId,
+                content: content,
+                replyParentCommentId: replyTo
+            })
+        }
+        else {
+            await db.comment.create({
+                userId: user.id,
+                postId: postId,
+                content: content
+            })
+        }
+
+
+        res.redirect(`/post/${postId}/view`)
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -1255,4 +1286,5 @@ module.exports = {
     createPost,
     deleteVersion,
     getMyPostsPage,
+    commentPost
 }

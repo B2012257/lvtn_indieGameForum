@@ -14,3 +14,42 @@
     color: #155ca2;
     background-color: #D6E8FA;
 }
+
+#add_comment_form {
+    display: none;
+}
+
+#add_comment_form textarea {
+    margin-bottom: 10px;
+    padding: 0;
+    border-radius: 6px;
+}
+
+.left_comment {
+    position: relative;
+}
+
+.list_comment a img {
+    transform: translateX(50%);
+}
+
+.username_comment {
+    position: absolute;
+    left: 50%;
+    top: 32px;
+}
+
+.reply_comment {
+    margin-left: 30%;
+    width: 70%;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.cancel_save_reply_comment {
+    float: right;
+}
+
+.save_reply_comment {
+    float: right;
+}

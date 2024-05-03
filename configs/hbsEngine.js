@@ -13,7 +13,10 @@ module.exports = (app) => {
             momentTime: function (date) {
                 return moment(date).format("LLL");
             },
-
+            momentTimeShort: function (date) {
+                return moment(date).format("LT");
+            }
+            ,
             momentDateShort: function (date) {
                 return moment(date).format("l")
             },
