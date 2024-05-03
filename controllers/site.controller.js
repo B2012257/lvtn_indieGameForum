@@ -759,7 +759,7 @@ const getMyProjectPage = async (req, res) => {
             orderBy,
             order,
             totalRevenue: totalRevenue,
-            user,
+            user: req.user || req.session.user ,
         })
     } else {
         res.redirect("/login")
