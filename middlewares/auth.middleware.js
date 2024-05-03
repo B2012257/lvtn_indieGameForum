@@ -1,3 +1,4 @@
+const { where, InvalidConnectionError } = require("sequelize");
 const db = require("../models/index")
 const isLogin = async (req, res, next) => {
     let user = req.user || req.session.user
@@ -18,7 +19,9 @@ const isLogin = async (req, res, next) => {
 const getUserInfoHeader = async (req, res, next) => {
     let user = req.user || req.session.user
     if (user) {
-        let userDb = await db.user.findByPk(user.id)
+        let userDb = await db.user.findByPk(user.id, {
+            include: [db.role]
+        })
         userDb = JSON.parse(JSON.stringify(userDb))
         req.user = userDb
         req.session.user = userDb
