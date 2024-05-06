@@ -1277,17 +1277,21 @@ const getViewPostPage = async (req, res) => {
             },
             include: [db.user, {
                 model: db.comment,
-                include: [db.user]
-            }],
+                include: [db.user],
+            },
+            ],
             required: false
         },
-        db.user],
+        db.user, {
+            model: db.version,
+            include: [db.project]
+        }],
         //sắp xếp comment theo createdAt giảm dần
         order: [[db.comment, 'createdAt', 'ASC']]
 
     })
     post = JSON.parse(JSON.stringify(post))
-    console.log(post, "post");
+    console.log(post, "postView");
     res.render('view_post', {
         header: true,
         footer: false,

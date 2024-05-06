@@ -88,10 +88,10 @@
                     {{/if}}
                 </form>
 
-                <button class="btn-action-project btn btn-outline-danger">
+                {{!-- <button class="btn-action-project btn btn-outline-danger">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     Báo xấu
-                </button>
+                </button> --}}
                 {{#if (ifEquals user.id projectInfo.user.id)}}
                 <a title="Điều chỉnh" href="/user/project/{{projectInfo.id}}/edit" class="btn btn-outline-info">
                     <i class="fa-solid fa-palette"></i>
@@ -174,7 +174,7 @@
 
                     {{/if}} --}}
                     {{indexing @index}}.
-                    <a href="#" class="text-black version_log_text">
+                    <a href="/post/{{id}}/view" class="text-black version_log_text">
                         (VER {{version.version_number}})
                         {{title}} -
                         {{momentDay

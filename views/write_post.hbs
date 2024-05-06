@@ -5,7 +5,7 @@
             <div class="card-body">
                 <h5 class="card-title">Viết bài</h5>
                 {{#if post}}
-                {{!-- <form id="writePostForm" action="/user/post/write?type={{post.postType}}&a=edit&id={{post.id}}"
+                <form id="writePostForm" action="/user/post/write?type={{post.postType}}&a=edit&id={{post.id}}"
                     method="POST">
                     <div class="mb-3 row mt-1">
                         <label for="inputPostTitle" class="col-4 col-form-label right__content__label">Tiêu đề </label>
@@ -35,6 +35,24 @@
                                 {{/each}}
 
                             </ul>
+                        </div>
+                    </div>
+                    <div class="mb-5 row">
+                        <label class="col-sm-2 col-form-label right__content__label">Loại:</label>
+
+                        <div class="col-6 ps-4 pe-4">
+                            <div class="form-floating">
+                                <select name="postType" class="form-select" id="selectPostType">
+                                    <option value="article" {{#if (ifEquals post.postType "article" )}} selected
+                                        {{/if}}>
+                                        Bài viết</option>
+                                    <option value="question" {{#if (ifEquals post.postType "question" )}} selected
+                                        {{/if}}>Câu hỏi</option>
+                                    <option value="devlog" {{#if (ifEquals post.postType "devlog" )}} selected{{/if}}>
+                                        Devlog</option>
+                                </select>
+                                <label for="selectClassification">Chọn một phân loại bài viết</label>
+                            </div>
                         </div>
                     </div>
                     {{!-- Hiển thị --}}
@@ -67,7 +85,7 @@
                         </div>
                     </div>
                     <button class="btn border bg-success text-white">Đăng</button>
-                </form> --}}
+                </form>
                 {{else}}
                 <form id="writePostForm" action="/user/post/write?type={{type}}" method="POST">
                     <div class="mb-3 row mt-1">
@@ -98,6 +116,22 @@
                                 {{/each}}
 
                             </ul>
+                        </div>
+                    </div>
+                    <div class="mb-5 row">
+                        <label class="col-sm-2 col-form-label right__content__label">Loại:</label>
+                        <div class="col-6 ps-4 pe-4">
+                            <div class="form-floating">
+                                <select name="postType" class="form-select" id="selectPostType">
+                                    <option value="article" selected>
+                                        Bài viết</option>
+                                    <option value="question">
+                                        Câu hỏi</option>
+                                    <option value="devlog">
+                                        Devlog</option>
+                                </select>
+                                <label for="selectClassification">Chọn một phân loại bài viết</label>
+                            </div>
                         </div>
                     </div>
                     {{!-- Hiển thị --}}

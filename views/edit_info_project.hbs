@@ -307,11 +307,9 @@
 </main>
 
 <script>
-    let long_description = document.getElementById('inputLongDescription');
     let short_description = document.getElementById('inputShortDescription');
 
-    long_description.textContent = long_description.value.trim();
-    short_description.textContent = short_description.value.trim();
+    short_description.textContent = short_description?.value.trim();
     window.addEventListener('beforeunload', function (event) {
         // Xóa bộ nhớ đệm
         projectFiles = []

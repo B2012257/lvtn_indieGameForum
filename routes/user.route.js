@@ -30,6 +30,8 @@ router.get('/project/:id/delete', userController.deleteProject)
 
 router.get('/post/write', userController.getWritePostPage)
 router.post('/post/write', userController.createPost)
+// router.get('/post/:id/edit', userController.editPostPage)
+
 router.post('/comment/post/:id', userController.commentPost)
 router.post('/version/:id/delete', userController.deleteVersion)
 

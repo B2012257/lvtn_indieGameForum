@@ -774,7 +774,7 @@ const getVerifyEmailPage = async (req, res) => {
         title: 'Xác thực email',
         verifyCode,
         message: "Mã xác thực gồm 6 chữ số đã được gửi đến email của bạn, vui lòng kiểm tra email để xác thực tài khoản",
-        user: user_db,
+        user: req.session?.user ?? req.user,
         redirect: false,
 
         header: true,
@@ -802,7 +802,7 @@ const verifyCode = async (req, res) => {
         res.render('verify_email', {
             title: 'Xác thực email thành công',
             message: "Xác thực thành công! Tài khoản của bạn đã được kích hoạt",
-            user: user_db,
+            user: req.session?.user ?? req.user,
             header: true,
             footer: false,
             redirect: true,
@@ -813,7 +813,7 @@ const verifyCode = async (req, res) => {
             title: 'Xác thực email thất bại',
             isFailed: true,
             message: "Xác thực thất bại! Vui lòng thử lại",
-            user: user_db,
+            user: req.session?.user ?? req.user,
             header: true,
             footer: false,
             redirect: true,
@@ -1105,7 +1105,9 @@ const getWritePostPage = async (req, res) => {
 }
 const createPost = async (req, res) => {
     let user = req.session?.user ?? req.user;
-    let type = req.query.type
+    // let type = req.query.type
+    let type = req.body.postType
+    console.log("type", type);
     let title = req.body.title;
     let content = req.body.content;
     let tags = JSON.parse(req.body.tags);
@@ -1148,12 +1150,18 @@ const createPost = async (req, res) => {
                         }
                     })
                     tag_db = JSON.parse(JSON.stringify(tag_db))
-                    await db.post_tag.create({
-                        postId: post_db.id,
-                        tagId: tag_db[0].id
+                    await db.post_tag.findOrCreate({
+                        where: {
+                            postId: post_db.id,
+                            tagId: tag_db[0].id
+                        },
+                        defaults: {
+                            postId: post_db.id,
+                            tagId: tag_db[0].id
+                        }
                     })
                 }
-                res.redirect('/forum')
+                res.redirect('/user/posts')
                 return
             }
 
@@ -1192,6 +1200,9 @@ const createPost = async (req, res) => {
     }
 
 }
+const editPostPage = async (req, res) => {
+
+}
 const deleteVersion = async (req, res) => {
     let versionId = req.params.id;
     let projectId = req.query.p
@@ -1216,10 +1227,11 @@ const getMyPostsPage = async (req, res) => {
             userId: user.id,
             //Với postType là article hoặc question
             postType: {
-                [db.Sequelize.Op.or]: ['article', 'question']
+                [db.Sequelize.Op.or]: ['article', 'question', 'devlog']
             }
         },
-        include: [db.tag]
+        include: [db.tag],
+        order: [['postType', 'DESC']]
     })
     posts = JSON.parse(JSON.stringify(posts))
 

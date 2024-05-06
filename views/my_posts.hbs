@@ -19,7 +19,7 @@
                                     <th scope="col">Loại</th>
                                     <th scope="col">Gắn nhãn</th>
                                     <th scope="col">Ngày đăng</th>
-                                    <th scope="col"> Lượt xem</th>
+                                    {{!-- <th scope="col"> Lượt xem</th> --}}
                                     <th scope="col"> Hiển thị</th>
 
                                     <th scope="col">Thao tác</th>
@@ -43,9 +43,15 @@
                                         <p class="badge bg-primary">
                                             {{#if (ifEquals postType "article")}}
                                             Bài viết
-                                            {{else}}
+                                            {{/if}}
+
+                                            {{#if (ifEquals postType "question")}}
 
                                             Câu hỏi
+                                            {{/if}}
+
+                                            {{#if (ifEquals postType "devlog")}}
+                                            Devlog
                                             {{/if}}
                                         </p>
                                     </td>
@@ -56,9 +62,9 @@
 
                                     </td>
                                     <td>{{momentDay createdAt}}</td>
-                                    <td>
+                                    {{!-- <td>
                                         {{viewCount}}
-                                    </td>
+                                    </td> --}}
 
                                     <td>
                                         {{#if is_public}}

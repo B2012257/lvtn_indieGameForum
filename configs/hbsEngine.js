@@ -111,6 +111,7 @@ module.exports = (app) => {
                 return formattedInteger + ' VND';
 
             },
+
             stripHtml: function (content) {
                 return content.replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, '');
             }
