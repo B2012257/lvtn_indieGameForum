@@ -396,7 +396,8 @@
 
                     {{#each downloads}}
                     <div class="mt-1 mb-2">
-                        <a href="{{link}}" class="btn btn-outline-primary">{{platform}}</a>
+                        <a href="{{link}}" class="btn btn-outline-primary"><i class="fa-regular fa-file-zipper me-1"
+                                style="font-size: 20px;"></i> {{platform}}</a>
                     </div>
                     {{/each}}
                     <a data-bs-toggle="modal" data-bs-target="#updateVersionHistory" style="font-size: 14px;"
@@ -431,8 +432,9 @@
                                 <ul class="list-group">
                                     {{#each downloads}}
                                     <li class="  list-group-item p-1 border-0 ps-5">
-                                        <a target="_blank" href="{{link}}"
-                                            class=" btn btn-outline-primary">{{platform}}</a>
+                                        <a target="_blank" href="{{link}}" class="text-black btn btn-outline-primary"><i
+                                                class="fa-regular fa-file-zipper me-1" style="font-size: 20px;"></i>
+                                            {{platform}}</a>
                                     </li>
                                     {{/each}}
 
@@ -449,7 +451,9 @@
                 </div>
                 <li class="list-group-item">Ngày phát hành phiên bản: {{momentDay this.release_Date}}.
                 </li>
-                <li class="list-group-item">Nền tảng hổ trợ: {{#each this.downloads}}
+                <li class="list-group-item">Nền tảng hổ trợ:
+                    {{#each this.downloads}}
+
                     {{this.platform}},
                     {{/each}}
                 </li>

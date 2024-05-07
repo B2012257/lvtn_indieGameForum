@@ -349,8 +349,8 @@ const paypalSuccess = async (req, res) => {
                     // 
                     res.render('payment_return', {
                         title: 'Thông tin thanh toán',
-                        message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
-
+                        message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.',
+                        redirectURL: "/user/libary"
                     })
                 }
             });
@@ -552,25 +552,26 @@ const payWithVnpayReturn = async (req, res) => {
             if (error) {
                 console.log(error);
             } else {
-                console.log('Email sent: ' + info.response);
+                console.log('Email sent: ' + payvnpay_email + " " + info.response);
                 // 
                 res.render('payment_return', {
                     title: 'Thông tin thanh toán',
                     message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
-                    , redirect: '/user/libary'
+                    , redirectURL: '/user/libary'
                 })
             }
         });
         res.render('payment_return', {
             title: 'Thông tin thanh toán',
             message: 'Thanh toán thành công! Vui lòng kiểm tra email của bạn để xem chi tiết giao dịch và tệp tải về.'
-            , redirect: '/user/libary'
+            , redirectURL: '/user/libary'
         })
 
     } else {
         res.render('payment_return', {
             title: 'Chi tiết thanh toán VNPay',
-            message: "Thanh toán thất bại! Vui lòng thử lại."
+            message: "Thanh toán thất bại! Vui lòng thử lại.",
+            redirectURL: "/user/libary"
         })
     }
 }

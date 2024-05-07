@@ -69,7 +69,8 @@
 
                             {{/if}}
                         </a>
-                        <textarea class="col-10 p-1 border" name="comment_content" id="comment_content"></textarea>
+                        <textarea required class="col-10 p-1 border" name="comment_content"
+                            id="comment_content"></textarea>
                     </div>
                     {{#if user}}
                     <div class="add_comment_btn btn border mt-2 btn-outline-primary">Thêm bình luận</div>
@@ -123,7 +124,7 @@
                             <form action="/user/comment/post/{{../id}}?replyComment={{id}}" method="POST"
                                 class="mt-2 form-reply d-none">
                                 <input type="text" hidden name="replyId" value="{{id}}">
-                                <textarea class="reply_comment border" placeholder="Nội dung trả lời"
+                                <textarea required class="reply_comment border" placeholder="Nội dung trả lời"
                                     name="comment_content" id=""></textarea>
                                 <div class="btn border btn-outline-danger ms-2 cancel_save_reply_comment">Huỷ</div>
                                 <button class="btn border btn-outline-success save_reply_comment"
