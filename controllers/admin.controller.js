@@ -83,6 +83,54 @@ const getAdminDashboard = async (req, res) => {
         include: [db.user, db.discount, db.classification, db.tag, db.image],
     })
 
+    //Lấy doanh thu trong vòng 6 tháng trước kể từ tháng này
+    let revenueIn6Months = [] //Key value: tháng, value: doanh thu
+    let month = (new Date().getMonth()) + 1
+    let year = new Date().getFullYear()
+    for (let i = 0; i < 6; i++) {
+
+        let monthRevenue = 0
+        let monthName = ''
+        if (month === 0) {
+            month = 12
+            year -= 1
+        }
+        monthName = month + '/' + year
+        //Lấy doanh thu trong tháng
+        // payments.forEach(payment => {
+        //     if (payment.payment_method?.name === 'vnpay' && new Date(payment.createdAt).getMonth() === month - 1 && new Date(payment.createdAt).getFullYear() === year) {
+        //         monthRevenue += parseInt(payment.lastPrice) * 0.02
+        //     } else if (new Date(payment.createdAt).getMonth() === month - 1 && new Date(payment.createdAt).getFullYear() === year) {
+        //         monthRevenue += parseFloat(payment.lastPrice) * 0.02 * parseFloat(process.env.USD_TO_VND_EXCHANGE_RATE) * 1000
+        //     }
+        // })
+        for (let i = 0; i < payments.length; i++) {
+            const payment = payments[i];
+            if (new Date(payment.createdAt).getMonth() === month - 1 && new Date(payment.createdAt).getFullYear() === year) {
+                if (payment.payment_method?.name === 'vnpay') {
+                    monthRevenue += parseInt(payment.lastPrice) * 0.02;
+                } else {
+                    monthRevenue += parseFloat(payment.lastPrice) * 0.02 * parseFloat(process.env.USD_TO_VND_EXCHANGE_RATE) * 1000;
+                }
+            }
+        }
+
+        // So sánh với tháng trước, nếu tăng thì số dương, giảm thì số âm, giữ nguyên thì 0
+        let compare = 0
+        if (i > 0) {
+            console.log(revenueIn6Months[i - 1].value, monthRevenue);
+            compare = revenueIn6Months[i - 1].value - monthRevenue
+            revenueIn6Months[i - 1].compare = parseInt(compare)
+        }
+        revenueIn6Months.push({
+            month: monthName,
+            value: parseInt(monthRevenue),
+            compare
+        })
+
+        month -= 1
+    }
+    console.log(revenueIn6Months);
     projects = JSON.parse(JSON.stringify(projects))
     totalPosts = JSON.parse(JSON.stringify(totalPosts))
     totalProject = JSON.parse(JSON.stringify(totalProject))
@@ -99,6 +147,7 @@ const getAdminDashboard = async (req, res) => {
         totalDeveloper,
         totalRevenue,
         totalUser,
+        revenueIn6Months,
         user: req.user || req.session.user
     })
 }

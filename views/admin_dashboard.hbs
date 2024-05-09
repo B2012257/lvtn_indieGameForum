@@ -63,6 +63,9 @@
                         </div>
                     </div>
                     <div class="col-6">
+                        <script id="revenueIn6MonthsTable" type="application/json">
+                        {{{json revenueIn6Months}}}
+                        </script>
                         <div style="width: 100%;display: inline-block">
                             {{!-- //bảng danh sách doanh thu qua các tháng --}}
                             <table class="table">
@@ -76,7 +79,28 @@
                                 </thead>
                                 <tbody>
                                     {{!-- {{#each revenueStatistic}} --}}
-                                    <tr class="table-success">
+                                    {{#each revenueIn6Months}}
+
+                                    <tr {{#if @first}} class="table-success" {{/if}}>
+                                        <td {{#if @first}} class="text-success" {{/if}}>{{month}}</td>
+                                        <td>{{value}}</td>
+                                        <td>
+                                            {{#if (equalsZero compare) }}
+                                            <i class="text-warning fa-solid fa-grip-lines"></i>
+                                            {{/if}}
+                                            {{#if (upperZero compare) }}
+                                            <i class="text-success fa-solid fa-arrow-trend-up"></i>
+                                            {{/if}}
+                                            {{#if (lowerZero compare) }}
+                                            <i class="text-danger fa-solid fa-arrow-trend-down"></i>
+                                            {{/if}}
+                                            {{compare}}
+                                        </td>
+
+                                    </tr>
+
+                                    {{/each}}
+                                    {{!-- <tr class="table-success">
                                         <td class="text-success">5</td>
                                         <td>20k</td>
                                         <td><i class="text-success fa-solid fa-arrow-trend-up"></i> 2k</td>
@@ -111,7 +135,7 @@
                                         <td>0k</td>
                                         <td><i class="text-danger fa-solid fa-arrow-trend-down"></i> 0k</td>
 
-                                    </tr>
+                                    </tr> --}}
                                     {{!-- {{/each}} --}}
                                 </tbody>
                             </table>

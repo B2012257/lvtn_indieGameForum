@@ -115,7 +115,19 @@ module.exports = (app) => {
             stripHtml: function (content) {
                 return content.replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, '');
             }
-
+            ,
+            equalsZero: function (number) {
+                let formatumber = parseInt(number);
+                return formatumber == 0;
+            },
+            upperZero: function (number) {
+                let formatumber = parseInt(number);
+                return formatumber > 0;
+            },
+            lowerZero: function (number) {
+                let formatumber = parseInt(number);
+                return formatumber < 0;
+            },
         }
     }));
     app.set('view engine', '.hbs');

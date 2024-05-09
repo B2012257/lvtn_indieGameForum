@@ -1305,7 +1305,7 @@ const deletePost = async (req, res) => {
                 id: postId
             }
         })
-        if (req.admin) {
+        if (req.role === "ADMIN") {
             res.redirect('/admin/dashboard')
         }
         res.redirect('/user/posts')

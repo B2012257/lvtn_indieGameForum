@@ -21,12 +21,12 @@
                     {
                         type: 'bar',
                         label: 'Dự án mới',
-                        data: [0, 1, 3, 5, 1, 3, 0],
+                        data: [0, 0, 0, 0, 14, 0, 0],
                     },
                     {
                         type: 'line',
                         label: 'Lập trình viên mới',
-                        data: [0, 4, 3, 5, 8, 6, 0],
+                        data: [0, 0, 0, 0, 1, 0, 0],
                     },
 
                 ]
@@ -68,7 +68,7 @@
                     {
 
                         label: 'Lượt mua',
-                        data: ["200", "300", "0", "100", "612", "240", "80"],
+                        data: ["0", "0", "1", "1", "3", "0", "0"],
                         borderColor: 'orange',
                         backgroundColor: 'yellow'
                     },
@@ -114,7 +114,7 @@
                     {
 
                         label: 'Bài viết',
-                        data: ["2", "3", "8", "1", "6", "2", "0"],
+                        data: ["0", "0", "0", "1", "3", "0", "0"],
                         borderColor: 'orange',
                         backgroundColor: 'yellow'
                     },

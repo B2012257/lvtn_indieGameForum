@@ -9,6 +9,7 @@ const isLogin = async (req, res, next) => {
         userDb = JSON.parse(JSON.stringify(userDb))
         req.user = userDb
         req.session.user = userDb
+        req.role = userDb.role.name.toUpperCase().trim()
         next()
     } else {
         res.redirect("/login")
