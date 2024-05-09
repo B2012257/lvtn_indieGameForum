@@ -32,7 +32,7 @@ router.get('/project/:slug/rating', siteController.getRatingPage)
 
 router.get('/tags/:slug', siteController.getTagsPage)
 
-router.get('/genres', siteController.getGenresPage)
+// router.get('/genres', siteController.getGenresPage)
 
 router.get('/project/:classification', siteController.getProjectViewByClassificationPage)
 router.get('/forum', siteController.getForumPage)

@@ -4,42 +4,65 @@
 
     <div class="row">
         <div class="col-2 p-3 side-bar overflow-y-scroll" style="padding-top: 70px;">
-            <p class="sidebar__title">Tìm kiếm</p>
+            <p class="sidebar__title">Tìm kiếm nhanh</p>
             <ul class="d-flex flex-row flex-wrap row list-unstyled sidebar__list">
                 <li class="col-6 sidebar__list__item ">
-                    <a href="#">Trò chơi</a>
+                    <a href="/project/all">Tất cả dự án</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a href="#">Trò chơi đang phát triển</a>
+                    <a href="/project/tai-nguyen-phat-trien-tro-choi">Tài nguyên phát triển trò chơi</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a href="#">Tài nguyên trò chơi</a>
+                    <a href="/tags/all">Tất cả nhãn</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a href="#">Bài viết nổi bật</a>
+                    <a href="/forum">Bài viết</a>
                 </li>
-
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/all?free=1">Miễn phí</a>
+                </li>
             </ul>
 
-            <p class="sidebar__title">Nhãn nổi bật</p>
+            <p class="sidebar__title">Nhãn</p>
             <ul class="d-flex flex-row flex-wrap row list-unstyled sidebar__list">
                 <li class="col-6 sidebar__list__item">
-                    <a class="badge text-wrap text-bg-secondary" href="#">Kinh dị</a>
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/kinh-di">Kinh dị</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a class="badge text-wrap text-bg-secondary" href="#">Sinh tồn</a>
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/sinh-ton">Sinh tồn</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a class="badge text-wrap text-bg-secondary" href="#">Nông trại</a>
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/nong-trai">Nông trại</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a class="badge text-wrap text-bg-secondary" href="#">Python</a>
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/hanh-dong">Hành động</a>
                 </li>
                 <li class="col-6 sidebar__list__item ">
-                    <a class="badge text-wrap text-bg-secondary" href="#">Unity</a>
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/giai-do">Giải đố</a>
+                </li>
+                <li class="col-6 sidebar__list__item ">
+                    <a class="badge text-wrap text-bg-secondary tag_name" href="/tags/co-op">Co-op</a>
                 </li>
             </ul>
-            <p class="sidebar__title">Thể loại</p>
+            <p class="sidebar__title">Phân loại</p>
+            <ul class="d-flex flex-row flex-wrap row list-unstyled sidebar__list">
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/tro-choi">Trò chơi</a>
+                </li>
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/tai-nguyen-phat-trien-tro-choi">Tài nguyên phát triển trò chơi</a>
+                </li>
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/game-mods">Mods game</a>
+                </li>
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/am-thanh">Âm thanh</a>
+                </li>
+                <li class="col-6 sidebar__list__item ">
+                    <a href="/project/cong-cu">Công cụ</a>
+                </li>
+            </ul>
+            {{!-- <p class="sidebar__title">Bài viết nổi bật</p>
             <ul class="d-flex flex-row flex-wrap row list-unstyled sidebar__list">
                 <li class="col-6 sidebar__list__item ">
                     <a href="#">Trò chơi</a>
@@ -54,23 +77,7 @@
                     <a href="#">Bài viết nổi bật</a>
                 </li>
 
-            </ul>
-            <p class="sidebar__title">Bài viết nổi bật</p>
-            <ul class="d-flex flex-row flex-wrap row list-unstyled sidebar__list">
-                <li class="col-6 sidebar__list__item ">
-                    <a href="#">Trò chơi</a>
-                </li>
-                <li class="col-6 sidebar__list__item ">
-                    <a href="#">Trò chơi đang phát triển</a>
-                </li>
-                <li class="col-6 sidebar__list__item ">
-                    <a href="#">Tài nguyên trò chơi</a>
-                </li>
-                <li class="col-6 sidebar__list__item ">
-                    <a href="#">Bài viết nổi bật</a>
-                </li>
-
-            </ul>
+            </ul> --}}
         </div>
         <div class="col-10 p-0 right__content">
             <div id="" class="col-12">
@@ -198,7 +205,7 @@
 
                                 {{#each projectInfo}}
                                 <div class="card project-item"
-                                    style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                                    style="flex-basis: 360px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
                                     {{#each images}}
                                     {{#if this.isCoverImage}}
                                     <img src="{{this.url}}" class="game__thumbnail" width="100%" height="100%">
@@ -225,7 +232,7 @@
                                                 href="/genre/{{this.genre.slug}}"
                                                 class="badge bg-primary fw-normal">{{this.genre.name}}</a>
                                         </div>
-                                        <div class="tags" style="min-height: 20px;">
+                                        <div class="tags" style="min-height: 20px; max-height: 25px;overflow:hidden;">
 
                                             {{#each this.tags}}
 
@@ -269,7 +276,7 @@
 
                                 {{#each projectInDiscount}}
                                 <div class="card project-item"
-                                    style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                                    style="flex-basis: 360px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
                                     {{#each this.project.images}}
                                     {{#if isCoverImage}}
                                     <img src="{{this.url}}" class="game__thumbnail" width="100%" height="100%">
@@ -294,7 +301,7 @@
                                                 href="/genre/{{this.project.genre.slug}}"
                                                 class="badge bg-primary fw-normal">{{this.project.genre.name}}</a>
                                         </div>
-                                        <div class="tags" style="min-height: 20px;">
+                                        <div class="tags" style="min-height: 20px; max-height: 25px;overflow:hidden;">
 
                                             {{#each this.project.tags}}
 

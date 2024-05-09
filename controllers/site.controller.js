@@ -27,7 +27,6 @@ let newProjectStatisticWeek = async ({ userId }) => {
     let startDate = new Date(currentYear, currentMonth, currentDate.getDate() - startDiff);
     let endDate = new Date(currentYear, currentMonth, currentDate.getDate() + endDiff);
 
-    console.log(startDate, endDate);
     //Đổi ra ngày tháng năm và lấy từ thứ 2 - Chủ nhật
 
     startDate = startDate.toLocaleDateString()
@@ -46,13 +45,11 @@ let newProjectStatisticWeek = async ({ userId }) => {
 
     })
     results = JSON.parse(JSON.stringify(results))
-    console.log(results);
     //Lấy ra ngày tạo dự án
     let createdAt
     results.rows.forEach(item => {
         createdAt = new Date(item.createdAt).toLocaleDateString()
     })
-    console.log("createdAt", createdAt);
 
     //Tạo data cho biểu đồ 7 ngày với dạng {date: dd/mm/yyyy, count: số lượng}
     for (let i = 0; i < 7; i++) {
@@ -101,7 +98,6 @@ let newProjectStatisticWeek = async ({ userId }) => {
 
 
     }
-    console.log(dataJson);
     return dataJson
 }
 //Thống kê số lượng dự án của người dùng trong tuần, trả về dữ liệu biểu đồ trong 1 tuần
@@ -162,7 +158,6 @@ let paidStatisticWeek = async ({ userId }) => {
             //Lấy ra ngày thanh toán
             let formattedDate = moment(item.createdAt).format('MM/DD/YYYY');
             //Nếu ngày thanh toán trùng với ngày thì tăng count
-            console.log(formattedDate, date);
             if (formattedDate === date) {
                 count++
             }
@@ -217,10 +212,25 @@ const getIndexPage = async (req, res) => {
             isPublic: true
         },
         order: [['updatedAt', 'DESC']],
-        limit: 12
+        limit: 6
     })
 
+    //Lấy ra 4 id dự án nổi bật (hoặc được mua nhiều nhất, theo dõi nhiều nhất, bình luận nhiều nhất, đánh giá cao nhất, hoặc là đang giảm giá)
+    //Đếm projectId dc mua nhiều trong bảng payment
+    let hotProjectId = await db.payment.findAll({
+        attributes: ['projectId', [db.Sequelize.fn('COUNT', 'projectId'), 'count']],
+        group: ['projectId'],
+        order: [[db.Sequelize.literal('count'), 'DESC']],
+        limit: 4
+    })
+    hotProjectId = JSON.parse(JSON.stringify(hotProjectId))
+    console.log(hotProjectId, "hotProject");
+
+
     let hotProject = await db.project.findAll({
+        where: {
+            id: hotProjectId.map(item => item.projectId)
+        },
         include: [
             db.user,
             {
@@ -235,7 +245,6 @@ const getIndexPage = async (req, res) => {
             isPublic: true
         },
         limit: 4,
-        order: [['createdAt', 'DESC']]
     })
     let projectInDiscount = await db.discount.findAll({
         include: [{
@@ -248,7 +257,7 @@ const getIndexPage = async (req, res) => {
                 [db.Sequelize.Op.gte]: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
             }
         },
-        limit: 12,
+        limit: 8,
         //sắp xếp theo số ngày còn lại từ ít đến nhiều
         order: [['endDate', 'ASC']]
 
@@ -287,7 +296,7 @@ const getRegisterPage = (req, res) => {
 }
 // [GET] /games
 const getProjectViewByClassificationPage = async (req, res) => {
-
+    let free = req.query.free || "all"
     let classificationSlug = req.params.classification
     let searchQuery = req.query.q
     let whereCondition = {}
@@ -303,7 +312,8 @@ const getProjectViewByClassificationPage = async (req, res) => {
             name: {
                 [db.Sequelize.Op.like]: `%${searchQuery}%`
             },
-            isPublic: true
+            isPublic: true,
+
         }
     }
     if (classificationSlug !== 'all' && !searchQuery) {
@@ -311,9 +321,14 @@ const getProjectViewByClassificationPage = async (req, res) => {
             slug: classificationSlug
         }
     }
+    if (classificationSlug === 'all' && free === '1') {
+        whereProjectCondition = {
+            price: 0
+        }
+    }
     //Phân trang dự án
     let page = req.query.page || 1 //Lấy ra page trên query
-    let limitPerPage = 4 //Giới hạn số lượng trên 1 trang
+    let limitPerPage = 8 //Giới hạn số lượng trên 1 trang
     let offset = (page - 1) * limitPerPage //Tính offset bắt đầu từ bao nhiêu
 
 
@@ -636,7 +651,6 @@ const getMyProjectPage = async (req, res) => {
         orderQuery = [['name', 'DESC']]
 
     }
-    console.log(orderQuery);
     let user = req?.user ?? req?.session?.user
 
     let projectDB = await db.project.findAll({
@@ -746,7 +760,6 @@ const getMyProjectPage = async (req, res) => {
             userId: user.id
         }
     })
-    console.log(projects);
     if (req.user || req.session.user) {
         res.render("my_project", {
             title: "Dự án của tôi",
@@ -852,7 +865,6 @@ const getProjectViewPage = async (req, res) => {
         projectInfo.versions[0].downloads = downloads
     }
 
-    console.log(allDevlog);
     // Kiểm tra nếu có payment_info thì đã mua
     res.render("project_view", {
         title: 'Xem ' + projectDB.name,

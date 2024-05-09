@@ -21,6 +21,10 @@
     color: gray;
 }
 
+.sidebar__list__item .tag_name {
+    font-size: 12px;
+}
+
 .sidebar__list__item a:hover {
     color: #8899e0;
 }

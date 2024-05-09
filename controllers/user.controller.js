@@ -11,6 +11,7 @@ const vnpay = require('vnpay');
 const { log } = require('console');
 const moment = require('moment');
 const { where } = require('sequelize');
+const { ltrim } = require('validator');
 const VNPay = vnpay.VNPay
 const VND_TO_USD_EXCHANGE_RATE = process.env.VND_TO_USD_EXCHANGE_RATE
 // Cấu hình VNPay
@@ -880,28 +881,42 @@ const setDiscount = async (req, res) => {
             //
 
             //Gữi mail thông báo đến người theo dõi
+
             let project_db = await db.project.findOne({
                 where: {
                     id: projectId
-                }
+                },
+                include: [
+                    {
+                        model: db.version,
+                        order: [['createdAt', 'DESC']],
+                        limit: 1
+                    }
+                ]
             })
             let followers = await db.user_follow.findAll({
                 attributes: ['userId'],
                 where: {
                     projectId: projectId
                 },
+
             })
 
             project_db = JSON.parse(JSON.stringify(project_db))
             let followerIds = JSON.parse(JSON.stringify(followers))
-            console.log(followerIds);
+            console.log(followerIds, "followerIds");
             let mailRedirectUrl = `http://localhost:3000/project/${project_db.slug}/view`
             for (const followerId of followerIds) {
+                console.log(followerId.email, "Email to share");
+                // share thư mực cho người theo dõi
                 let userFollow = await db.user.findOne({
                     where: {
                         id: followerId.userId
                     }
                 })
+
+
+
                 let mailOptions = {
                     from: 'Admin Indie Game VN (-.-)',
                     to: userFollow.email,
@@ -942,7 +957,7 @@ const setDiscount = async (req, res) => {
         .button {
             display: inline-block;
             background-color: #007bff;
-            color: #fff;
+            color: #ccc;
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 5px;
@@ -964,7 +979,7 @@ const setDiscount = async (req, res) => {
 
                     `
                 }
-                //nếu id theo dõi khác người đăng thì gửi mail thông báo
+                //nếu id theo dõi khác người đăng thì ko gửi mail thông báo
                 if (userFollow.id != project_db.userId) {
                     transporter.sendMail(mailOptions, function (error, info) {
                         if (error) {
@@ -979,6 +994,7 @@ const setDiscount = async (req, res) => {
 
 
             // console.log(followers, project_db);
+
         }
 
         res.redirect('/user/projects')

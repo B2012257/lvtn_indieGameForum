@@ -2,35 +2,43 @@
     <div class="container">
         <div class="row mt-3">
             <h4>Tổng quan</h4>
-            <div class="col-4">
+            <div class="col">
                 <div class="w-100 card bg-danger-subtle" style=" padding: 10px 30px; line-height:30px">
                     <div class="card-body">
                         <i style="font-size: 30px; margin-right: 10px" class="fa-solid fa-briefcase"></i>
-                        Tổng dự án trong hệ thống: 10
+                        Tổng dự án: {{ totalProject}}
                     </div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="w-100 card bg-info" style=" padding: 10px 30px; line-height:30px">
                     <div class="card-body">
-                        <i style="font-size: 30px; margin-right: 10px" class="fa-solid fa-user"> </i>
-                        Số nhà phát
-                        triển 4.
-                        {{totalFollow}}
+                        <i style="font-size: 30px; margin-right: 10px" class="fa-solid fa-code"> </i>
+                        Nhà phát triển / người dùng:
+                        {{totalDeveloper}} / {{totalUser}}
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col ">
+                <div class="w-100 card bg-info" style=" padding: 10px 30px; line-height:30px">
+                    <div class="card-body">
+                        <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-newspaper"> </i>
+                        Tổng bài viết:
+                        {{totalPosts}}
+                    </div>
+                </div>
+            </div>
+            <div class="col">
                 <div class="w-100 card bg-primary-subtle" style=" padding: 10px 30px; line-height:30px">
                     <div class="card-body">
                         <i style="font-size: 30px; margin-right: 10px" class="fa-regular fa-dollar-sign"></i> Doanh
-                        thu: 0
+                        thu: {{vndFormat totalRevenue}}
                     </div>
                 </div>
             </div>
             <ul class="row" style="list-style: none;">
                 <div class="mt-3">
-                    <h4>Thống kê dự án trong hệ thống</h4>
+                    <h4>Thống kê trong hệ thống</h4>
                 </div>
 
                 <div class="row mt-2">
@@ -51,25 +59,337 @@
                     </div>
                     <div class="col-6">
                         <div style="width: 100%;display: inline-block">
-                            <canvas id="newdev-acquisitions"></canvas>
+                            <canvas id="newpost-acquisitions"></canvas>
                         </div>
                     </div>
                     <div class="col-6">
                         <div style="width: 100%;display: inline-block">
                             {{!-- //bảng danh sách doanh thu qua các tháng --}}
-                            <table></table>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Tháng</th>
+                                        <th scope="col">Doanh thu</th>
+                                        <th scope="col">So với tháng trước</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{!-- {{#each revenueStatistic}} --}}
+                                    <tr class="table-success">
+                                        <td class="text-success">5</td>
+                                        <td>20k</td>
+                                        <td><i class="text-success fa-solid fa-arrow-trend-up"></i> 2k</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>18k</td>
+                                        <td> <i class="text-warning fa-solid fa-grip-lines"></i> 0k</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>18k</td>
+                                        <td><i class="text-success fa-solid fa-arrow-trend-up"></i> 7k</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>11k</td>
+                                        <td><i class="text-success fa-solid fa-arrow-trend-up"></i> 9k</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2k</td>
+                                        <td><i class="text-success fa-solid fa-arrow-trend-up"></i>2k </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>12</td>
+                                        <td>0k</td>
+                                        <td><i class="text-danger fa-solid fa-arrow-trend-down"></i> 0k</td>
+
+                                    </tr>
+                                    {{!-- {{/each}} --}}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </ul>
             <div class="row">
                 <div class="mt-3">
-                    <h4>Dự án gần đây</h4>
+                    <div class="mt-3">
+
+
+                        <h4>Các dự án đã tải lên gần đây</h4>
+
+                        {{#unless projects}}
+                        <ul class="text-center" style="list-style: none;">
+                            <li>Chưa có dự án nào</li>
+                        </ul>
+                        {{/unless}}
+
+
+                    </div>
+
+
+                    <li class="d-flex gap-2 mt-2" style="flex-wrap: wrap;">
+
+                        {{#each projects}}
+                        {{#if (ifEquals this.user.id user.id)}}
+                        <div class="card project-item "
+                            style="flex-basis: 310px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                            {{#each images}}
+                            {{#if this.isCoverImage}}
+                            <img src="{{this.url}}" class="game__thumbnail" width="100%" height="100%"
+                                style="max-height: 200px; min-height:200px">
+                            {{/if}}
+                            {{/each}}
+                            {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
+                            <div class="card-body p-2 pb-0">
+                                {{!-- <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0
+                                </p> --}}
+                                <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-bookmark "></i>
+                                </p>
+                                {{#if isPublic}}
+                                <p class="p-0 m-0 visibility " title="Công khai"><i
+                                        class="me-1 fa-solid fa-lock-open"></i> Công
+                                    khai </p>
+                                {{else }}
+                                <p class="p-0 m-0 visibility " title="Riêng tư"><i
+                                        class="me-1 fa-solid fa-lock text-danger"></i> Riêng tư
+                                </p>
+
+                                {{/if}}
+                                {{#with discounts.[0]}}
+                                <p class="badge bg-warning sale  text-dark">Đang giảm
+                                    {{discountValuePercent}}%</p>
+                                <p class="badge bg-info-subtle text-dark sale sale-duration">Còn lại
+                                    {{CheckPromotionPeriod
+                                    endDate}}</p>
+                                {{/with}}
+                                <a href="/project/{{this.slug}}/view" class="card-title fs-5">{{this.name}}</a>
+                                <br />
+
+                                <a href="/project/{{this.classification.slug}}"
+                                    class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
+                                <div class="tags" style="min-height: 50px;">
+                                    {{#each this.tags}}
+
+                                    <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
+                                        class="badge bg-danger fw-normal">{{this.name}}</a>
+                                    {{/each}}
+                                </div>
+                                <p class="mt-2  card-text clamped-text-3 ">{{this.short_description}}</p>
+                                {{#if (ifEquals this.price '0')}}
+                                <p>Miễn phí</p>
+                                {{else}}
+                                Giá:
+                                <span class="{{#if discounts}} text-decoration-line-through {{/if}}"> {{vndFormat
+                                    this.price}}</span>
+
+
+                                {{/if}}
+                                {{#with discounts.[0]}}
+                                <br />
+                                Giảm còn:
+                                <span class="text-danger">
+                                    {{ priceOnSale ../price discountValuePercent}}
+                                </span>
+                                <!-- Áp dụng định dạng VND cho giá sau giảm giá -->
+                                {{/with}}
+
+                            </div>
+                            <p class="m-0 ps-2 pe-2 " style="font-size: 14px;"><i class="fa-solid fa-coins"></i>
+                                {{this.saledCount}} lượt mua
+                            </p>
+
+
+                            <div class="card-footer">
+                                <div class="form-set-discount">
+
+                                    <form class="" action="/user/project/discount" method="POST">
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="staticBackdrop{{this.id}}" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">{{#if
+                                                            discount}} Cập nhật {{else}} Thiết lập {{/if}} chương
+                                                            trình giảm giá cho {{this.name}}</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input hidden name="projectId" value="{{this.id}}">
+                                                        <div class="mb-2 row justify-content-between">
+                                                            <label class="col-4" for="startDate">
+                                                                Ngày bắt đầu:
+                                                            </label>
+                                                            <input {{#if discount}}
+                                                                value="{{ momentDateTimeInput discount.startDate}}"
+                                                                {{/if}} value="10" required
+                                                                class="form-control w-50 col-8" type="datetime-local"
+                                                                name="start" id="startDate">
+                                                        </div>
+                                                        <div class="mb-2 row justify-content-between">
+                                                            <label class="col-4" for="endDate">
+                                                                Ngày kết thúc:
+                                                            </label>
+                                                            <input {{#if discount}}
+                                                                value="{{momentDateTimeInput discount.endDate}}" {{/if}}
+                                                                required class="form-control w-50 col-8"
+                                                                type="datetime-local" name="end" id="endDate">
+
+                                                        </div>
+                                                        <div class="mb-2 row justify-content-between">
+                                                            <label class="col-4" for="discount-percent">
+                                                                Phần trăm giảm:
+                                                            </label>
+                                                            <input required class="form-control w-50 col-4"
+                                                                type="number" name="percent" id="discount-percent"
+                                                                min="1" max="100" {{#if discount}}
+                                                                value="{{discount.discountValuePercent}}" {{else}}
+                                                                value="10" {{/if}}>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <div class="float-start">
+                                                            {{!-- <strong class="text-success">
+                                                                3 tiếng
+                                                            </strong> --}}
+
+                                                        </div>
+                                                        {{#if discount}}
+
+                                                        <a href="/user/project/discount/{{discount.id}}/delete"
+                                                            type="submit" class="btn btn-danger">Xoá
+                                                            khuyến mãi</a>
+                                                        {{/if}}
+                                                        <button type="submit" class="btn btn-primary">Thiết
+                                                            lập</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{this.id}}"
+                                    class="border-0 text-primary bg-transparent discount-btn">
+                                    {{#if discount}} Cập nhật {{else}}
+                                    Đặt {{/if}} giảm giá
+
+                                </button>
+                                |
+                                <a href="/user/project/{{this.id}}/edit">Điều chỉnh</a> |
+                                <a href="/user/project/{{this.id}}/delete">Xoá</a>
+                            </div>
+                        </div>
+
+                        {{/if}}
+                        {{/each}}
+
+                    </li>
                 </div>
             </div>
             <div class="row">
                 <div class="mt-3">
                     <h4>Bài viết gần đây</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>
+                                        STT
+                                    </th>
+                                    <th scope="col">Tiêu đề</th>
+                                    <th scope="col">Nội dung</th>
+                                    <th scope="col">Loại</th>
+                                    <th scope="col">Tác giả</th>
+                                    <th scope="col">Ngày đăng</th>
+                                    {{!-- <th scope="col"> Lượt xem</th> --}}
+                                    <th scope="col"> Hiển thị</th>
+
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="customtable">
+                                {{#each posts}}
+                                <tr>
+                                    <td>{{indexing @index}}</td>
+                                    <td style="max-width: 120px;">
+                                        <a href="/post/{{id}}/view">{{title}}</a>
+                                    </td>
+                                    <td style="min-width:150px; max-width: 300px">
+                                        <p class="clamped-text-3 post_content">
+
+                                            {{{stripHtml content}}}
+
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="badge bg-primary">
+                                            {{#if (ifEquals postType "article")}}
+                                            Bài viết
+                                            {{/if}}
+
+                                            {{#if (ifEquals postType "question")}}
+
+                                            Câu hỏi
+                                            {{/if}}
+
+                                            {{#if (ifEquals postType "devlog")}}
+                                            Devlog
+                                            {{/if}}
+                                        </p>
+                                    </td>
+                                    <td>
+
+                                        <span class="">@{{user.name}}</span>
+
+
+                                    </td>
+                                    <td>{{momentDay createdAt}}</td>
+                                    {{!-- <td>
+                                        {{viewCount}}
+                                    </td> --}}
+
+                                    <td>
+                                        {{#if is_public}}
+                                        <span class="badge bg-success">Công khai</span>
+                                        {{else}}
+                                        <span class="badge bg-danger">Riêng tư</span>
+                                        {{/if}}
+                                        <br />
+                                        {{#if is_closed}}
+                                        <span class="badge bg-danger" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
+                                            đóng bài</span>
+                                        {{/if}}
+                                    </td>
+
+                                    <td>
+                                        {{!-- <a class="btn border" type="submit" href="/post/{{id}}/edit">Chỉnh
+                                            sửa</a> --}}
+
+                                        <form class="mt-2" action="/post/{{id}}/close" method="POST">
+                                            <button class="btn btn-outline-danger border" type="submit"
+                                                href="/project/{{this.project.slug}}/rating">Đóng
+                                                bài</button>
+
+                                        </form>
+
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

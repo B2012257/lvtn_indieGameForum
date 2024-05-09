@@ -23,6 +23,11 @@
                         label: 'Dự án mới',
                         data: [0, 1, 3, 5, 1, 3, 0],
                     },
+                    {
+                        type: 'line',
+                        label: 'Lập trình viên mới',
+                        data: [0, 4, 3, 5, 8, 6, 0],
+                    },
 
                 ]
             }
@@ -88,7 +93,7 @@
     ];
 
     new Chart(
-        document.getElementById('newdev-acquisitions'),
+        document.getElementById('newpost-acquisitions'),
         {
             type: 'line',
             options: {
@@ -99,7 +104,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Nhà phát triển mới trong tuần'
+                        text: 'Bài viết mới trong tuần'
                     }
                 }
             },
@@ -108,7 +113,7 @@
                 datasets: [
                     {
 
-                        label: 'Lượt mua',
+                        label: 'Bài viết',
                         data: ["2", "3", "8", "1", "6", "2", "0"],
                         borderColor: 'orange',
                         backgroundColor: 'yellow'

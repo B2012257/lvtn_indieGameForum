@@ -252,9 +252,15 @@ const uploadProject = async (req, res) => {
                 id: buyers.map(buyer => buyer.userId)
             }
         })
+
         //Gửi mail thông báo cập nhật cho từng người dùng
         for (const user of users) {
-            //Gửi mail thông báo cập nhật
+            //Share thu muc cap nhat
+            await ggdrive.shareFile({
+                fileId: versionFolderId,
+                emailToShare: user.email,
+                shareToUser: true
+            })
             //Gửi mail thông báo cập nhật
             let mailOptions = {
                 from: 'Admin Indie Game VN (-.-)',

@@ -94,13 +94,14 @@
                             <h5 class="card-title m-b-0">Danh sách theo dõi</h5>
                         </div>
                         <div class="table-responsive">
-                            <div class="w-100 d-flex gap-4 justify-content-start flex-wrap">
+                            <div class="w-100 d-flex gap-2 justify-content-start flex-wrap">
                                 {{#each projectFollow}}
                                 <div class="card project-item"
-                                    style="flex-basis: 260px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
+                                    style="flex-basis: 310px;flex-shrink: 0;flex-grow: 0; border-radius: 0">
                                     {{#each images}}
                                     {{#if this.isCoverImage}}
-                                    <img src="{{this.url}}" class="game__thumbnail" width="100%">
+                                    <img style="min-height: 180px; max-height: 180px" src="{{this.url}}"
+                                        class="game__thumbnail" width="100%">
                                     {{/if}}
                                     {{/each}}
                                     {{!-- <img src="{{this.image}}" class="game__thumbnail" width="100%"> --}}
