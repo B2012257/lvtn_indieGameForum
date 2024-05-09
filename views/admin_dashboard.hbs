@@ -152,18 +152,7 @@
                             <div class="card-body p-2 pb-0">
                                 {{!-- <p class="p-0 m-0 viewCount"><i class="me-1 fa-solid fa-eye text-white"></i> 0
                                 </p> --}}
-                                <p class="p-0 m-0 likeCount"><i class="me-1 fa-solid fa-bookmark "></i>
-                                </p>
-                                {{#if isPublic}}
-                                <p class="p-0 m-0 visibility " title="Công khai"><i
-                                        class="me-1 fa-solid fa-lock-open"></i> Công
-                                    khai </p>
-                                {{else }}
-                                <p class="p-0 m-0 visibility " title="Riêng tư"><i
-                                        class="me-1 fa-solid fa-lock text-danger"></i> Riêng tư
-                                </p>
 
-                                {{/if}}
                                 {{#with discounts.[0]}}
                                 <p class="badge bg-warning sale  text-dark">Đang giảm
                                     {{discountValuePercent}}%</p>
@@ -176,7 +165,7 @@
 
                                 <a href="/project/{{this.classification.slug}}"
                                     class="badge bg-primary text-decoration-none">{{this.classification.name}}</a>
-                                <div class="tags" style="min-height: 50px;">
+                                <div class="tags" style="min-height: 26px; max-height: 26px; overflow: hidden;">
                                     {{#each this.tags}}
 
                                     <a style="--bs-bg-opacity: .65;" href="/tags/{{this.slug}}"
@@ -203,84 +192,14 @@
                                 {{/with}}
 
                             </div>
-                            <p class="m-0 ps-2 pe-2 " style="font-size: 14px;"><i class="fa-solid fa-coins"></i>
-                                {{this.saledCount}} lượt mua
-                            </p>
+
 
 
                             <div class="card-footer">
-                                <div class="form-set-discount">
 
-                                    <form class="" action="/user/project/discount" method="POST">
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="staticBackdrop{{this.id}}" data-bs-backdrop="static"
-                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">{{#if
-                                                            discount}} Cập nhật {{else}} Thiết lập {{/if}} chương
-                                                            trình giảm giá cho {{this.name}}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <input hidden name="projectId" value="{{this.id}}">
-                                                        <div class="mb-2 row justify-content-between">
-                                                            <label class="col-4" for="startDate">
-                                                                Ngày bắt đầu:
-                                                            </label>
-                                                            <input {{#if discount}}
-                                                                value="{{ momentDateTimeInput discount.startDate}}"
-                                                                {{/if}} value="10" required
-                                                                class="form-control w-50 col-8" type="datetime-local"
-                                                                name="start" id="startDate">
-                                                        </div>
-                                                        <div class="mb-2 row justify-content-between">
-                                                            <label class="col-4" for="endDate">
-                                                                Ngày kết thúc:
-                                                            </label>
-                                                            <input {{#if discount}}
-                                                                value="{{momentDateTimeInput discount.endDate}}" {{/if}}
-                                                                required class="form-control w-50 col-8"
-                                                                type="datetime-local" name="end" id="endDate">
 
-                                                        </div>
-                                                        <div class="mb-2 row justify-content-between">
-                                                            <label class="col-4" for="discount-percent">
-                                                                Phần trăm giảm:
-                                                            </label>
-                                                            <input required class="form-control w-50 col-4"
-                                                                type="number" name="percent" id="discount-percent"
-                                                                min="1" max="100" {{#if discount}}
-                                                                value="{{discount.discountValuePercent}}" {{else}}
-                                                                value="10" {{/if}}>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer justify-content-between">
-                                                        <div class="float-start">
-                                                            {{!-- <strong class="text-success">
-                                                                3 tiếng
-                                                            </strong> --}}
-
-                                                        </div>
-                                                        {{#if discount}}
-
-                                                        <a href="/user/project/discount/{{discount.id}}/delete"
-                                                            type="submit" class="btn btn-danger">Xoá
-                                                            khuyến mãi</a>
-                                                        {{/if}}
-                                                        <button type="submit" class="btn btn-primary">Thiết
-                                                            lập</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{this.id}}"
+                                {{!-- <button type="button" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop{{this.id}}"
                                     class="border-0 text-primary bg-transparent discount-btn">
                                     {{#if discount}} Cập nhật {{else}}
                                     Đặt {{/if}} giảm giá
@@ -288,7 +207,7 @@
                                 </button>
                                 |
                                 <a href="/user/project/{{this.id}}/edit">Điều chỉnh</a> |
-                                <a href="/user/project/{{this.id}}/delete">Xoá</a>
+                                <a href="/user/project/{{this.id}}/delete">Xoá</a> --}}
                             </div>
                         </div>
 
@@ -368,7 +287,7 @@
                                         {{/if}}
                                         <br />
                                         {{#if is_closed}}
-                                        <span class="badge bg-danger" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
+                                        <span class="badge bg-warning" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
                                             đóng bài</span>
                                         {{/if}}
                                     </td>
@@ -377,9 +296,8 @@
                                         {{!-- <a class="btn border" type="submit" href="/post/{{id}}/edit">Chỉnh
                                             sửa</a> --}}
 
-                                        <form class="mt-2" action="/post/{{id}}/close" method="POST">
-                                            <button class="btn btn-outline-danger border" type="submit"
-                                                href="/project/{{this.project.slug}}/rating">Đóng
+                                        <form class="mt-2" action="/user/post/{{id}}/delete" method="POST">
+                                            <button class="btn btn-outline-danger border" type="submit">Xoá
                                                 bài</button>
 
                                         </form>

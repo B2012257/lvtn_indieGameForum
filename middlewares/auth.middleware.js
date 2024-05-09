@@ -25,6 +25,7 @@ const isAdmin = async (req, res, next) => {
         if (userDb.role.name.toUpperCase().trim() === "ADMIN") {
             req.user = userDb
             req.session.user = userDb
+            req.admin = true
             next()
         } else {
             res.redirect("/login")

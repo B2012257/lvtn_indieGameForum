@@ -1248,7 +1248,9 @@ const getMyPostsPage = async (req, res) => {
             }
         },
         include: [db.tag],
-        order: [['postType', 'DESC']]
+        //order theo posttype và thời gian tạo
+        order: [['postType', 'ASC'], ['createdAt', 'DESC']]
+
     })
     posts = JSON.parse(JSON.stringify(posts))
 
@@ -1294,6 +1296,54 @@ const commentPost = async (req, res) => {
     }
 
 }
+const deletePost = async (req, res) => {
+    let postId = req.params.id;
+
+    try {
+        await db.post.destroy({
+            where: {
+                id: postId
+            }
+        })
+        if (req.admin) {
+            res.redirect('/admin/dashboard')
+        }
+        res.redirect('/user/posts')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const closePost = async (req, res) => {
+    let postId = req.params.id;
+    try {
+        await db.post.update({
+            is_closed: true
+        }, {
+            where: {
+                id: postId
+            }
+        })
+        res.redirect('/user/posts')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const reopenPost = async (req, res) => {
+    let postId = req.params.id;
+    try {
+        await db.post.update({
+            is_closed: false
+        }, {
+            where: {
+                id: postId
+            }
+        })
+        res.redirect('/user/posts')
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 module.exports = {
     uploadProject,
     payWithPaypal,
@@ -1303,6 +1353,7 @@ module.exports = {
     ratingProject,
     payWithVnpayReturn,
     editProject,
+    deletePost,
     payWithFree,
     getVerifyEmailPage,
     verifyCode,
@@ -1315,5 +1366,7 @@ module.exports = {
     createPost,
     deleteVersion,
     getMyPostsPage,
-    commentPost
+    commentPost,
+    closePost,
+    reopenPost
 }

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const userController = require("../controllers/user.controller");
-
+const authMiddleware = require('../middlewares/auth.middleware')
 
 
 // [Get] /user/:id/project/create
@@ -30,6 +30,11 @@ router.get('/project/:id/delete', userController.deleteProject)
 
 router.get('/post/write', userController.getWritePostPage)
 router.post('/post/write', userController.createPost)
+router.post('/post/:id/delete', userController.deletePost)
+router.post('/post/:id/close', userController.closePost)
+router.post('/post/:id/reopen', userController.reopenPost)
+
+
 // router.get('/post/:id/edit', userController.editPostPage)
 
 router.post('/comment/post/:id', userController.commentPost)

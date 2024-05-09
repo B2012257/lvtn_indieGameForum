@@ -9,6 +9,11 @@
                     <span>{{momentDay createdAt}}</span> |
                     <span>Đăng bởi @{{user.name}}</span> |
                     <span>{{viewCount}} xem</span>
+                    {{#if is_closed}}
+                    <span class="badge bg-danger float-end" title="Chỉ có thể xem"><i class="fa-solid fa-lock me-1"></i>
+                        Đã
+                        đóng (Chỉ đọc)</span>
+                    {{/if}}
                     <div class="mt-1">
                         {{#if (ifEquals postType "devlog")}}
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
@@ -72,8 +77,10 @@
                         <textarea required class="col-10 p-1 border" name="comment_content"
                             id="comment_content"></textarea>
                     </div>
-                    {{#if user}}
+                    {{#if @root.user}}
+                    {{#unless is_closed}}
                     <div class="add_comment_btn btn border mt-2 btn-outline-primary">Thêm bình luận</div>
+                    {{/unless}}
                     {{/if}}
                     <div class="row mt-2">
                         <div class="col-2"></div>
@@ -110,14 +117,17 @@
 
                                 </div>
                                 <div class="comment_content_footer text-end">
+                                    {{#if @root.user}}
                                     {{#if (ifEquals @root.user.id this.user.id)}}
-                                    <span style="font-size: 14px;"
+                                    {{!-- <span style="font-size: 14px;"
                                         class="ml-2 delete_comment_btn btn btn-outline-danger border"><i
-                                            class="fa-solid fa-trash"></i> Xoá</span>
+                                            class="fa-solid fa-trash"></i> Xoá</span> --}}
                                     {{/if}}
+                                    {{#unless ../is_closed}}
                                     <span style="font-size: 14px;" class="ml-2 reply_btn btn border"><i
                                             class="fa-solid fa-reply"></i> Trả lời</span>
-
+                                    {{/unless}}
+                                    {{/if}}
                                 </div>
 
                             </div>

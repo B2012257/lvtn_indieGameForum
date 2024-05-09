@@ -168,7 +168,7 @@ const uploadProject = async (req, res) => {
     let version = req.body.version
     let projectId = req.body.projectId ?? "" //Nếu là cập nhật thì sẽ có id
     let isGenerateDevlog = req.body.isGenerateDevlog ?? false
-    console.log('isGenerateDevlog', isGenerateDevlog);
+    console.log('isGenerateDevlog', isGenerateDevlog, req.body.isGenerateDevlog);
     const files = { ...req.files }
     let urlResponse = []
     const newArrayFiles = [];
@@ -211,7 +211,8 @@ const uploadProject = async (req, res) => {
         })
         newVersion = JSON.parse(JSON.stringify(newVersion))
         //Tạo 1 bài viết có type devlog với nội dung trống và userId là người đang đăng
-        if (isGenerateDevlog) {
+        if (isGenerateDevlog == "true" || isGenerateDevlog == true ) {
+            console.log("vÀO TẠO DEVLOG");
             await db.post.create({
                 postType: "devlog",
                 content: "",
@@ -261,6 +262,11 @@ const uploadProject = async (req, res) => {
                 emailToShare: user.email,
                 shareToUser: true
             })
+            console.log({
+                fileId: versionFolderId,
+                emailToShare: user.email,
+                shareToUser: true
+            });
             //Gửi mail thông báo cập nhật
             let mailOptions = {
                 from: 'Admin Indie Game VN (-.-)',
@@ -273,7 +279,7 @@ const uploadProject = async (req, res) => {
                 `
             }
             //Gửi mail
-            transporter.sendMail(mailOptions, (err, info) => {
+            await transporter.sendMail(mailOptions, (err, info) => {
                 if (err) return console.log(err);
                 return console.log("Email sent: ", info);
             })

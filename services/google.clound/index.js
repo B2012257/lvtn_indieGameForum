@@ -79,7 +79,7 @@ var that = module.exports = {
                 fields: "webViewLink, webContentLink"
             })
             console.log(responseData.data, responseData.status, responseData.statusText);
-            return await that.shareFile({ fileId, emailToShare: shareTo, shareToUser });
+            return await that.shareFile({ fileId });
 
             //xoá file vừa upload
 

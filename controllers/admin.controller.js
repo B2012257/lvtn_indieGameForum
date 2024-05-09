@@ -24,7 +24,7 @@ const getAdminDashboard = async (req, res) => {
     )
     payments = JSON.parse(JSON.stringify(payments))
     payments.forEach(payment => {
-        if (payment.payment_method.name === 'vnpay') {
+        if (payment.payment_method?.name === 'vnpay') {
             console.log(parseInt(payment.lastPrice));
             totalRevenue += parseInt(payment.lastPrice) * 0.02
             console.log(totalRevenue);
@@ -69,7 +69,7 @@ const getAdminDashboard = async (req, res) => {
             is_public: true,
         },
         order: [['createdAt', 'DESC']],
-        limit: 6
+        limit: 10
     })
     posts = JSON.parse(JSON.stringify(posts))
 

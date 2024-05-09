@@ -74,22 +74,34 @@
                                         {{/if}}
                                         <br />
                                         {{#if is_closed}}
-                                        <span class="badge bg-danger" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
+                                        <span class="badge bg-warning" title="Bài viết đã đóng lại! Chỉ có thể xem">Đã
                                             đóng bài</span>
+
                                         {{/if}}
                                     </td>
 
                                     <td>
                                         <a class="btn border" type="submit" href="/post/{{id}}/edit">Chỉnh
                                             sửa</a>
-
-                                        <form class="mt-2" action="/post/{{id}}/close" method="POST">
-                                            <button class="btn btn-outline-danger border" type="submit"
+                                        {{#unless is_closed}}
+                                        <form class="mt-2" action="/user/post/{{id}}/close" method="POST">
+                                            <button class="btn btn-outline-warning border" type="submit"
                                                 href="/project/{{this.project.slug}}/rating">Đóng
                                                 bài</button>
 
                                         </form>
+                                        {{/unless}}
+                                        {{#if is_closed}}
+                                        <form class="mt-2" action="/user/post/{{id}}/reopen" method="POST">
+                                            <button class="btn btn-outline-success border" type="submit"
+                                                href="/project/{{this.project.slug}}/rating">Mở lại bài</button>
 
+                                        </form>
+                                        {{/if}}
+                                        <form class="mt-2" action="/user/post/{{id}}/delete" method="POST">
+                                            <button class="btn btn-outline-danger border" type="submit">Xoá</button>
+
+                                        </form>
                                     </td>
                                 </tr>
                                 {{/each}}

@@ -572,7 +572,8 @@ const getEditInterfaceProjectPage = async (req, res) => {
             postType: "devlog"
         },
         include: [db.version],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        limit: 8
     })
     allVersion = JSON.parse(JSON.stringify(allVersion))
     const projectDb = await db.project.findOne({
@@ -796,7 +797,8 @@ const getProjectViewPage = async (req, res) => {
             postType: "devlog"
         },
         include: [db.version],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        limit: 8
     })
     allDevlog = JSON.parse(JSON.stringify(allDevlog))
 
